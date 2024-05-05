@@ -1,0 +1,2 @@
+ResQFood
+<p>ResQFood facilitates the redistribution of surplus food during late-night hours before restaurant closures, ensuring that excess inventory finds a purposeful destination rather than going to waste. By streamlining the process through our platform, restaurants can efficiently connect with nearby establishments or charitable organizations, contributing to a sustainable and compassionate food ecosystem even during the late hours.</p>
