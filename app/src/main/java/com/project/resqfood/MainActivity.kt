@@ -24,7 +24,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.project.resqfood.presentation.login.Destinations
 import com.project.resqfood.presentation.login.GoogleAuthUIClient
+import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInViewModel
 import com.project.resqfood.ui.theme.ResQFoodTheme
@@ -43,12 +45,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ResQFoodTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "sign_in") {
-                        composable("sign_in"){
+                    NavHost(navController = navController, startDestination = Destinations.SignIn.route) {
+
+                        composable(Destinations.SignIn.route){
                             val viewModel = viewModel<SignInViewModel>()
                             val state by viewModel.state.collectAsStateWithLifecycle()
+
+                            //First we need to check if the user is already signed in
+                            LaunchedEffect(Unit) {
+                                if(googleAuthUIClient.getSignedInUser()!= null){
+                                    //Implement what to do if user is already signed in
+                                    //That is proceed to the dashboard
+                                }
+                            }
+
+                            //Declaring launcher for google sign In
                             val launcher = rememberLauncherForActivityResult(
                                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                                 onResult= {
@@ -62,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
-
+                            //Handling the sign in success state
                             LaunchedEffect(key1 = state.isSignInSuccessful) {
                                 if(state.isSignInSuccessful){
                                     Toast.makeText(
@@ -70,10 +82,16 @@ class MainActivity : ComponentActivity() {
                                         "Sign In Successful",
                                         Toast.LENGTH_SHORT
                                     ).show()
+
+                                    //Implement what to do after sign in is successful
+                                    //TODO("Navigate to relevant composable depending on the user type")
+
+                                    viewModel.resetSate()
                                 }
                             }
-                            SignInUI(state = state,
-                                onSignInClick = {
+                            //Declaring the launcher for google sign In
+                            SignInUI(state = state,navController = navController,
+                                onGoogleSignInClick = {
                                     lifecycleScope.launch {
                                         val signInIntent = googleAuthUIClient.signInWithGoogle()
                                         launcher.launch(
@@ -84,11 +102,14 @@ class MainActivity : ComponentActivity() {
                                     }
                                 })
                         }
+                        composable(Destinations.OtpVerification.route){
+                            OTPVerificationUI(navController = navController)
+                        }
+
                     }
                 }
             }
         }
-    }
 }
 
 @Composable

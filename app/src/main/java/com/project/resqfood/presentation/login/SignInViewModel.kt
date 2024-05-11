@@ -10,6 +10,7 @@ class SignInViewModel: ViewModel() {
     private val _state = MutableStateFlow(SignInState())
     //This is the public immutable version because we don't want to expose the mutable state flow
     val state = _state.asStateFlow()
+    var storedVerificationId = ""
 
     fun onGoogleSignInResult(result: GoogleSignInResult){
         if(result.data != null){
