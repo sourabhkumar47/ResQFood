@@ -15,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,12 +26,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.presentation.login.Destinations
 import com.project.resqfood.presentation.login.GoogleAuthUIClient
 import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInViewModel
 import com.project.resqfood.ui.theme.ResQFoodTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -40,12 +44,21 @@ class MainActivity : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext)
         )
     }
+
+    companion object{
+        var phoneNumber: String = ""
+        var storedVerificationId = ""
+        var forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
+        var countDownTime = MutableStateFlow(6000)
+        var isFinishEnabled = MutableStateFlow(false)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ResQFoodTheme {
                     val navController = rememberNavController()
+
                     NavHost(navController = navController, startDestination = Destinations.SignIn.route) {
 
                         composable(Destinations.SignIn.route){

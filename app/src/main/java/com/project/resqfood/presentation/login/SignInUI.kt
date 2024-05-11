@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.project.resqfood.MainActivity
 
 @Composable
 fun SignInUI(
@@ -59,6 +61,7 @@ fun SignInUI(
     }
 
     Scaffold {
+        Column(modifier = Modifier.padding(it)) {
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
@@ -66,12 +69,12 @@ fun SignInUI(
         Button(onClick = {
             phoneNumberSignIn.onLoginClicked(auth, context, phoneNumber,viewModel = viewModel){
                 //TODO(Make the OTP verification UI visible)
+                MainActivity.phoneNumber = phoneNumber
                 navController.navigate(Destinations.OtpVerification.route)
             }
         }) {
             Text(text = "Send OTP")
         }
-        Column(modifier = Modifier.padding(it)) {
             Button(onClick = onGoogleSignInClick) {
                 Text(text = "Sign In With Google")
             }
@@ -82,6 +85,8 @@ fun SignInUI(
 
 @Composable
 fun OTPVerificationUI(navController: NavController){
+    val countDownTime by MainActivity.countDownTime.collectAsState(initial = 60000)
+    val isResendEnabled by MainActivity.isFinishEnabled.collectAsState(initial = false)
     val phoneNumberSignIn = PhoneNumberSignIn()
     var otp by remember {
         mutableStateOf("")
@@ -93,18 +98,45 @@ fun OTPVerificationUI(navController: NavController){
             OutlinedTextField(value = otp, onValueChange = {
                 otp = it
             })
-        }
-        Button(onClick = { /*TODO*/
-             phoneNumberSignIn.verifyPhoneNumberWithCode(FirebaseAuth.getInstance(), context,viewModel.storedVerificationId ,otp)
+            Button(onClick = { /*TODO*/
+                if(MainActivity.storedVerificationId.isEmpty()){
+                    Toast.makeText(context, "Verification Id is empty", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                phoneNumberSignIn.verifyPhoneNumberWithCode(
+                    FirebaseAuth.getInstance(),
+                    context,
+                    MainActivity.storedVerificationId,
+                    otp
+                )
 //            Toast.makeText(context, "OTP Verified", Toast.LENGTH_SHORT).show()
-        }) {
-            Text(text ="Verify OTP")
-        }
-        TextButton(onClick = { /*TODO*/ }) {
-            Text(text = "Resend OTP")
-        }
-        TextButton(onClick = { /*TODO*/ }) {
-            Text(text = "Go back to Login Methods")
+            }) {
+                Text(text = "Verify OTP")
+            }
+            TextButton(onClick = {
+                phoneNumberSignIn.resendVerificationCode(
+                    FirebaseAuth.getInstance(),
+                    context,
+                    MainActivity.phoneNumber,
+                    viewModel
+                )
+            }, enabled = isResendEnabled) {
+                Text(text =
+                if(isResendEnabled) "Resend OTP" else "Resend OTP in $countDownTime seconds"
+                )
+            }
+            TextButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Text(text = "Go back to Login Methods")
+            }
+
+            //Testing
+            Button(onClick={
+                Toast.makeText(context,"Test $isResendEnabled",Toast.LENGTH_SHORT).show()
+            }){
+                Text(text = "Test")
+            }
         }
     }
 

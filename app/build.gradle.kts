@@ -71,6 +71,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     //Adding Firebase BOM
     implementation(libs.firebase.bom)
@@ -86,5 +88,7 @@ dependencies {
 
     // Google Identity Services Library
     implementation(libs.play.services.identity)
+    
+    
 
 }
