@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.ui.text.google.fonts)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,7 +89,10 @@ dependencies {
 
     // Google Identity Services Library
     implementation(libs.play.services.identity)
-    
-    
+
+    //Extended list of material 3 icons
+    implementation(libs.androidx.material.icons.extended)
+
+
 
 }

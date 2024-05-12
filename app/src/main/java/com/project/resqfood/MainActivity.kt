@@ -8,31 +8,36 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.presentation.login.Destinations
+import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.GoogleAuthUIClient
 import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.SignInUI
+import com.project.resqfood.presentation.login.SignInUsingEmail
 import com.project.resqfood.presentation.login.SignInViewModel
-import com.project.resqfood.ui.theme.ResQFoodTheme
+import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -56,7 +61,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ResQFoodTheme {
+            AppTheme {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = Destinations.SignIn.route) {
@@ -67,9 +72,10 @@ class MainActivity : ComponentActivity() {
 
                             //First we need to check if the user is already signed in
                             LaunchedEffect(Unit) {
-                                if(googleAuthUIClient.getSignedInUser()!= null){
+                                if(FirebaseAuth.getInstance().currentUser != null){
                                     //Implement what to do if user is already signed in
                                     //That is proceed to the dashboard
+                                    navController.navigate(Destinations.Temporary.route)
                                 }
                             }
 
@@ -118,7 +124,15 @@ class MainActivity : ComponentActivity() {
                         composable(Destinations.OtpVerification.route){
                             OTPVerificationUI(navController = navController)
                         }
-
+                        composable(Destinations.Temporary.route){
+                            Temporary( navController = navController)
+                        }
+                        composable(Destinations.EmailSignIn.route){
+                            SignInUsingEmail(navController = navController)
+                        }
+                        composable(Destinations.ForgotPassword.route){
+                            ForgotPassword(navController = navController)
+                        }
                     }
                 }
             }
@@ -126,17 +140,30 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun Temporary(modifier: Modifier = Modifier, navController: NavController) {
+    val auth = FirebaseAuth.getInstance()
+    Surface {
+        Box(modifier = modifier.fillMaxSize()
+        , contentAlignment = Alignment.Center) {
+            Column {
+                Text(
+                    text = "Hello ${auth.currentUser?.displayName}!",
+                    modifier = modifier
+                )
+                Button(onClick = {
+                    auth.signOut()
+                    navController.popBackStack(navController.graph.startDestinationId, false)
+                }) {
+                    Text(text = "Sign Out")
+                }
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    ResQFoodTheme {
-        Greeting("Android")
+    AppTheme {
     }
 }
