@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    //plugins for firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -59,6 +61,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.ui.text.google.fonts)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,4 +72,27 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    // LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    //Adding Firebase BOM
+    implementation(libs.firebase.bom)
+
+    //Adding Firebase Analytics
+    implementation(libs.google.firebase.analytics)
+
+    //Adding dependencies for firebase authentication
+    implementation(libs.firebase.auth.ktx)
+
+    //Adding dependencies for google play sign in
+    implementation(libs.play.services.auth)
+
+    // Google Identity Services Library
+    implementation(libs.play.services.identity)
+
+    //Extended list of material 3 icons
+    implementation(libs.androidx.material.icons.extended)
+
+
+
 }
