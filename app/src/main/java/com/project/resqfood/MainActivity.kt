@@ -54,8 +54,9 @@ class MainActivity : ComponentActivity() {
         var phoneNumber: String = ""
         var storedVerificationId = ""
         var forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
-        var countDownTime = MutableStateFlow(6000)
-        var isFinishEnabled = MutableStateFlow(false)
+        var countDownTime = MutableStateFlow(60000)
+        var isResendButtonEnabled = MutableStateFlow(false)
+        var googleSignInError = MutableStateFlow(false)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,10 +102,7 @@ class MainActivity : ComponentActivity() {
                                         "Sign In Successful",
                                         Toast.LENGTH_SHORT
                                     ).show()
-
-                                    //Implement what to do after sign in is successful
-                                    //TODO("Navigate to relevant composable depending on the user type")
-
+                                    navController.navigate(Destinations.Temporary.route)
                                     viewModel.resetSate()
                                 }
                             }
@@ -147,7 +145,7 @@ fun Temporary(modifier: Modifier = Modifier, navController: NavController) {
         , contentAlignment = Alignment.Center) {
             Column {
                 Text(
-                    text = "Hello ${auth.currentUser?.displayName}!",
+                    text = "Sign In Successful! \nHello ${auth.currentUser?.displayName ?: "User"}!",
                     modifier = modifier
                 )
                 Button(onClick = {

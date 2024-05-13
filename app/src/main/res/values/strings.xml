@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ResQFood</string>
-    <string name="default_web_client_id">881648758154-77gsfhch1j58u4hj7kblqna38gudjp9p.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">726557887682-ol2lmm1t0ce4p20l0gc010bhomqcrs7t.apps.googleusercontent.com</string>
     <string name="LoginIntro">ResQFood: Saving food, changing lives!"</string>
     <array name="com_google_android_gms_fonts_certs">
         <item>@array/com_google_android_gms_fonts_certs_dev</item>

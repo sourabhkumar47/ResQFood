@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.project.resqfood" />
-                  <option name="mobileSdkAppId" value="1:881648758154:android:8e1f527a613bcef36fec73" />
-                  <option name="projectId" value="finflow-9e703" />
-                  <option name="projectNumber" value="881648758154" />
+                  <option name="mobileSdkAppId" value="1:726557887682:android:04d689b3a5e866cb3fbf5b" />
+                  <option name="projectId" value="resqfood-d03bf" />
+                  <option name="projectNumber" value="726557887682" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

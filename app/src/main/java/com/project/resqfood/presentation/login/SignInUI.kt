@@ -3,6 +3,8 @@ package com.project.resqfood.presentation.login
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -68,15 +70,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.MainActivity
 import com.project.resqfood.R
 
+
+/**
+ * SignInUI is a composable function that provides the UI for the sign-in process.
+ * It includes fields for entering phone number and OTP, and buttons for sending OTP, verifying OTP, and signing in with Google.
+ * It also provides the UI for switching to sign-up mode.
+ *
+ * @param state The current state of the sign-in process.
+ * @param onGoogleSignInClick A function to be invoked when the "Sign in with Google" button is clicked.
+ * @param navController The NavController used for navigation.
+ */
 @Composable
 fun SignInUI(
     state: SignInState,
@@ -91,9 +101,19 @@ fun SignInUI(
     val context = LocalContext.current
     val phoneNumberSignIn = PhoneNumberSignIn()
     //This launched effect is for google sign in
-    LaunchedEffect(key1 = state.signInError) {
+    LaunchedEffect(key1 =state.signInError ) {
+        if(state.signInError != null)
+            isLoading = false
+    }
+    val googleSignInError = MainActivity.googleSignInError.collectAsState(initial = false)
+    LaunchedEffect(key1 = state.signInError, key2 = googleSignInError) {
         state.signInError?.let {
+            isLoading = false
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+        if(googleSignInError.value){
+            isLoading = false
+            MainActivity.googleSignInError.value = false
         }
     }
     var phoneNumber by remember {
@@ -145,7 +165,7 @@ fun SignInUI(
             .fillMaxHeight(0.25f),
             contentAlignment = Alignment.Center) {
             Image(
-                painter = painterResource(id = R.drawable.logo_removebg_preview),
+                painter = painterResource(id = R.drawable.logo_without_background),
                 contentDescription = null,
             )
         }
@@ -165,7 +185,7 @@ fun SignInUI(
                 ),
             ) {
                 if(isLoading)
-                Wait()
+                    Wait()
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -229,8 +249,10 @@ fun SignInUI(
                         Row {
                             CircleImage(painterId = R.drawable.google, size = 40,
                                 onClick = {
-                                    if(!isLoading)
-                                    onGoogleSignInClick()
+                                    if(!isLoading) {
+                                        isLoading = true
+                                        onGoogleSignInClick()
+                                    }
                                 })
                             Spacer(modifier = Modifier.width(48.dp))
                             CircleImage(imageVector = Icons.Default.Email, size = 40,
@@ -273,6 +295,14 @@ fun DividerWithText(text: String = "Or"){
     }
 }
 
+
+/**
+ * OTPVerificationUI is a composable function that provides the UI for the OTP verification process.
+ * It includes a field for entering the OTP and a button for verifying the OTP.
+ *
+ * @param navController The NavController used for navigation.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OTPVerificationUI(navController: NavController){
@@ -281,7 +311,7 @@ fun OTPVerificationUI(navController: NavController){
         mutableStateOf(false)
     }
     val countDownTime by MainActivity.countDownTime.collectAsState(initial = 60000)
-    val isResendEnabled by MainActivity.isFinishEnabled.collectAsState(initial = false)
+    val isResendEnabled by MainActivity.isResendButtonEnabled.collectAsState(initial = false)
     val phoneNumberSignIn = PhoneNumberSignIn()
     var otp by remember {
         mutableStateOf("")
@@ -389,7 +419,7 @@ fun OTPVerificationUI(navController: NavController){
                             isLoading = false
                         },
                         onCodeSent = {
-                            MainActivity.isFinishEnabled.value = false
+                            MainActivity.isResendButtonEnabled.value = false
                             isLoading = false
                         }
                     )
@@ -411,7 +441,12 @@ fun OTPVerificationUI(navController: NavController){
 }
 
 
-
+/**
+ * SignInUsingEmail is a composable function that provides the UI for the sign-in process using email.
+ * It includes fields for entering email and password, and buttons for signing in and switching to sign-up mode.
+ *
+ * @param navController The NavController used for navigation.
+ */
 @Composable
 fun SignInUsingEmail(navController: NavController) {
     var isSignInMode by remember {
@@ -453,11 +488,19 @@ fun SignInUsingEmail(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(value = email, onValueChange = {
                 email = it
+                passwordError = null
             }, placeholder = { Text("Enter Email") })
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(value = password, onValueChange = {
                 password = it
-            }, placeholder = { Text("Enter Password")},
+                passwordError = null
+            },
+                isError = passwordError != null,
+                supportingText = {
+                    if(passwordError != null)
+                        Text(text = passwordError!!)
+                },
+                placeholder = { Text("Enter Password")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -469,14 +512,34 @@ fun SignInUsingEmail(navController: NavController) {
                     }
                 })
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                EmailAuthentication().signInWithEmail(email, password, context)
+            Button(enabled = !isLoading,onClick = {
+                //Implement password and email validity here
+                if(!emailAuthentication.isValidEmail(email))
+                {
+                    Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                passwordError = emailAuthentication.validatePassword(password)
+                if(passwordError != null){
+                    Toast.makeText(context, passwordError!!, Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                isLoading = true
+                EmailAuthentication().signInWithEmail(email, password, context,
+                    onSuccess = {
+                        navController.navigate(Destinations.Temporary.route)
+                        isLoading = false
+                    },
+                    onFailure = {
+                        isLoading = false
+                    })
             },
                 modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Sign In")
             }
             Spacer(Modifier.height(8.dp))
-            TextButton(enabled = !isLoading, onClick = {
+            TextButton(enabled = !isLoading,
+                onClick = {
                 if(emailAuthentication.isValidEmail(email)) {
                     isLoading = true
                     emailAuthentication.forgotPassword(email = email,
@@ -521,10 +584,12 @@ fun SignInUsingEmail(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(value = email, onValueChange = {
                 email = it
+                passwordError = null
             }, placeholder = { Text("Enter Email") })
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(value = password, onValueChange = {
                 password = it
+                passwordError = null
             }, placeholder = {Text("Create Password")},
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
@@ -539,8 +604,14 @@ fun SignInUsingEmail(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                onValueChange = { confirmPassword = it
+                                passwordError = null},
                 placeholder = { Text("Confirm Password") },
+                isError = passwordError != null,
+                supportingText = {
+                    if(passwordError != null)
+                        Text(text = passwordError!!)
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -554,7 +625,26 @@ fun SignInUsingEmail(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                EmailAuthentication().signUpWithEmail(email, password, context)
+                passwordError = emailAuthentication.validatePassword(password)
+                if (!emailAuthentication.isValidEmail(email))
+                    Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
+                else if (passwordError != null)
+                    Toast.makeText(context, passwordError!!, Toast.LENGTH_SHORT).show()
+                else if(password != confirmPassword){
+                    passwordError = "Passwords do not match"
+                    Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    isLoading = true
+                    EmailAuthentication().signUpWithEmail(email, password, context,
+                        onSuccess = {
+                            isLoading = false
+                            navController.navigate(Destinations.Temporary.route)
+                        },
+                        onFailure = {
+                            isLoading = false
+                        })
+                }
             }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Sign Up")
             }
@@ -572,7 +662,7 @@ fun SignInUsingEmail(navController: NavController) {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.logo_removebg_preview),
+                painter = painterResource(id = R.drawable.logo_without_background),
                 contentDescription = null,
             )
         }
@@ -609,6 +699,12 @@ fun SignInUsingEmail(navController: NavController) {
     }
 }
 
+/**
+ * ForgotPassword is a composable function that provides the UI for the password reset process.
+ * It includes a message indicating that a password reset link has been sent, and a button for going back to the sign-in screen.
+ *
+ * @param navController The NavController used for navigation.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPassword(navController: NavController){
@@ -643,6 +739,15 @@ fun ForgotPassword(navController: NavController){
     }
 }
 
+
+/**
+ * CircleImage is a composable function that displays an image in a circular shape.
+ *
+ * @param painterId The resource ID of the image to be displayed. This is optional and defaults to null.
+ * @param imageVector The vector image to be displayed. This is optional and defaults to null.
+ * @param size The size of the image in dp.
+ * @param onClick A function to be invoked when the image is clicked. This is optional and defaults to an empty function.
+ */
 @Composable
 fun CircleImage(
     painterId: Int? = null,
@@ -685,23 +790,37 @@ fun Context.getActivity(): Activity ?= when(this){
     is ContextWrapper -> baseContext.getActivity()
     else -> null
 }
-@Composable
-fun Test(){
-    Surface {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Success")
-        }
-    }
-}
 
+
+/**
+ * Wait is a composable function that displays a linear progress indicator.
+ */
 @Composable
 fun Wait(){
     LinearProgressIndicator(modifier = Modifier.fillMaxWidth()
         )
 }
 
+
+/**
+ * isValidPhoneNumber is a function that checks if a phone number is valid.
+ *
+ * @param phoneNumber The phone number to be checked.
+ * @return A boolean indicating whether the phone number is valid.
+ */
 fun isValidPhoneNumber(phoneNumber: String): Boolean {
     val regex = "^\\+91[0-9]{10}$".toRegex()
     return regex.matches(phoneNumber)
 }
 
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return when {
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        else -> false
+    }
+}

@@ -14,12 +14,22 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.MainActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PhoneNumberSignIn {
 
+    /**
+     * verifyPhoneNumberWithCode is a function that verifies the phone number with the provided verification code.
+     *
+     * @param auth The FirebaseAuth instance used for authentication.
+     * @param context The context used to access resources and services.
+     * @param verificationId The verification ID obtained from the Firebase PhoneAuthProvider.
+     * @param code The verification code entered by the user.
+     * @param onVerificationCompleted A function to be invoked when the verification is completed successfully.
+     * @param onInvalidOTP A function to be invoked when the entered OTP is invalid. This is optional and defaults to an empty function.
+     * @param onVerificationFailed A function to be invoked when the verification fails. This is optional and defaults to an empty function.
+     */
     fun verifyPhoneNumberWithCode(auth: FirebaseAuth, context: Context, verificationId: String,
                                   code: String, onVerificationCompleted:() -> Unit,
                                   onInvalidOTP: () -> Unit = {},onVerificationFailed: () -> Unit){
@@ -34,6 +44,19 @@ class PhoneNumberSignIn {
         }
     }
 
+    /**
+     * onLoginClicked is a function that initiates the phone number sign-in process.
+     *
+     * @param auth The FirebaseAuth instance used for authentication.
+     * @param context The context used to access resources and services.
+     * @param phoneNumber The phone number entered by the user.
+     * @param viewModel The SignInViewModel instance used to manage the sign-in state.
+     * @param onCodeSent A function to be invoked when the verification code is sent.
+     * @param onAutoVerify A function to be invoked when the verification is completed automatically.
+     * @param onInvalidRequest A function to be invoked when the verification request is invalid.
+     * @param onQuotaExceeded A function to be invoked when the quota for verification requests is exceeded.
+     * @param onRecaptchaVerification A function to be invoked when reCAPTCHA verification is required.
+     */
     fun onLoginClicked(auth: FirebaseAuth,
                        context: Context,
                        phoneNumber: String, viewModel: SignInViewModel, onCodeSent:() -> Unit
@@ -61,15 +84,25 @@ class PhoneNumberSignIn {
                 Toast.makeText(context, "Verification Failed", Toast.LENGTH_SHORT).show()
                 Log.d("PhoneSignIN", "onVerificationFailed: ${e.message}")
                 Toast.makeText(context, "Verification Failed", Toast.LENGTH_SHORT).show()
-                if (e is FirebaseAuthInvalidCredentialsException) {
-                    onInvalidRequest()
-                } else if (e is FirebaseTooManyRequestsException) {
-                    onQuotaExceeded()
-                } else if (e is FirebaseAuthMissingActivityForRecaptchaException) {
-                    // reCAPTCHA verification attempted with null Activity
-                    onRecaptchaVerification()
-                }else
-                    Toast.makeText(context, "Verification Failed", Toast.LENGTH_SHORT).show()
+                when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        onInvalidRequest()
+                    }
+
+                    is FirebaseTooManyRequestsException -> {
+                        onQuotaExceeded()
+                    }
+
+                    is FirebaseAuthMissingActivityForRecaptchaException -> {
+                        // reCAPTCHA verification attempted with null Activity
+                        onRecaptchaVerification()
+                    }
+
+                    else -> {
+                        onInvalidRequest()
+                        Toast.makeText(context, "Verification Failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             override fun onCodeAutoRetrievalTimeOut(p0: String) {
@@ -93,6 +126,8 @@ class PhoneNumberSignIn {
         }
     }
 
+
+
     private fun signInWithPhoneAuthCredential(auth: FirebaseAuth, context: Context, credential: PhoneAuthCredential,
                                               onVerificationCompleted: () -> Unit,
                                               onInvalidOTP: () -> Unit = {},
@@ -102,7 +137,6 @@ class PhoneNumberSignIn {
                 .addOnCompleteListener(it){task->
                     if(task.isSuccessful){
                         //Sign In successful, update UI with signed-in user's information
-                        val user = task.result?.user
                         Log.d("PhoneSignIn", "Success signInWithPhoneAuthCredential: user")
                         onVerificationCompleted()
                     }
@@ -121,6 +155,19 @@ class PhoneNumberSignIn {
     }
 
 
+    /**
+     * resendVerificationCode is a function that resends the verification code.
+     *
+     * @param auth The FirebaseAuth instance used for authentication.
+     * @param context The context used to access resources and services.
+     * @param phoneNumber The phone number entered by the user.
+     * @param viewModel The SignInViewModel instance used to manage the sign-in state.
+     * @param onVerificationCompleted A function to be invoked when the verification is completed successfully.
+     * @param onRecaptchaVerification A function to be invoked when reCAPTCHA verification is required.
+     * @param onQuotaExceeded A function to be invoked when the quota for verification requests is exceeded.
+     * @param onInvalidRequest A function to be invoked when the verification request is invalid.
+     * @param onCodeSent A function to be invoked when the verification code is sent.
+     */
     fun resendVerificationCode(auth: FirebaseAuth, context: Context, phoneNumber: String,viewModel: SignInViewModel
     ,onVerificationCompleted: () -> Unit, onRecaptchaVerification: () -> Unit, onQuotaExceeded: () -> Unit, onInvalidRequest: () -> Unit,
                                onCodeSent: () -> Unit){
@@ -129,9 +176,10 @@ class PhoneNumberSignIn {
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(p0, p1)
                 viewModel.addVerificationIds(p0,p1)
+                Toast.makeText(context,"Code sent successfully", Toast.LENGTH_SHORT).show()
                 onCodeSent()
                 Log.d("PhoneSignIn", "onCodeSent: $p0")
-                MainActivity.isFinishEnabled.value = false
+                MainActivity.isResendButtonEnabled.value = false
                 startCountdown()
             }
 
@@ -144,13 +192,19 @@ class PhoneNumberSignIn {
             override fun onVerificationFailed(p0: FirebaseException) {
                 Toast.makeText(context, "Verification Failed", Toast.LENGTH_SHORT).show()
                 Log.d("PhoneSignIN", "onVerificationFailed: ${p0.message}")
-                if (p0 is FirebaseAuthInvalidCredentialsException) {
-                    onInvalidRequest()
-                } else if (p0 is FirebaseTooManyRequestsException) {
-                    onQuotaExceeded()
-                } else if (p0 is FirebaseAuthMissingActivityForRecaptchaException) {
-                    // reCAPTCHA verification attempted with null Activity
-                    onRecaptchaVerification()
+                when (p0) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        onInvalidRequest()
+                    }
+
+                    is FirebaseTooManyRequestsException -> {
+                        onQuotaExceeded()
+                    }
+
+                    is FirebaseAuthMissingActivityForRecaptchaException -> {
+                        // reCAPTCHA verification attempted with null Activity
+                        onRecaptchaVerification()
+                    }
                 }
             }
 
@@ -158,7 +212,7 @@ class PhoneNumberSignIn {
                 super.onCodeAutoRetrievalTimeOut(p0)
                 //Add functionality when code retrieval times out if user is not authenticated
                 if(auth.currentUser == null)
-                Toast.makeText(context, "Time Out, Try Resending", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Time Out, Try Resending", Toast.LENGTH_SHORT).show()
             }
         }
         val options = context.getActivity()?.let {
@@ -179,15 +233,21 @@ class PhoneNumberSignIn {
         }
     }
 
+
+    /**
+     * startCountdown is a function that starts a countdown for resending the verification code.
+     */
     fun startCountdown(){
         object : CountDownTimer(60000,1000){
             override fun onTick(millisUntilFinished: Long){
-                MainActivity.countDownTime.value = (millisUntilFinished/1000).toInt()
+                CoroutineScope(Dispatchers.Main).launch {
+                    MainActivity.countDownTime.value = (millisUntilFinished / 1000).toInt()
+                }
             }
             override fun onFinish(){
-                CoroutineScope(Dispatchers.Main).launch(){
-                MainActivity.isFinishEnabled.value = true
-                Log.d("PhoneSignIn", "onFinish: ${MainActivity.isFinishEnabled}")
+                CoroutineScope(Dispatchers.Main).launch{
+                MainActivity.isResendButtonEnabled.value = true
+                Log.d("PhoneSignIn", "onFinish: ${MainActivity.isResendButtonEnabled}")
                 }
             }
         }.start()
