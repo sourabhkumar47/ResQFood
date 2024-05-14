@@ -6,4 +6,5 @@ sealed class Destinations(val route: String) {
     object Temporary: Destinations("temporary")
     object EmailSignIn: Destinations("emailSignIn")
     object ForgotPassword: Destinations("forgotPassword")
+    object MainScreen: Destinations("MainScreen")
 }

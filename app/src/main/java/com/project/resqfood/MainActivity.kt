@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
+import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
 import com.project.resqfood.presentation.login.Destinations
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.GoogleAuthUIClient
@@ -76,7 +77,7 @@ class MainActivity : ComponentActivity() {
                                 if(FirebaseAuth.getInstance().currentUser != null){
                                     //Implement what to do if user is already signed in
                                     //That is proceed to the dashboard
-                                    navController.navigate(Destinations.Temporary.route)
+                                    navController.navigate(Destinations.MainScreen.route)
                                 }
                             }
 
@@ -102,7 +103,7 @@ class MainActivity : ComponentActivity() {
                                         "Sign In Successful",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    navController.navigate(Destinations.Temporary.route)
+                                    navController.navigate(Destinations.MainScreen.route)
                                     viewModel.resetSate()
                                 }
                             }
@@ -130,6 +131,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Destinations.ForgotPassword.route){
                             ForgotPassword(navController = navController)
+                        }
+                        composable(Destinations.MainScreen.route){
+                            MainScreen(navController = navController)
                         }
                     }
                 }
