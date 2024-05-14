@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.0-beta02"
+agp = "8.4.0"
 firebaseAnalytics = "22.0.0"
 firebaseAuthKtx = "23.0.0"
 firebaseBom = "33.0.0"

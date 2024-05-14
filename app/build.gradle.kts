@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     //plugins for firebase
+    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    kotlin("kapt")
 }
 
 android {
@@ -92,6 +94,13 @@ dependencies {
 
     //Extended list of material 3 icons
     implementation(libs.androidx.material.icons.extended)
+    //Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
 
 

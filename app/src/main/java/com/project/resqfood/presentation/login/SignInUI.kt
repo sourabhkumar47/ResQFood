@@ -132,7 +132,7 @@ fun SignInUI(
                 context,
                 finalPhoneNumber,
                 onAutoVerify = {
-                    navController.navigate(Destinations.Temporary.route)
+                    navController.navigate(Destinations.MainScreen.route)
                     isLoading = false
                 },
                 viewModel = viewModel,
@@ -319,7 +319,7 @@ fun OTPVerificationUI(navController: NavController){
     val viewModel: SignInViewModel = viewModel()
     val context = LocalContext.current
     val onVerificationComplete = {
-            navController.navigate(Destinations.Temporary.route)
+            navController.navigate(Destinations.MainScreen.route)
             isLoading = false
     }
     val onClickVerifyOTP = {
@@ -527,7 +527,7 @@ fun SignInUsingEmail(navController: NavController) {
                 isLoading = true
                 EmailAuthentication().signInWithEmail(email, password, context,
                     onSuccess = {
-                        navController.navigate(Destinations.Temporary.route)
+                        navController.navigate(Destinations.MainScreen.route)
                         isLoading = false
                     },
                     onFailure = {
@@ -639,7 +639,7 @@ fun SignInUsingEmail(navController: NavController) {
                     EmailAuthentication().signUpWithEmail(email, password, context,
                         onSuccess = {
                             isLoading = false
-                            navController.navigate(Destinations.Temporary.route)
+                            navController.navigate(Destinations.MainScreen.route)
                         },
                         onFailure = {
                             isLoading = false
