@@ -84,13 +84,8 @@ fun MainScreen(
                                         item.unselectedIcon
                                     },
                                     contentDescription =item.title )
-
                             }
-
-
                         )
-
-
                     }
 
                 }
@@ -100,7 +95,6 @@ fun MainScreen(
                 modifier = Modifier.padding(top = PaddingValues.calculateTopPadding())
             ) {
                 Text(text = "Hello")
-
             }
 
         }

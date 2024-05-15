@@ -16,6 +16,8 @@ import com.project.resqfood.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class PhoneNumberSignIn {
 
@@ -111,18 +113,28 @@ class PhoneNumberSignIn {
                 Toast.makeText(context, "Time Out, Try Resending", Toast.LENGTH_SHORT).show()
             }
         }
-        val options = context.getActivity()?.let {
-            PhoneAuthOptions.newBuilder(auth)
-                .setPhoneNumber(phoneNumber)
-                .setTimeout(120L, java.util.concurrent.TimeUnit.SECONDS)
-                .setActivity(it)
-                .setCallbacks(callback)
-                .build()
-        }
 
-        if(options != null){
-            Log.d("phoneBook", options.toString())
-            PhoneAuthProvider.verifyPhoneNumber(options)
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val options = context.getActivity()?.let {
+                    PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(phoneNumber)
+                        .setTimeout(120L, java.util.concurrent.TimeUnit.SECONDS)
+                        .setActivity(it)
+                        .setCallbacks(callback)
+                        .build()
+                }
+
+                if(options != null){
+                    Log.d("phoneBook", options.toString())
+                    withContext(Dispatchers.IO) {
+                        PhoneAuthProvider.verifyPhoneNumber(options)
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle exception
+                Log.w("PhoneSignIn", "verifyPhoneNumber:failure", e)
+            }
         }
     }
 
@@ -132,25 +144,25 @@ class PhoneNumberSignIn {
                                               onVerificationCompleted: () -> Unit,
                                               onInvalidOTP: () -> Unit = {},
                                               onVerificationFailed: () -> Unit = {}){
-        context.getActivity()?.let{
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(it){task->
-                    if(task.isSuccessful){
-                        //Sign In successful, update UI with signed-in user's information
-                        Log.d("PhoneSignIn", "Success signInWithPhoneAuthCredential: user")
-                        onVerificationCompleted()
-                    }
-                    else{
-                        //Sign In failed, display message and update the UI
-                        Log.d("PhoneSignIn", "signInWithPhoneAuthCredential: ${task.exception}")
-                        if(task.exception is FirebaseAuthInvalidCredentialsException){
-                            Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
-                            onInvalidOTP()
-                        }
-                        Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
-                        onVerificationFailed()
-                    }
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    auth.signInWithCredential(credential).await()
                 }
+                // Sign In successful, update UI with signed-in user's information
+                Log.d("PhoneSignIn", "Success signInWithPhoneAuthCredential: user")
+                onVerificationCompleted()
+            } catch (e: Exception) {
+                // Sign In failed, display message and update the UI
+                Log.w("PhoneSignIn", "signInWithPhoneAuthCredential:failure", e)
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                    onInvalidOTP()
+                } else {
+                    Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
+                    onVerificationFailed()
+                }
+            }
         }
     }
 

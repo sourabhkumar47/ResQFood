@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,7 +53,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -83,14 +84,11 @@ import com.project.resqfood.R
  * It includes fields for entering phone number and OTP, and buttons for sending OTP, verifying OTP, and signing in with Google.
  * It also provides the UI for switching to sign-up mode.
  *
- * @param state The current state of the sign-in process.
- * @param onGoogleSignInClick A function to be invoked when the "Sign in with Google" button is clicked.
  * @param navController The NavController used for navigation.
  */
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun SignInUI(
-    state: SignInState,
-    onGoogleSignInClick: () -> Unit,
     navController: NavController
 ) {
     val scrollView = rememberScrollState()
@@ -100,22 +98,7 @@ fun SignInUI(
     val viewModel: SignInViewModel = viewModel()
     val context = LocalContext.current
     val phoneNumberSignIn = PhoneNumberSignIn()
-    //This launched effect is for google sign in
-    LaunchedEffect(key1 =state.signInError ) {
-        if(state.signInError != null)
-            isLoading = false
-    }
-    val googleSignInError = MainActivity.googleSignInError.collectAsState(initial = false)
-    LaunchedEffect(key1 = state.signInError, key2 = googleSignInError) {
-        state.signInError?.let {
-            isLoading = false
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-        if(googleSignInError.value){
-            isLoading = false
-            MainActivity.googleSignInError.value = false
-        }
-    }
+
     var phoneNumber by remember {
         mutableStateOf("")
     }
@@ -247,12 +230,15 @@ fun SignInUI(
                         DividerWithText(text = "or")
                         Spacer(modifier = Modifier.height(32.dp))
                         Row {
-                            CircleImage(painterId = R.drawable.google, size = 40,
-                                onClick = {
-                                    if(!isLoading) {
-                                        isLoading = true
-                                        onGoogleSignInClick()
-                                    }
+                            GoogleSignInButton(onClickUI = {
+                                if(!isLoading)
+                                    isLoading = true
+                            },
+                                onFailureUI = {
+                                    isLoading = false
+                                },
+                                onSuccess = {
+                                    navController.navigate(Destinations.MainScreen.route)
                                 })
                             Spacer(modifier = Modifier.width(48.dp))
                             CircleImage(imageVector = Icons.Default.Email, size = 40,

@@ -1,10 +1,9 @@
 package com.project.resqfood.presentation.login
 
 sealed class Destinations(val route: String) {
-    object SignIn: Destinations("signIn")
-    object OtpVerification: Destinations("otpVerification")
-    object Temporary: Destinations("temporary")
-    object EmailSignIn: Destinations("emailSignIn")
-    object ForgotPassword: Destinations("forgotPassword")
-    object MainScreen: Destinations("MainScreen")
+    data object SignIn: Destinations("signIn")
+    data object OtpVerification: Destinations("otpVerification")
+    data object EmailSignIn: Destinations("emailSignIn")
+    data object ForgotPassword: Destinations("forgotPassword")
+    data object MainScreen: Destinations("MainScreen")
 }
