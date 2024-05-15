@@ -1,13 +1,49 @@
-# ResQFood
+# ResQFood: Bridging the Gap Between Leftovers and Hungry Stomachs
 
 <img src="logo.png" width="1000" height="500"  alt="banner"/>
 
 ## About
 
-ResQFood is a platform dedicated to the noble cause of reducing food wastage by facilitating the
+ResQFood's vision is to build a world where delicious food doesn't end up in the trash.
+By bringing together restaurants and individuals, we create a win-win scenario for everyone involved.
+
+This platform is dedicated to the noble cause of reducing food wastage by facilitating the
 redistribution of surplus food during late-night hours before restaurant closures. Our mission is to
 ensure that excess inventory finds a purposeful destination rather than ending up in landfills,
 contributing to a more sustainable and compassionate food ecosystem.
+
+It is a mobile app designed to connect restaurants with individuals looking for a delicious and affordable 
+meal while tackling food waste. It empowers restaurants to utilize leftover food instead of discarding it
+and provides individuals with access to great deals on quality food.
+
+## App Features: *TODO*
+- For Restaurants:
+1. Listing & Profile: Restaurants can create profiles, and add their contact information, cuisine type, and operating hours.
+Food Inventory:
+2. Adding Leftovers: Restaurants can easily add leftover food items (quantity, description, estimated value).
+3. Categorization: Ability to categorize leftovers (e.g., appetizers, main courses, desserts) for easier search.
+4. Pricing: Restaurants can set prices (free, discounted, etc.) for leftovers.
+5. Pickup Window: Restaurants can specify a pickup time window to avoid leftovers sitting out for too long.
+6. Notifications: Receive real-time notifications when someone claims their leftovers.
+7. Tracking & Analytics: Restaurants can see how much food they've saved from waste and track overall usage.
+   
+- For Individuals:
+1. Search & Filter: Users can search for leftover food based on location, cuisine type, price, and pickup window.
+2. Ordering & Pickup: Users can claim leftovers and receive directions to the restaurant for pickup.
+3. Payment Integration: Users can pay for leftovers if the restaurant has a fee.
+4. Order History: Users can keep track of their previous orders.
+5. Rating & Reviews: Users can review restaurants and leftovers to help other users.
+   
+- For Both:
+1. Communication: In-app messaging system for restaurants and users to communicate about orders (e.g., special requests, dietary restrictions).
+2. Location Services: Accurate location mapping for finding nearby restaurants and pickup locations.
+3. Safety & Security: Measures to ensure the safety of both parties involved (e.g., verified restaurant profiles, user ratings).
+4. Community Building: A platform to connect restaurants and individuals to raise awareness about food waste and sustainability.
+
+- Additional Features (Optional):
+1. Food Donation: Partner with food banks or charities to facilitate donations of leftover food.
+2. Delivery Service: Offer a delivery service for leftovers (could be a paid feature).
+3. Sustainability Features: Integrate features that educate users about food waste and sustainability (e.g., carbon footprint calculators).
 
 ## How it Works
 
@@ -18,7 +54,7 @@ surplus food, and establishments or organizations in need can browse and request
 seamless connection ensures that surplus food gets to those who need it most, even during the late
 hours when traditional donation channels may not be available.
 
-## Features
+## Social Benifits
 
 - **Efficient Redistribution**: Our platform enables restaurants to quickly connect with nearby
   establishments or charitable organizations to redistribute surplus food before closing time.
@@ -58,6 +94,12 @@ create a modular, scalable, and testable codebase.
     5. Make your changes and commit them.
     6. Push your changes to your forked repository.
     7. Create a pull request to the `main` branch of this repository.
+       
+## Why ResQFood?
+Reduces Food Waste: Food waste is a major environmental and economic problem. ResQFood helps restaurants reduce their waste and minimize their environmental footprint.
+Saves Money: Restaurants can recover some of their costs by selling leftover food at reduced prices. Individuals can enjoy delicious meals at a fraction of the original cost.
+Supports Local Restaurants: ResQFood strengthens local communities by supporting small businesses and helping them operate more sustainably.
+Promotes Food Security: By making affordable food more accessible, ResQFood contributes to food security, especially for individuals who may be facing food insecurity.
 
 ## Contributing
 
