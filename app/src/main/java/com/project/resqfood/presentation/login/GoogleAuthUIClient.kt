@@ -78,6 +78,10 @@ fun GoogleSignInButton(onClickUI: () -> Unit, onFailureUI: () -> Unit, onSuccess
                 onFailureUI()
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
+            catch (e: Exception) {
+                onFailureUI()
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
     CircleImage(painterId = R.drawable.google, size = 40,
