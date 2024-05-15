@@ -39,8 +39,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -231,14 +231,13 @@ fun SignInUI(
                         Spacer(modifier = Modifier.height(32.dp))
                         Row {
                             GoogleSignInButton(onClickUI = {
-                                if(!isLoading)
-                                    isLoading = true
                             },
                                 onFailureUI = {
                                     isLoading = false
                                 },
                                 onSuccess = {
                                     navController.navigate(Destinations.MainScreen.route)
+                                    isLoading = false
                                 })
                             Spacer(modifier = Modifier.width(48.dp))
                             CircleImage(imageVector = Icons.Default.Email, size = 40,
@@ -262,21 +261,21 @@ fun DividerWithText(text: String = "Or"){
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Divider(
-            color = MaterialTheme.colorScheme.outline,
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
-                .height(1.dp)
+                .height(1.dp),
+            color = MaterialTheme.colorScheme.outline
         )
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Divider(
-            color = MaterialTheme.colorScheme.outline,
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
-                .height(1.dp)
+                .height(1.dp),
+            color = MaterialTheme.colorScheme.outline
         )
     }
 }
