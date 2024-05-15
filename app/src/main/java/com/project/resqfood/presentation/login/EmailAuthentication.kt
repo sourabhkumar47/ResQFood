@@ -7,6 +7,11 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -24,42 +29,34 @@ class EmailAuthentication {
      * @param onFailure A function to be invoked when the sign-up fails.
      */
     fun signUpWithEmail(email: String, password: String, context: Context,
-                        onSuccess: () -> Unit, onFailure: () -> Unit){
+                        onSuccess: () -> Unit, onFailure: () -> Unit) {
         val auth = FirebaseAuth.getInstance()
-        context.getActivity()?.let {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(it) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
-                        onSuccess()
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        onFailure()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    auth.createUserWithEmailAndPassword(email, password).await()
+                }
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "createUserWithEmail:success")
+                onSuccess()
+            } catch (e: Exception) {
+                // If sign in fails, display a message to the user.
+                Log.w(TAG, "createUserWithEmail:failure", e)
+                when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        Toast.makeText(context, "Invalid email", Toast.LENGTH_SHORT).show()
+                    }
+                    is FirebaseAuthInvalidUserException -> {
+                        Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .addOnFailureListener {e->
-                    when (e) {
-                        is FirebaseAuthInvalidCredentialsException -> {
-                            Toast.makeText(context, "Invalid email", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-
-                        is FirebaseAuthInvalidUserException -> {
-                            Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-
-                        else -> {
-                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-                    }
-                }
+                onFailure()
+            }
         }
     }
-
 
     /**
      * signInWithEmail is a function that signs in a user with the provided email and password.
@@ -71,39 +68,33 @@ class EmailAuthentication {
      * @param onFailure A function to be invoked when the sign-in fails.
      */
     fun signInWithEmail(email: String, password: String, context: Context,
-                        onSuccess: () -> Unit, onFailure: () -> Unit){
+                        onSuccess: () -> Unit, onFailure: () -> Unit) {
         val auth = FirebaseAuth.getInstance()
-        context.getActivity()?.let {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(it) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        onSuccess()
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithEmail:failure", task.exception)
-                        onFailure()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    auth.signInWithEmailAndPassword(email, password).await()
+                }
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "signInWithEmail:success")
+                onSuccess()
+            } catch (e: Exception) {
+                // If sign in fails, display a message to the user.
+                Log.w(TAG, "signInWithEmail:failure", e)
+                when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT).show()
+                    }
+                    is FirebaseAuthInvalidUserException -> {
+                        Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
                 }
-                .addOnFailureListener {e->
-                    when (e) {
-                        is FirebaseAuthInvalidUserException -> {
-                            Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-
-                        is FirebaseAuthInvalidCredentialsException -> {
-                            Toast.makeText(context, "Invalid password or email id", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-
-                        else -> {
-                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                            onFailure()
-                        }
-                    }
+                onFailure()
+            }
         }
-    }
     }
 
 
@@ -115,20 +106,22 @@ class EmailAuthentication {
      * @param onFailed A function to be invoked when sending the password reset email fails.
      */
     fun forgotPassword(email: String,
-                       onSuccessfullySend: () -> Unit,onFailed: () -> Unit){
+                       onSuccessfullySend: () -> Unit, onFailed: () -> Unit) {
         val auth = FirebaseAuth.getInstance()
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    onSuccessfullySend()
-                    Log.d(TAG, "Email sent.")
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    auth.sendPasswordResetEmail(email).await()
                 }
-            }
-            .addOnFailureListener {e ->
-                onFailed()
+                // Email sent successfully
+                Log.d(TAG, "Email sent.")
+                onSuccessfullySend()
+            } catch (e: Exception) {
+                // If sending email fails, display a message to the user.
                 Log.w(TAG, "sendPasswordResetEmail:failure", e)
+                onFailed()
             }
-
+        }
     }
 
 

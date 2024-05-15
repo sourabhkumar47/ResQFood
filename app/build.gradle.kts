@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -103,5 +104,14 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
 
+    //Dependencies for Google Sign In suing credential manager
+    implementation(libs.androidx.credentials)
+
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    implementation(libs.kotlinx.coroutines.android)
 
 }
