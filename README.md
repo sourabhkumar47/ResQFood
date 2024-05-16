@@ -1,5 +1,7 @@
 # ResQFood: Bridging the Gap Between Leftovers and Hungry Stomachs
 
+## Feel free to star ⭐ the repository if you find it valuable.
+
 <img src="logo.png" width="1000" height="500"  alt="banner"/>
 
 ## About
