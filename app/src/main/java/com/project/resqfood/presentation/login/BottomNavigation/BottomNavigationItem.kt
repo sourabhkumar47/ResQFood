@@ -1,4 +1,4 @@
-package com.project.resqfood.presentation.BottomNavigation
+package com.project.resqfood.presentation.login.BottomNavigation
 
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector

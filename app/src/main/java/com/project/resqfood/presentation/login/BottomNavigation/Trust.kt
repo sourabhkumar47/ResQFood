@@ -1,4 +1,4 @@
-package com.project.resqfood.presentation.BottomNavigation
+package com.project.resqfood.presentation.login.BottomNavigation
 
 import android.graphics.drawable.Icon
 import androidx.compose.animation.animateContentSize
