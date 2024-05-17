@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.googleid)
     implementation(libs.androidx.material3.android)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -129,4 +130,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.coil.compose)
+    implementation(libs.firebase.firestore)
 }

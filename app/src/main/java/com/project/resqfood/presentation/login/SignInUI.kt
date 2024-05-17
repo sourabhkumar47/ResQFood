@@ -78,6 +78,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
+import com.project.resqfood.presentation.isNewUser
 
 
 /**
@@ -116,7 +117,7 @@ fun SignInUI(
                 context,
                 finalPhoneNumber,
                 onAutoVerify = {
-                    navController.navigate(Destinations.MainScreen.route)
+                    onSignInSuccessful(navController)
                     isLoading = false
                 },
                 viewModel = viewModel,
@@ -237,7 +238,7 @@ fun SignInUI(
                                     isLoading = false
                                 },
                                 onSuccess = {
-                                    navController.navigate(Destinations.MainScreen.route)
+                                    onSignInSuccessful(navController)
                                     isLoading = false
                                 })
                             Spacer(modifier = Modifier.width(48.dp))
@@ -305,7 +306,7 @@ fun OTPVerificationUI(navController: NavController){
     val viewModel: SignInViewModel = viewModel()
     val context = LocalContext.current
     val onVerificationComplete = {
-            navController.navigate(Destinations.MainScreen.route)
+        onSignInSuccessful(navController)
             isLoading = false
     }
     val onClickVerifyOTP = {
@@ -513,7 +514,7 @@ fun SignInUsingEmail(navController: NavController) {
                 isLoading = true
                 EmailAuthentication().signInWithEmail(email, password, context,
                     onSuccess = {
-                        navController.navigate(Destinations.MainScreen.route)
+                        onSignInSuccessful(navController)
                         isLoading = false
                     },
                     onFailure = {
@@ -625,7 +626,7 @@ fun SignInUsingEmail(navController: NavController) {
                     EmailAuthentication().signUpWithEmail(email, password, context,
                         onSuccess = {
                             isLoading = false
-                            navController.navigate(Destinations.MainScreen.route)
+                            onSignInSuccessful(navController)
                         },
                         onFailure = {
                             isLoading = false
@@ -797,6 +798,13 @@ fun Wait(){
 fun isValidPhoneNumber(phoneNumber: String): Boolean {
     val regex = "^\\+91[0-9]{10}$".toRegex()
     return regex.matches(phoneNumber)
+}
+
+fun onSignInSuccessful(navController: NavController){
+    if(isNewUser())
+        navController.navigate(Destinations.PersonalDetails.route)
+    else
+        navController.navigate(Destinations.MainScreen.route)
 }
 
 fun isInternetAvailable(context: Context): Boolean {
