@@ -20,6 +20,8 @@ and provides individuals with access to great deals on quality food.
 
 ## App Features: *TODO*
 
+Design Idea: https://www.figma.com/design/93qkrzana3qZ1jup0D6GjY/Untitled?node-id=0%3A1&t=Rxda2auBzo0To2WM-1
+
 1. Welcome & Onboarding Screens
    
 - Welcome Screen: Show the app's name, a tagline like "Delicious Meals, Less Waste," and a "Get Started" button.
