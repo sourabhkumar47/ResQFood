@@ -1,4 +1,4 @@
-package com.project.resqfood.presentation.login
+package com.project.resqfood.presentation
 
 sealed class Destinations(val route: String) {
     data object SignIn: Destinations("signIn")

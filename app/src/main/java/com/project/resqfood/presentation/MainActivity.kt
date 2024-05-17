@@ -1,4 +1,4 @@
-package com.project.resqfood
+package com.project.resqfood.presentation
 
 import android.os.Build
 import android.os.Bundle
@@ -11,8 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
-import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
-import com.project.resqfood.presentation.login.Destinations
+import com.project.resqfood.presentation.BottomNavigation.MainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.SignInUI

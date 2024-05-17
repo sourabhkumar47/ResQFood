@@ -75,8 +75,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import com.project.resqfood.MainActivity
+import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.R
+import com.project.resqfood.presentation.Destinations
 
 
 /**

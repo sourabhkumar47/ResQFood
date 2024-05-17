@@ -1,4 +1,4 @@
-package com.project.resqfood.presentation.login.BottomNavigation
+package com.project.resqfood.presentation.BottomNavigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
