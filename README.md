@@ -19,6 +19,95 @@ meal while tackling food waste. It empowers restaurants to utilize leftover food
 and provides individuals with access to great deals on quality food.
 
 ## App Features: *TODO*
+
+## Design Idea:
+- https://www.figma.com/design/93qkrzana3qZ1jup0D6GjY/Untitled?node-id=0%3A1&t=Rxda2auBzo0To2WM-1
+- https://www.usegalileo.ai/create/59c8618f-a769-4962-90dc-690430d2a7a7
+
+## Welcome & Onboarding Screens
+   
+- Welcome Screen: Show the app's name, a tagline like "Delicious Meals, Less Waste," and a "Get Started" button.
+- Onboarding Screens:
+- A series of 3-4 screens explaining the app's purpose and key features with illustrations.
+   - Screen 1: "Save Money on Quality Meals"
+   - Screen 2: "Help Reduce Food Waste"
+   - Screen 3: "Support Local Restaurants"
+   - Screen 4: "Join a Sustainable Community"
+- Login/Signup Screen: Options to sign up with email, Google, or Facebook. Include a "Continue as Guest" option
+
+##  Home Screen (For Individuals)
+   
+- Top Navigation Bar: App logo, search bar, profile icon.
+- Search & Filter Options: Filters for location, cuisine type, price, and pickup window.
+- Featured Listings: Carousel of highlighted leftovers with images, names, and prices.
+- Nearby Restaurants: List of nearby restaurants with available leftovers.
+- Categories: Tabs for Appetizers, Main Courses, Desserts, etc.
+- Map View: Toggle option to switch between list view and a map view showing restaurant locations.
+  
+##  Restaurant Profile Screen
+   
+- Profile Information: Restaurant name, contact info, cuisine type, operating hours.
+- About Us: Short description of the restaurant.
+- Food Listings: Grid or list of available leftovers with images, descriptions, quantities, and prices.
+- Reviews & Ratings: User reviews and average rating.
+  
+##  Adding Leftovers (For Restaurants)
+   
+- Add Item Screen: Form to add leftover items.
+- Item Name: Text field.
+- Description: Text area.
+- Category: Dropdown menu (Appetizers, Main Courses, Desserts, etc.).
+- Quantity: Number input.
+- Estimated Value: Number input.
+- Price: Number input (option for free).
+- Pickup Window: Time picker.
+- Add Image: Option to upload a photo.
+- Submit Button: Button to save the listing.
+  
+##  Ordering & Pickup (For Individuals)
+   
+- Item Details Screen: Detailed view of a leftover item.
+- Image: Large image of the item.
+- Description: Detailed description.
+- Pickup Time: Display pickup window.
+- Price: Display price.
+- Claim Button: Button to claim the item.
+- Order Confirmation Screen: Confirmation details of the order with directions to the restaurant.
+- Payment Integration: Integrated payment options for items with a fee.
+
+##  Notifications
+   
+- Notification Center: List of notifications.
+- Order Confirmations: Notifications for confirmed orders.
+- Ready for Pickup: Alerts when an item is ready for pickup.
+- New Listings: Notifications about new leftovers from favourite restaurants.
+
+##  Tracking & Analytics (For Restaurants)
+    
+- Dashboard Screen: Visual stats and graphs.
+- Food Saved: Amount of food saved from waste.
+- Total Orders: Number of orders fulfilled.
+- User Feedback: Summary of user reviews and ratings.
+
+##  Communication
+    
+- Messaging Screen: In-app messaging interface.
+- Chat List: List of ongoing conversations.
+- Chat Window: Individual chat with text input and send button.
+- Notifications for Messages: Alerts for new messages.
+
+##  Profile & Settings
+
+- User Profile Screen: User information, order history, saved restaurants.
+- Restaurant Profile Settings: Edit restaurant details, manage listings and view analytics.
+- Security & Privacy Settings: Options to manage account security, notifications, and privacy settings.
+
+##  Community Building
+
+- Community Feed: Social feed for sharing tips on reducing food waste, sustainability articles, and success stories.
+- Events & Campaigns: Information on community events related to food waste and sustainability.
+
+<--------------------------------------->
 - For Restaurants:
 1. Listing & Profile: Restaurants can create profiles, and add their contact information, cuisine type, and operating hours.
 Food Inventory:
