@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
-import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
+import com.project.resqfood.presentation.login.Screens.MainScreen
 import com.project.resqfood.presentation.login.Destinations
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.OTPVerificationUI
