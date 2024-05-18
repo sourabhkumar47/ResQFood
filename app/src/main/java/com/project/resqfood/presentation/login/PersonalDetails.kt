@@ -492,7 +492,7 @@ suspend fun saveDetails(userEntity: UserEntity, onSuccess: () -> Unit, onFailure
 
                 val downloadUrl: String?
                 Log.i("PersonalDetails", "profileURI: ${user?.photoUrl}")
-                if (profileUrl != "null" && profileUrl.isNotEmpty()) {
+                if (profileUrl != "null" && profileUrl.isNotEmpty() && profileUrl != user?.photoUrl.toString()) {
                     val storageRef =
                         Firebase.storage.reference.child("profile_pictures/${user?.uid}")
                     val uploadTask = storageRef.putFile(profileUrl.toUri())
