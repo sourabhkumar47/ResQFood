@@ -565,6 +565,7 @@ fun WaitScreen(navController: NavController){
                         navController.navigate(Destinations.PersonalDetails.route)
                     },
                     isOld = {
+                        navController.popBackStack(navController.graph.startDestinationId, true)
                         navController.navigate(Destinations.MainScreen.route)
                     },
                     navController = navController

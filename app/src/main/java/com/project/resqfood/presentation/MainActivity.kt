@@ -14,8 +14,10 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.OTPVerificationUI
+import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
+import com.project.resqfood.presentation.login.WaitScreen
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -54,6 +56,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Destinations.MainScreen.route){
                             MainScreen(navController = navController)
+                        }
+                        composable(Destinations.PersonalDetails.route){
+                            PersonalDetails(navigationAfterCompletion = {
+                                navController.popBackStack(navController.graph.startDestinationId, true)
+                                navController.navigate(Destinations.MainScreen.route)
+                            })
+                        }
+                        composable(Destinations.WaitScreen.route){
+                            WaitScreen(navController)
                         }
                     }
                 }
