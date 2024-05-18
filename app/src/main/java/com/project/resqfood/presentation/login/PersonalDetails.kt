@@ -27,6 +27,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAddAlt1
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -79,7 +80,8 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun PersonalDetails(navigationAfterCompletion: () -> Unit = {}){
+fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
+                    onBackButtonClick: () -> Unit = {}){
     val coroutineScope  = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
@@ -131,8 +133,12 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {}){
             //Back Button
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back button"
+                contentDescription = "Back button",
+                modifier = Modifier.clickable {
+                    onBackButtonClick()
+                }
             )
+                Spacer(modifier =Modifier.width(16.dp))
         })
     }
 
@@ -143,19 +149,16 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {}){
             .clickable {
                 pickImageLauncher.launch("image/*")
             }) {
-            if (profilePictureUrl.isEmpty()) {
-                Icon(
-                    imageVector = Icons.Filled.PersonAddAlt1,
+            AsyncImage(
+                model = if(profilePictureUrl.isEmpty())profilePictureUrl
+                else Icon(
+                    imageVector = Icons.Filled.Person,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = "Add Profile Picture",
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                )
-                return
-            }
-            AsyncImage(
-                model = profilePictureUrl,
+                ),
                 contentDescription = "profile",
                 imageLoader = ImageLoader(context),
                 modifier = Modifier
@@ -359,7 +362,8 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {}){
     }
 }
 
-suspend fun saveDetails(name: String, gender: String, email: String, phoneNumber: String, photoURI: Uri? = null, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+suspend fun saveDetails(name: String, gender: String, email: String, phoneNumber: String,
+                        photoURI: Uri? = null, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     try {
         withContext(Dispatchers.IO) {
             val auth = FirebaseAuth.getInstance()
@@ -409,4 +413,30 @@ suspend fun saveDetails(name: String, gender: String, email: String, phoneNumber
             onFailure(e)
         }
     }
+}
+
+fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit){
+    val auth = FirebaseAuth.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
+    val uid = auth.currentUser?.uid
+    if (uid != null) {
+        val docRef = firestore.collection("users").document(uid)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // The user's personal details exist
+                    Log.d("Firestore", "DocumentSnapshot data: ${document.data}")
+                    isOld()
+                } else {
+                    // The user's personal details do not exist
+                    Log.d("Firestore", "No such document")
+                    isNew()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("Firestore", "get failed with ", exception)
+                isNew()
+            }
+    }
+    isNew()
 }

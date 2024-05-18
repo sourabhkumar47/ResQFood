@@ -78,7 +78,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
-import com.project.resqfood.presentation.isNewUser
 
 
 /**
@@ -801,10 +800,14 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean {
 }
 
 fun onSignInSuccessful(navController: NavController){
-    if(isNewUser())
-        navController.navigate(Destinations.PersonalDetails.route)
-    else
-        navController.navigate(Destinations.MainScreen.route)
+    isNewUser(
+        isNew = {
+            navController.navigate(Destinations.PersonalDetails.route)
+        },
+        isOld = {
+            navController.navigate(Destinations.MainScreen.route)
+        }
+    )
 }
 
 fun isInternetAvailable(context: Context): Boolean {

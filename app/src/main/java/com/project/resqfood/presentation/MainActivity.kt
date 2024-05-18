@@ -19,6 +19,7 @@ import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
+import com.project.resqfood.presentation.login.isNewUser
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -70,29 +71,3 @@ class MainActivity : ComponentActivity() {
         }
 }
 
-fun isNewUser(): Boolean{
-    val auth = FirebaseAuth.getInstance()
-    val firestore = FirebaseFirestore.getInstance()
-    var isCompleted = false
-    var isNew = false
-    val uid = auth.currentUser?.uid
-    if (uid != null) {
-        val docRef = firestore.collection("users").document(uid)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    // The user's personal details exist
-                    Log.d("Firestore", "DocumentSnapshot data: ${document.data}")
-                    isNew = false
-                } else {
-                    // The user's personal details do not exist
-                    Log.d("Firestore", "No such document")
-                    isNew = true
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("Firestore", "get failed with ", exception)
-            }
-    }
-    return isNew
-}
