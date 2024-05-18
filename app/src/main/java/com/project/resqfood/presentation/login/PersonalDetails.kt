@@ -581,6 +581,8 @@ fun WaitScreen(navController: NavController){
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
