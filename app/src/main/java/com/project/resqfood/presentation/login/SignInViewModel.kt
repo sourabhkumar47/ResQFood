@@ -2,7 +2,7 @@ package com.project.resqfood.presentation.login
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.PhoneAuthProvider
-import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.MainActivity
 
 class SignInViewModel: ViewModel() {
 
