@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Destinations.PersonalDetails.route){
                             PersonalDetails(navigationAfterCompletion = {
-                                navController.popBackStack(navController.graph.startDestinationId,true)
                                 navController.navigate(Destinations.MainScreen.route)
                             })
                         }
