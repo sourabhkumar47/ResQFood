@@ -800,14 +800,7 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean {
 }
 
 fun onSignInSuccessful(navController: NavController){
-    isNewUser(
-        isNew = {
-            navController.navigate(Destinations.PersonalDetails.route)
-        },
-        isOld = {
-            navController.navigate(Destinations.MainScreen.route)
-        }
-    )
+    navController.navigate(Destinations.WaitScreen.route)
 }
 
 fun isInternetAvailable(context: Context): Boolean {

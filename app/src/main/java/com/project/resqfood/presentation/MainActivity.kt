@@ -19,6 +19,7 @@ import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
+import com.project.resqfood.presentation.login.WaitScreen
 import com.project.resqfood.presentation.login.isNewUser
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +45,6 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController,
                         startDestination = if(alreadyLoggedIn)
                     Destinations.MainScreen.route else Destinations.SignIn.route) {
-
                         composable(Destinations.SignIn.route){
                             SignInUI(navController = navController)
                         }
@@ -62,8 +62,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Destinations.PersonalDetails.route){
                             PersonalDetails(navigationAfterCompletion = {
+                                navController.popBackStack(navController.graph.startDestinationId,true)
                                 navController.navigate(Destinations.MainScreen.route)
                             })
+                        }
+                        composable(Destinations.WaitScreen.route){
+                            WaitScreen(navController)
                         }
                     }
                 }

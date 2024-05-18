@@ -7,4 +7,5 @@ sealed class Destinations(val route: String) {
     data object ForgotPassword: Destinations("forgotPassword")
     data object MainScreen: Destinations("MainScreen")
     data object PersonalDetails: Destinations("personaldetails")
+    data object WaitScreen: Destinations("waitScreen")
 }

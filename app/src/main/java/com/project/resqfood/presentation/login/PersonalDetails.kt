@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -42,6 +44,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -63,6 +66,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
+import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.google.firebase.Firebase
@@ -72,6 +76,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
 import com.project.resqfood.R
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.Destinations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -129,45 +134,62 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
         }, colors = TopAppBarDefaults.topAppBarColors(
             containerColor = if(!isSystemInDarkTheme())MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
             )
-            , navigationIcon = {
-            //Back Button
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back button",
-                modifier = Modifier.clickable {
-                    onBackButtonClick()
-                }
-            )
-                Spacer(modifier =Modifier.width(16.dp))
-        })
+
+        )
     }
 
     @Composable
     fun ProfileImage() {
-        Box(modifier = Modifier
-            .size(100.dp)
-            .clickable {
-                pickImageLauncher.launch("image/*")
-            }) {
-            AsyncImage(
-                model = if(profilePictureUrl.isEmpty())profilePictureUrl
-                else Icon(
-                    imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = "Add Profile Picture",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                ),
-                contentDescription = "profile",
-                imageLoader = ImageLoader(context),
+        Box(
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+        ) {
+            Box(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-            )
-            Icon(imageVector = Icons.Filled.Edit, contentDescription = null
-            , tint= MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.align(Alignment.BottomEnd))
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .clickable {
+                        pickImageLauncher.launch("image/*")
+                    }) {
+//                Toast.makeText(context, "profileUrl: $profilePictureUrl", Toast.LENGTH_SHORT).show()
+                if (profilePictureUrl == "null" || profilePictureUrl.isEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.person),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                shape = CircleShape
+                            )
+                    )
+                } else {
+                    AsyncImage(
+                        model = profilePictureUrl,
+                        contentDescription = "profile",
+                        imageLoader = ImageLoader(context),
+                        placeholder = painterResource(id = R.drawable.user),
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                shape = CircleShape
+                            )
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                )
+            }
         }
     }
     val emailAuthentication = EmailAuthentication()
@@ -415,7 +437,7 @@ suspend fun saveDetails(name: String, gender: String, email: String, phoneNumber
     }
 }
 
-fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit){
+fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit, navController: NavController){
     val auth = FirebaseAuth.getInstance()
     val firestore = FirebaseFirestore.getInstance()
     val uid = auth.currentUser?.uid
@@ -438,5 +460,39 @@ fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit){
                 isNew()
             }
     }
-    isNew()
+}
+
+@Composable
+fun WaitScreen(navController: NavController){
+    val auth = FirebaseAuth.getInstance()
+    DisposableEffect(auth) {
+        val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                isNewUser(
+                    isNew = {
+                        navController.navigate(Destinations.PersonalDetails.route)
+                    },
+                    isOld = {
+                        navController.navigate(Destinations.MainScreen.route)
+                    },
+                    navController = navController
+                )
+            }
+        }
+        auth.addAuthStateListener(authStateListener)
+        onDispose {
+            auth.removeAuthStateListener(authStateListener)
+        }
+    }
+
+    Surface {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Please wait..")
+            }
+        }
+    }
 }
