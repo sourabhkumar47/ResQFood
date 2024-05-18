@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.resqfood.R
-import com.project.resqfood.presentation.BottomNavigation.BottomNavigationItem
+import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

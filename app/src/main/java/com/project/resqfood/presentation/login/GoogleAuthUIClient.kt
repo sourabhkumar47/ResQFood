@@ -15,6 +15,9 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.project.resqfood.R
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
@@ -65,6 +68,9 @@ fun GoogleSignInButton(onClickUI: () -> Unit, onFailureUI: () -> Unit, onSuccess
                     .createFrom(credential.data)
 
                 val googleIdToken = googleIdTokenCredential.idToken
+
+                val authCredential = GoogleAuthProvider.getCredential(googleIdToken, null)
+                FirebaseAuth.getInstance().signInWithCredential(authCredential)
 
                 Log.i(TAG, googleIdToken)
                 onSuccess()
