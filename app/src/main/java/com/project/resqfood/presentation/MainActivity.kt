@@ -1,8 +1,7 @@
-package com.project.resqfood.presentation
+package com.project.resqfood
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,15 +11,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
+import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.OTPVerificationUI
-import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
-import com.project.resqfood.presentation.login.WaitScreen
-import com.project.resqfood.presentation.login.isNewUser
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -42,9 +38,9 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController,
-                        startDestination = if(alreadyLoggedIn)
+                    NavHost(navController = navController, startDestination = if(alreadyLoggedIn)
                     Destinations.MainScreen.route else Destinations.SignIn.route) {
+
                         composable(Destinations.SignIn.route){
                             SignInUI(navController = navController)
                         }
@@ -60,17 +56,8 @@ class MainActivity : ComponentActivity() {
                         composable(Destinations.MainScreen.route){
                             MainScreen(navController = navController)
                         }
-                        composable(Destinations.PersonalDetails.route){
-                            PersonalDetails(navigationAfterCompletion = {
-                                navController.navigate(Destinations.MainScreen.route)
-                            })
-                        }
-                        composable(Destinations.WaitScreen.route){
-                            WaitScreen(navController)
-                        }
                     }
                 }
             }
         }
 }
-
