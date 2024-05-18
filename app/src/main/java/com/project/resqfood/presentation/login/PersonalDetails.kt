@@ -24,10 +24,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAddAlt1
@@ -65,6 +67,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import coil.ImageLoader
@@ -83,7 +86,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
 fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                     onBackButtonClick: () -> Unit = {}){
@@ -91,6 +93,12 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
     var isLoading by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var selectedGender by remember { mutableStateOf("Select Gender") }
+    var houseNumber by remember { mutableStateOf("") }
+    var streetName by remember { mutableStateOf("") }
+    var locality by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
+    var state by remember { mutableStateOf("") }
+    var pinCode by remember { mutableStateOf("") }
     val context = LocalContext.current
     var name by remember {
         mutableStateOf("")
@@ -200,10 +208,33 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
             Toast.makeText(context,"Invalid Email", Toast.LENGTH_SHORT).show()
         else if(selectedGender == "Select Gender")
             Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()
+        else if(houseNumber.isEmpty())
+            Toast.makeText(context, "House Number cannot be empty", Toast.LENGTH_SHORT).show()
+        else if(city.isEmpty())
+            Toast.makeText(context, "City cannot be empty", Toast.LENGTH_SHORT).show()
+        else if(state.isEmpty())
+            Toast.makeText(context, "State cannot be empty", Toast.LENGTH_SHORT).show()
+        else if(pinCode.isEmpty())
+            Toast.makeText(context, "Pin Code cannot be empty", Toast.LENGTH_SHORT).show()
         else if(phoneNumber.length == 10 && phoneNumber.isDigitsOnly())
         coroutineScope.launch {
             isLoading = true
-            saveDetails(name, selectedGender, email, phoneNumber, uri,
+            val userEntity = UserEntity(
+                uid = auth.currentUser?.uid ?: "",
+                email = email,
+                name = name,
+                phoneNumber = phoneNumber,
+                gender = selectedGender,
+                isEmailVerified = false,
+                isPhoneVerified = false,
+                profileUrl = profilePictureUrl,
+                houseNumber = houseNumber,
+                street = streetName,
+                city = city,
+                state = state,
+                pincode = pinCode
+            )
+            saveDetails(userEntity,
                 onSuccess = {
                     isLoading = false
                     Toast.makeText(context, "Details saved successfully", Toast.LENGTH_SHORT).show()
@@ -222,11 +253,33 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
     @Composable
     fun GenderSelector() {
         Box {
-            OutlinedButton(
-                onClick = { expanded = true },
-                modifier = Modifier.fillMaxWidth(0.75f)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.85F)
+                    .height(56.dp)
+                    .clickable {
+                        expanded = true
+                    }
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        shape = RoundedCornerShape(4.dp)
+                    )
             ) {
-                Text(selectedGender)
+                Row {
+                    Text(text = selectedGender
+                        , modifier = Modifier
+                            .padding(start = 16.dp)
+                            .align(Alignment.CenterVertically))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.CenterVertically)
+                    ) {
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Select Gender",
+                        modifier = Modifier.align(Alignment.CenterEnd))
+                    }
+                }
             }
 
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
@@ -323,19 +376,22 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                                 .fillMaxHeight(1f)
                         ) {
                             item{
-                            Spacer(modifier = Modifier.height(180.dp))
+                            Spacer(modifier = Modifier.height(120.dp))
                             OutlinedTextField(value = name,
                                 onValueChange = { name = it },
-                                label = { Text("Name") })
+                                label = { Text("Name*") },
+                                modifier = Modifier.fillMaxWidth(0.85F))
                             Spacer(modifier = Modifier.height(16.dp))
                             OutlinedTextField(value = email,
                                 onValueChange = { email = it },
-                                label = { Text("Email") })
+                                label = { Text("Email*") },
+                                modifier = Modifier.fillMaxWidth(0.85F))
                             Spacer(modifier = Modifier.height(16.dp))
                                 OutlinedTextField(
                                     value = phoneNumber,
                                     onValueChange = { phoneNumber = it },
-                                    placeholder = { Text("Enter Phone Number")},
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    placeholder = { Text("Phone Number*")},
                                     prefix = {
                                         Row {
                                             Image(
@@ -356,17 +412,60 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                                         }
                                     )
                                 )
-
                                 Spacer(modifier = Modifier.height(16.dp))
                             GenderSelector()
                             Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = houseNumber,
+                                    onValueChange = { houseNumber = it },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    label = { Text("House/Flat/Building Number*") }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = streetName,
+                                    onValueChange = { streetName = it },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    label = { Text("Street Name") }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = locality,
+                                    onValueChange = { locality = it },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    label = { Text("Locality") }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = city,
+                                    onValueChange = { city = it },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    label = { Text("City*") }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = state,
+                                    onValueChange = { state = it },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    label = { Text("State*") }
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = pinCode,
+                                    onValueChange = { pinCode = it },
+                                    label = { Text("Pin Code*") },
+                                    modifier = Modifier.fillMaxWidth(0.85F),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                )
+                                Spacer(modifier = Modifier.height(48.dp))
                             Button(onClick = {
                                 onClickSave()
                             }, enabled = !isLoading,
-                                modifier = Modifier.fillMaxWidth(0.75f)
+                                modifier = Modifier.fillMaxWidth(0.85F)
                                 ) {
                                 Text("Save")
                             }
+                                Spacer(modifier = Modifier.height(120.dp))
                         }
                     }
                 }
@@ -384,55 +483,47 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
     }
 }
 
-suspend fun saveDetails(name: String, gender: String, email: String, phoneNumber: String,
-                        photoURI: Uri? = null, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    try {
-        withContext(Dispatchers.IO) {
-            val auth = FirebaseAuth.getInstance()
-            val user = auth.currentUser
+suspend fun saveDetails(userEntity: UserEntity, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    userEntity.apply {
+        try {
+            withContext(Dispatchers.IO) {
+                val auth = FirebaseAuth.getInstance()
+                val user = auth.currentUser
 
-            val downloadUrl: String?
-            Log.i("PersonalDetails", "profileURI: $photoURI")
-            if(photoURI != null){
-                val storageRef = Firebase.storage.reference.child("profile_pictures/${user?.uid}")
-                val uploadTask = storageRef.putFile(photoURI)
-                val taskSnapshot = uploadTask.await()
-                downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl?.await().toString()
+                val downloadUrl: String?
+                Log.i("PersonalDetails", "profileURI: ${user?.photoUrl}")
+                if (profileUrl != "null" && profileUrl.isNotEmpty()) {
+                    val storageRef =
+                        Firebase.storage.reference.child("profile_pictures/${user?.uid}")
+                    val uploadTask = storageRef.putFile(profileUrl.toUri())
+                    val taskSnapshot = uploadTask.await()
+                    downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl?.await().toString()
 
-                val profileUpdates = UserProfileChangeRequest.Builder()
-                    .setPhotoUri(Uri.parse(downloadUrl))
-                    .build()
-                user?.updateProfile(profileUpdates)?.await()
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setPhotoUri(Uri.parse(downloadUrl))
+                        .build()
+                    user?.updateProfile(profileUpdates)?.await()
+                } else {
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+
+                    user?.updateProfile(profileUpdates)?.await()
+                }
+                userEntity.profileUrl = user?.photoUrl.toString()
+                // Save gender and phone number to your database
+                val database = FirebaseFirestore.getInstance()
+                val userRef = database.collection("users").document("${user?.uid}")
+                userRef.set(userEntity).await()
             }
-            else {
-                val profileUpdates = UserProfileChangeRequest.Builder()
-                    .setDisplayName(name)
-                    .build()
 
-                user?.updateProfile(profileUpdates)?.await()
+            withContext(Dispatchers.Main) {
+                onSuccess()
             }
-            val userEntity = UserEntity(
-                uid = user?.uid ?: "",
-                email = email,
-                name = name,
-                phoneNumber = phoneNumber,
-                gender = gender,
-                isEmailVerified = false,
-                isPhoneVerified = false,
-                profileUrl = user?.photoUrl.toString()
-            )
-            // Save gender and phone number to your database
-            val database = FirebaseFirestore.getInstance()
-            val userRef = database.collection("users").document("${user?.uid}")
-            userRef.set(userEntity).await()
-        }
-
-        withContext(Dispatchers.Main) {
-            onSuccess()
-        }
-    } catch (e: Exception) {
-        withContext(Dispatchers.Main) {
-            onFailure(e)
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                onFailure(e)
+            }
         }
     }
 }
@@ -488,10 +579,12 @@ fun WaitScreen(navController: NavController){
 
     Surface {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column {
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+            ) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Please wait..")
+                Text("Loading your details..")
             }
         }
     }
