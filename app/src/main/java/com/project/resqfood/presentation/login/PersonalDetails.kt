@@ -80,6 +80,7 @@ import com.google.firebase.storage.storage
 import com.project.resqfood.R
 import com.project.resqfood.model.UserEntity
 import com.project.resqfood.presentation.Destinations
+import com.project.resqfood.presentation.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -90,40 +91,40 @@ import kotlinx.coroutines.withContext
 fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                     onBackButtonClick: () -> Unit = {}){
     val coroutineScope  = rememberCoroutineScope()
-    var isLoading by remember { mutableStateOf(false) }
+    var userEntity by remember {
+        mutableStateOf(MainActivity.userEntity ?: UserEntity(
+            gender = "Select Gender"
+        ))
+    }
     var expanded by remember { mutableStateOf(false) }
-    var selectedGender by remember { mutableStateOf("Select Gender") }
-    var houseNumber by remember { mutableStateOf("") }
-    var streetName by remember { mutableStateOf("") }
-    var locality by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var state by remember { mutableStateOf("") }
-    var pinCode by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf(userEntity.name) }
+    var email by remember { mutableStateOf(userEntity.email) }
+    var phoneNumber by remember { mutableStateOf(userEntity.phoneNumber) }
+    var selectedGender by remember { mutableStateOf(userEntity.gender) }
+    var houseNumber by remember { mutableStateOf(userEntity.houseNumber) }
+    var streetName by remember { mutableStateOf(userEntity.street) }
+    var locality by remember { mutableStateOf(userEntity.locality) }
+    var city by remember { mutableStateOf(userEntity.city) }
+    var state by remember { mutableStateOf(userEntity.state) }
+    var pinCode by remember { mutableStateOf(userEntity.pincode) }
+    var profilePictureUrl by remember { mutableStateOf(userEntity.profileUrl) }
+
+    var isProfilePictureChanged = false
     val context = LocalContext.current
-    var name by remember {
-        mutableStateOf("")
-    }
-    var email by remember {
-        mutableStateOf("")
-    }
-    var phoneNumber by remember {
-        mutableStateOf("")
-    }
-    var profilePictureUrl by remember {
-        mutableStateOf("")
-    }
     var uri: Uri? = null
     val pickImageLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) {uriRef->
         if (uriRef != null) {
             uri = uriRef
             profilePictureUrl = uri.toString()
+            isProfilePictureChanged = true
         }
     }
     val auth = FirebaseAuth.getInstance()
     DisposableEffect(auth) {
         val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
-            if (user != null) {
+            if (user != null && MainActivity.userEntity == null) {
                 name = user.displayName ?: ""
                 email = user.email ?: ""
                 phoneNumber = user.phoneNumber ?: ""
@@ -161,7 +162,6 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                     .clickable {
                         pickImageLauncher.launch("image/*")
                     }) {
-//                Toast.makeText(context, "profileUrl: $profilePictureUrl", Toast.LENGTH_SHORT).show()
                 if (profilePictureUrl == "null" || profilePictureUrl.isEmpty()) {
                     Image(
                         painter = painterResource(id = R.drawable.person),
@@ -219,7 +219,7 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
         else if(phoneNumber.length == 10 && phoneNumber.isDigitsOnly())
         coroutineScope.launch {
             isLoading = true
-            val userEntity = UserEntity(
+            val userEntityUpdated = UserEntity(
                 uid = auth.currentUser?.uid ?: "",
                 email = email,
                 name = name,
@@ -234,11 +234,12 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
                 state = state,
                 pincode = pinCode
             )
-            saveDetails(userEntity,
+            saveDetails(userEntityUpdated,
                 onSuccess = {
                     isLoading = false
                     Toast.makeText(context, "Details saved successfully", Toast.LENGTH_SHORT).show()
                     navigationAfterCompletion()
+                    MainActivity.userEntity = userEntityUpdated
                 },
                 onFailure = {
                     Log.e("PersonalDetails", "Failed to save details", it)
