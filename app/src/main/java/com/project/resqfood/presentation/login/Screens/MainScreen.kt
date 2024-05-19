@@ -1,5 +1,12 @@
 package com.project.resqfood.presentation.login.BottomNavigation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,7 +36,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavController
+import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.login.Screens.CardsSection
+import com.project.resqfood.presentation.profilescreens.ProfileScreen
+import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +56,8 @@ fun MainScreen(
         BottomNavigationItem(
             title = "You",
             selectedIcon = Icons.Filled.AccountCircle,
-            unselectedIcon = Icons.Outlined.AccountCircle
+            unselectedIcon = Icons.Outlined.AccountCircle,
+            destinationId = Destinations.Profile
         ),
     )
     var selectedItemIndex by rememberSaveable {
@@ -59,10 +70,15 @@ fun MainScreen(
     ) {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         Scaffold(
-            modifier = Modifier
+            modifier = if(selectedItemIndex == 0)Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+            else
+                Modifier.fillMaxSize(),
             topBar = {
+                if(selectedItemIndex == 1)
+                    TopAppBarProfileScreen()
+                else
                 LargeTopAppBar(
                     title = {
                         Text(text = "ResQFood")
@@ -118,16 +134,39 @@ fun MainScreen(
             }
 
         ) { values ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = values.calculateTopPadding())
+            AnimatedContent(targetState = selectedItemIndex,
+                label = "",
+                transitionSpec = {
+                    slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = Up
+                    ).togetherWith(
+                        slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseOut),
+                            towards = Down
+                        )
+                    )
+                }
             ) {
-                CardsSection()
+                targetState ->
+                when(targetState){
+                    0 -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = values.calculateTopPadding())
+                        ) {
 
-            }
+                            CardsSection()
 
+                        }
+                    }
+                    1 -> {
+                        ProfileScreen(values, navController)
+                    }
+                }
             }
+    }
         }
     }
 

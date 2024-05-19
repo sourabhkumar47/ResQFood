@@ -1,18 +1,19 @@
 package com.project.resqfood.model
 
 data class UserEntity(
-    val uid: String = "",
-    val email: String = "",
-    val name: String = "",
-    val phoneNumber: String = "",
-    val gender: String = "",
-    val isEmailVerified: Boolean = false,
-    val isPhoneVerified: Boolean = false,
-    val isProfileComplete: Boolean = false,
+    var uid: String = "",
+    var email: String = "",
+    var name: String = "",
+    var phoneNumber: String = "",
+    var gender: String = "",
+    var isEmailVerified: Boolean = false,
+    var isPhoneVerified: Boolean = false,
+    var isProfileComplete: Boolean = false,
     var profileUrl : String = "",
-    val houseNumber: String = "",
-    val street: String = "",
-    val city: String = "",
-    val state: String = "",
-    val pincode: String = "",
+    var houseNumber: String = "",
+    var street: String = "",
+    var city: String = "",
+    var state: String = "",
+    var pincode: String = "",
+    var locality: String = ""
     )
