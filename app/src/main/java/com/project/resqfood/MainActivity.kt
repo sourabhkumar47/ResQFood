@@ -1,11 +1,15 @@
 package com.project.resqfood
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -60,4 +64,39 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        BackButton()
+    }
+
+
+    private fun BackButton() {
+        val BackDialog = AlertDialog.Builder(this)
+        BackDialog.setCancelable(false)
+
+
+
+        BackDialog.setTitle("Exit")
+         BackDialog.setMessage("Want to stay more with RestQFood?")
+         BackDialog.setCancelable(false)
+
+        BackDialog.setPositiveButton("No"){dialog, which ->
+
+            dialog.dismiss()
+            super.onBackPressed()
+        }
+        BackDialog.setNegativeButton("Yes"){dialog, which ->
+
+        }
+        val alertDialog: AlertDialog = BackDialog.create()
+        BackDialog.show()
+    }
 }
+
+
+
+
+
+
+

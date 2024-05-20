@@ -33,6 +33,7 @@ android {
         }
     }
 
+
     buildTypes {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
@@ -54,6 +55,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+
         compose = true
     }
     composeOptions {
@@ -64,6 +66,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
