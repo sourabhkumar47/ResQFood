@@ -107,7 +107,7 @@ and provides individuals with access to great deals on quality food.
 - Community Feed: Social feed for sharing tips on reducing food waste, sustainability articles, and success stories.
 - Events & Campaigns: Information on community events related to food waste and sustainability.
 
-<--------------------------------------->
+<!-- 
 - For Restaurants:
 1. Listing & Profile: Restaurants can create profiles, and add their contact information, cuisine type, and operating hours.
 Food Inventory:
@@ -185,6 +185,8 @@ create a modular, scalable, and testable codebase.
     5. Make your changes and commit them.
     6. Push your changes to your forked repository.
     7. Create a pull request to the `main` branch of this repository.
+
+    -->
        
 ## Why ResQFood?
 Reduces Food Waste: Food waste is a major environmental and economic problem. ResQFood helps restaurants reduce their waste and minimize their environmental footprint.
