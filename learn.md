@@ -54,11 +54,24 @@ ResQFood follows the MVVM (Model-View-ViewModel) architecture pattern, which sep
   7. Make your changes in the code.
   8. After making the required changes. Check your changes with
   ```
-  git status
-  git diff
+  $ git status
+  $ git diff
   ```
-  10. Push your changes to your forked repository.
-  11. Create a pull request to the `main` branch of this repository.
+  9. Stage your changes
+  ```
+  $ git add . <\files_that_you_made_changes>
+  ```
+  10. Commit your changes.
+  ```
+  $ git commit -m "relavant message"
+  ```
+  11. Push your changes to your forked repository.
+  ```
+  $ git push -u origin <your_branch_name>
+  ```
+  12. Now to create a pull request, click on compare and pull request.
+  13. Add an appropriate title and description to your PR explaining your changes.
+  14. Click on Create pull request.
 
 ## Contributing
 
