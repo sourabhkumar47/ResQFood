@@ -82,6 +82,7 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.SignInViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 data class ProfileItem(val vectorImage: ImageVector, val label: String, val onClick: (NavController) -> Unit)
@@ -134,11 +135,10 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
             pagerState.currentPage
         }
     }
-
+    val scope = rememberCoroutineScope()
     var sizeState by remember {
         mutableStateOf(140.dp)
     }
-
     val animatedSize by animateDpAsState(
         targetValue = sizeState,
         animationSpec = tween(
@@ -191,7 +191,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                     }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState)
+                ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
                 HorizontalPager(state = pagerState) { index ->
                     when(index){
                         TabItem.MyOrders.ordinal -> TabItemContent(
@@ -212,8 +212,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState) {
-    val scope = rememberCoroutineScope()
+fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState, scope: CoroutineScope) {
     val modifier = Modifier.height(44.dp)
     TabRow(selectedTabIndex = selectedTabItemIndex) {
         TabItem.entries.forEach{ tabItem ->
