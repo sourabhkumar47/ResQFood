@@ -5,6 +5,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +23,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,14 +50,18 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +70,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -72,6 +82,7 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.SignInViewModel
+import kotlinx.coroutines.launch
 
 data class ProfileItem(val vectorImage: ImageVector, val label: String, val onClick: (NavController) -> Unit)
 
@@ -91,11 +102,13 @@ val moreList = listOf(
     ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
 )
 
-enum class TabItem{
-    MyOrders,
-    More
+enum class TabItem(name: String){
+    MyOrders(name = "My Orders"),
+    More(name = "More")
 }
 
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     val viewModel: SignInViewModel = viewModel()
@@ -113,9 +126,15 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     var areButtonsVisible by remember {
         mutableStateOf(true)
     }
-    var selectedTabItem by remember {
-        mutableStateOf(TabItem.MyOrders)
+
+    val pagerState = rememberPagerState { TabItem.entries.size }
+
+    val selectedTabItemIndex by remember {
+        derivedStateOf {
+            pagerState.currentPage
+        }
     }
+
     var sizeState by remember {
         mutableStateOf(140.dp)
     }
@@ -127,14 +146,14 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
             easing = LinearEasing
         ), label = "animated size"
     )
-    val scrollSate = rememberScrollState()
-    LaunchedEffect(key1 = scrollSate.value) {
-        sizeState = (140 - (60.0/scrollSate.maxValue)*scrollSate.value).toInt().dp
+    val scrollState = rememberScrollState()
+    LaunchedEffect(key1 = scrollState.value) {
+        sizeState = (140 - (60.0/scrollState.maxValue)*scrollState.value).toInt().dp
         if(sizeState > 110.dp)
             areButtonsVisible = true
         else
             areButtonsVisible = false
-        Log.i("scroll", "scroll value: ${scrollSate.value} && size = $sizeState && are")
+        Log.i("scroll", "scroll value: ${scrollState.value} && size = $sizeState && are")
     }
 
     Column(
@@ -143,8 +162,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
             .fillMaxWidth()
 
     ) {
-            Column(
-            ) {
+            Column {
                 Box {
                 Row {
                     Spacer(modifier = Modifier.width(16.dp))
@@ -173,36 +191,66 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                     }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth()){
-                    SelectionCardsUI(text = "My Orders", onClick = {selectedTabItem = TabItem.MyOrders}, isSelected = selectedTabItem == TabItem.MyOrders
-                    , width = 0.5f)
-                    SelectionCardsUI(text = "More", onClick = {selectedTabItem = TabItem.More}, isSelected = selectedTabItem == TabItem.More,
-                        width = 1.0f)
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .verticalScroll(scrollSate),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                        when(selectedTabItem){
-                            TabItem.MyOrders ->{
-                                    myOrderList.forEach {
-                                        val (vectorImage, label, onClick) = it
-                                        RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
-                                    }
-                                }
-                            TabItem.More ->{
-                                moreList.forEach {
-                                    val (vectorImage, label, onClick) = it
-                                    RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
-                                }
-                            }
+                ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState)
+                HorizontalPager(state = pagerState) { index ->
+                    when(index){
+                        TabItem.MyOrders.ordinal -> TabItemContent(
+                            scrollState = scrollState,
+                            profileItemList = myOrderList,
+                            navController = navController
+                        )
+                        TabItem.More.ordinal -> TabItemContent(
+                            scrollState = scrollState,
+                            profileItemList = moreList,
+                            navController = navController
+                        )
                     }
-                    Spacer(modifier =Modifier.height(180.dp))
                 }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState) {
+    val scope = rememberCoroutineScope()
+    val modifier = Modifier.height(44.dp)
+    TabRow(selectedTabIndex = selectedTabItemIndex) {
+        TabItem.entries.forEach{ tabItem ->
+            Tab(
+                modifier = modifier,
+                selected = selectedTabItemIndex == tabItem.ordinal,
+                onClick = {scope.launch { pagerState.animateScrollToPage(tabItem.ordinal) }}) {
+                val isSelected = selectedTabItemIndex == tabItem.ordinal
+                Text(
+                    text = tabItem.name,
+                    textAlign = TextAlign.Center,
+                    style = if (isSelected) MaterialTheme.typography.bodyMedium
+                    else MaterialTheme.typography.bodySmall,
+                    fontWeight = if (isSelected) FontWeight.Bold
+                    else MaterialTheme.typography.titleSmall.fontWeight,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TabItemContent(scrollState: ScrollState, profileItemList: List<ProfileItem>, navController: NavController) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        profileItemList.forEach{
+            val (vectorImage, label, onClick) = it
+            RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
+        }
+        Spacer(modifier =Modifier.height(180.dp))
     }
 }
 
@@ -245,38 +293,6 @@ fun AnimatedCards(vectorImage: ImageVector, text: String, onClick: () -> Unit,
             Icon(imageVector = vectorImage, contentDescription = text)
             Spacer(modifier = Modifier.width(16.dp))
             Text(text = text)
-    }
-}
-@Composable
-fun SelectionCardsUI(text: String, onClick: () -> Unit,
-                     width: Float = 0.5f, isSelected: Boolean){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(width)
-            .height(44.dp)
-            .clickable { onClick() },
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .align(Alignment.Center),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = text, style =if(isSelected) MaterialTheme.typography.bodyMedium
-            else MaterialTheme.typography.bodySmall,
-                fontWeight = if(isSelected) FontWeight.Bold
-                else MaterialTheme.typography.titleSmall.fontWeight,
-                color = if(isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface
-                )
-        }
-        if(isSelected){
-            HorizontalDivider(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 }
 
