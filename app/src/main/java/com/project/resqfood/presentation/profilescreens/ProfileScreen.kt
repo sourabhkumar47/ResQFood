@@ -73,6 +73,29 @@ import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.SignInViewModel
 
+data class ProfileItem(val vectorImage: ImageVector, val label: String, val onClick: (NavController) -> Unit)
+
+val myOrderList = listOf(
+    ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
+)
+
+val moreList = listOf(
+    ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(Destinations.PersonalDetails.route) }),
+    ProfileItem(vectorImage = Icons.Default.Star, label = "Rate Us", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Feedback, label = "Send Feedback",onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
+)
+
+enum class TabItem{
+    MyOrders,
+    More
+}
+
 @Composable
 fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     val viewModel: SignInViewModel = viewModel()
@@ -90,7 +113,9 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     var areButtonsVisible by remember {
         mutableStateOf(true)
     }
-    var selectedTabIsOrder by remember{mutableStateOf(true)}
+    var selectedTabItem by remember {
+        mutableStateOf(TabItem.MyOrders)
+    }
     var sizeState by remember {
         mutableStateOf(140.dp)
     }
@@ -149,84 +174,30 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth()){
-                    SelectionCardsUI(text = "My Orders", onClick = {selectedTabIsOrder = true}, isSelected = selectedTabIsOrder
+                    SelectionCardsUI(text = "My Orders", onClick = {selectedTabItem = TabItem.MyOrders}, isSelected = selectedTabItem == TabItem.MyOrders
                     , width = 0.5f)
-                    SelectionCardsUI(text = "More", onClick = {selectedTabIsOrder = false}, isSelected = !selectedTabIsOrder,
+                    SelectionCardsUI(text = "More", onClick = {selectedTabItem = TabItem.More}, isSelected = selectedTabItem == TabItem.More,
                         width = 1.0f)
                 }
                 Column(
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
-                        .verticalScroll(scrollSate)
+                        .verticalScroll(scrollSate),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                        when(selectedTabIsOrder){
-                            true ->{
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Fastfood,
-                                        text = "Your Orders",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.House,
-                                        text = "Your Addresses",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Payments,
-                                        text = "Payment Methods",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Restaurant,
-                                        text = "Add Restaurant",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.HouseSiding,
-                                        text = "Add Trusts",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            else ->{
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Person,
-                                    text = "Edit Personal Details",
-                                    onClick = {
-                                        navController.navigate(Destinations.PersonalDetails.route)
-                                    })
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Star,
-                                    text = "Rate Us",
-                                    onClick = { /*TODO*/ })
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Feedback,
-                                    text = "Send Feedback",
-                                    onClick = { /*TODO*/ }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Delete,
-                                    text = "Delete Account",
-                                    onClick = { /*TODO*/ }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.AutoMirrored.Filled.Logout,
-                                    text = "Log Out",
-                                    onClick = {
-                                        logoutUser(navController)
+                        when(selectedTabItem){
+                            TabItem.MyOrders ->{
+                                    myOrderList.forEach {
+                                        val (vectorImage, label, onClick) = it
+                                        RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
                                     }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-
+                                }
+                            TabItem.More ->{
+                                moreList.forEach {
+                                    val (vectorImage, label, onClick) = it
+                                    RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
+                                }
                             }
                     }
                     Spacer(modifier =Modifier.height(180.dp))
@@ -246,13 +217,12 @@ fun RowOfProfile(vectorImage: ImageVector, text: String, onClick: () -> Unit){
         Row(
             modifier = Modifier
                 .fillMaxSize()
-
+                .padding(horizontal = 16.dp)
                 .clickable { onClick() },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
             Icon(imageVector = vectorImage, contentDescription = null)
-            Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
