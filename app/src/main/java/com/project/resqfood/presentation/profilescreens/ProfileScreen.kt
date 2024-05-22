@@ -5,6 +5,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,13 +16,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,18 +45,21 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +68,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -72,7 +80,34 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.SignInViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+data class ProfileItem(val vectorImage: ImageVector, val label: String, val onClick: (NavController) -> Unit)
+
+val myOrderList = listOf(
+    ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
+)
+
+val moreList = listOf(
+    ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(Destinations.PersonalDetails.route) }),
+    ProfileItem(vectorImage = Icons.Default.Star, label = "Rate Us", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Feedback, label = "Send Feedback",onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
+)
+
+enum class TabItem(val label: String){
+    MyOrders(label ="My Orders"),
+    More(label = "More")
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     val viewModel: SignInViewModel = viewModel()
@@ -90,11 +125,18 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     var areButtonsVisible by remember {
         mutableStateOf(true)
     }
-    var selectedTabIsOrder by remember{mutableStateOf(true)}
+
+    val pagerState = rememberPagerState { TabItem.entries.size }
+
+    val selectedTabItemIndex by remember {
+        derivedStateOf {
+            pagerState.currentPage
+        }
+    }
+    val scope = rememberCoroutineScope()
     var sizeState by remember {
         mutableStateOf(140.dp)
     }
-
     val animatedSize by animateDpAsState(
         targetValue = sizeState,
         animationSpec = tween(
@@ -102,14 +144,14 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
             easing = LinearEasing
         ), label = "animated size"
     )
-    val scrollSate = rememberScrollState()
-    LaunchedEffect(key1 = scrollSate.value) {
-        sizeState = (140 - (60.0/scrollSate.maxValue)*scrollSate.value).toInt().dp
+    val scrollState = rememberScrollState()
+    LaunchedEffect(key1 = scrollState.value) {
+        sizeState = (140 - (60.0/scrollState.maxValue)*scrollState.value).toInt().dp
         if(sizeState > 110.dp)
             areButtonsVisible = true
         else
             areButtonsVisible = false
-        Log.i("scroll", "scroll value: ${scrollSate.value} && size = $sizeState && are")
+        Log.i("scroll", "scroll value: ${scrollState.value} && size = $sizeState && are")
     }
 
     Column(
@@ -118,8 +160,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
             .fillMaxWidth()
 
     ) {
-            Column(
-            ) {
+            Column {
                 Box {
                 Row {
                     Spacer(modifier = Modifier.width(16.dp))
@@ -148,90 +189,65 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                     }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth()){
-                    SelectionCardsUI(text = "My Orders", onClick = {selectedTabIsOrder = true}, isSelected = selectedTabIsOrder
-                    , width = 0.5f)
-                    SelectionCardsUI(text = "More", onClick = {selectedTabIsOrder = false}, isSelected = !selectedTabIsOrder,
-                        width = 1.0f)
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .verticalScroll(scrollSate)
-                ) {
-                        when(selectedTabIsOrder){
-                            true ->{
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Fastfood,
-                                        text = "Your Orders",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.House,
-                                        text = "Your Addresses",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Payments,
-                                        text = "Payment Methods",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.Restaurant,
-                                        text = "Add Restaurant",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    RowOfProfile(
-                                        vectorImage = Icons.Default.HouseSiding,
-                                        text = "Add Trusts",
-                                        onClick = { /*TODO*/ }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            else ->{
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Person,
-                                    text = "Edit Personal Details",
-                                    onClick = {
-                                        navController.navigate(Destinations.PersonalDetails.route)
-                                    })
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Star,
-                                    text = "Rate Us",
-                                    onClick = { /*TODO*/ })
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Feedback,
-                                    text = "Send Feedback",
-                                    onClick = { /*TODO*/ }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.Default.Delete,
-                                    text = "Delete Account",
-                                    onClick = { /*TODO*/ }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                RowOfProfile(
-                                    vectorImage = Icons.AutoMirrored.Filled.Logout,
-                                    text = "Log Out",
-                                    onClick = {
-                                        logoutUser(navController)
-                                    }
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                            }
+                ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
+                HorizontalPager(state = pagerState) { index ->
+                    when(index){
+                        TabItem.MyOrders.ordinal -> TabItemContent(
+                            scrollState = scrollState,
+                            profileItemList = myOrderList,
+                            navController = navController
+                        )
+                        TabItem.More.ordinal -> TabItemContent(
+                            scrollState = scrollState,
+                            profileItemList = moreList,
+                            navController = navController
+                        )
                     }
-                    Spacer(modifier =Modifier.height(180.dp))
                 }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState, scope: CoroutineScope) {
+    val modifier = Modifier.height(44.dp)
+    TabRow(selectedTabIndex = selectedTabItemIndex) {
+        TabItem.entries.forEach{ tabItem ->
+            Tab(
+                modifier = modifier,
+                selected = selectedTabItemIndex == tabItem.ordinal,
+                onClick = {scope.launch { pagerState.animateScrollToPage(tabItem.ordinal) }}) {
+                val isSelected = selectedTabItemIndex == tabItem.ordinal
+                Text(
+                    text = tabItem.label,
+                    textAlign = TextAlign.Center,
+                    style = if (isSelected) MaterialTheme.typography.bodyMedium
+                    else MaterialTheme.typography.bodySmall,
+                    fontWeight = if (isSelected) FontWeight.Bold
+                    else MaterialTheme.typography.titleSmall.fontWeight,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TabItemContent(scrollState: ScrollState, profileItemList: List<ProfileItem>, navController: NavController) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        profileItemList.forEach{
+            val (vectorImage, label, onClick) = it
+            RowOfProfile(vectorImage = vectorImage, text = label, onClick = { onClick(navController) })
+        }
+        Spacer(modifier =Modifier.height(180.dp))
     }
 }
 
@@ -246,13 +262,12 @@ fun RowOfProfile(vectorImage: ImageVector, text: String, onClick: () -> Unit){
         Row(
             modifier = Modifier
                 .fillMaxSize()
-
+                .padding(horizontal = 16.dp)
                 .clickable { onClick() },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
             Icon(imageVector = vectorImage, contentDescription = null)
-            Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
@@ -275,38 +290,6 @@ fun AnimatedCards(vectorImage: ImageVector, text: String, onClick: () -> Unit,
             Icon(imageVector = vectorImage, contentDescription = text)
             Spacer(modifier = Modifier.width(16.dp))
             Text(text = text)
-    }
-}
-@Composable
-fun SelectionCardsUI(text: String, onClick: () -> Unit,
-                     width: Float = 0.5f, isSelected: Boolean){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(width)
-            .height(44.dp)
-            .clickable { onClick() },
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .align(Alignment.Center),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = text, style =if(isSelected) MaterialTheme.typography.bodyMedium
-            else MaterialTheme.typography.bodySmall,
-                fontWeight = if(isSelected) FontWeight.Bold
-                else MaterialTheme.typography.titleSmall.fontWeight,
-                color = if(isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface
-                )
-        }
-        if(isSelected){
-            HorizontalDivider(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 }
 
