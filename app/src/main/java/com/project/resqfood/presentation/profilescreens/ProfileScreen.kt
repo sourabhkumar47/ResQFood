@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +45,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -103,9 +101,9 @@ val moreList = listOf(
     ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
 )
 
-enum class TabItem(name: String){
-    MyOrders(name = "My Orders"),
-    More(name = "More")
+enum class TabItem(val label: String){
+    MyOrders(label ="My Orders"),
+    More(label = "More")
 }
 
 
@@ -222,7 +220,7 @@ fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState, scope: Coro
                 onClick = {scope.launch { pagerState.animateScrollToPage(tabItem.ordinal) }}) {
                 val isSelected = selectedTabItemIndex == tabItem.ordinal
                 Text(
-                    text = tabItem.name,
+                    text = tabItem.label,
                     textAlign = TextAlign.Center,
                     style = if (isSelected) MaterialTheme.typography.bodyMedium
                     else MaterialTheme.typography.bodySmall,
