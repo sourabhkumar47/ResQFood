@@ -77,8 +77,8 @@ class MainActivity : ComponentActivity() {
 
 
         BackDialog.setTitle("Exit")
-         BackDialog.setMessage("Want to stay more with RestQFood?")
-         BackDialog.setCancelable(false)
+        BackDialog.setMessage("Want to stay more with RestQFood?")
+        BackDialog.setCancelable(false)
 
         BackDialog.setPositiveButton("No"){dialog, which ->
 
@@ -86,9 +86,9 @@ class MainActivity : ComponentActivity() {
             super.onBackPressed()
         }
         BackDialog.setNegativeButton("Yes"){dialog, which ->
-
+         null
         }
-        val alertDialog: AlertDialog = BackDialog.create()
+        BackDialog.create()
         BackDialog.show()
     }
 }
