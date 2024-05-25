@@ -1,6 +1,7 @@
 package com.project.resqfood.presentation
 
 sealed class Destinations(val route: String) {
+    data object Onboarding:Destinations("onboarding")
     data object SignIn: Destinations("signIn")
     data object OtpVerification: Destinations("otpVerification")
     data object EmailSignIn: Destinations("emailSignIn")
