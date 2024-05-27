@@ -131,4 +131,10 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.firebase.firestore)
+
+//    Material 3 Core
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
+
+    // CLOCK
+    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
 }
