@@ -23,12 +23,13 @@ import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
 import com.project.resqfood.presentation.login.SignInViewModel
 import com.project.resqfood.presentation.login.WaitScreen
+import com.project.resqfood.presentation.onboardingProcess.Onboarding
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
 
-    companion object{
+    companion object {
         var userEntity: UserEntity? = null
         var phoneNumber: String = ""
         var storedVerificationId = ""
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
         var countDownTime = MutableStateFlow(60000)
         var isResendButtonEnabled = MutableStateFlow(false)
     }
+
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
+
                     val navController = rememberNavController()
                     val viewModel: SignInViewModel = viewModel()
                     if(alreadyLoggedIn)
@@ -81,8 +84,50 @@ class MainActivity : ComponentActivity() {
                         composable(Destinations.OrderConfirmScreen.route){
                             OrderConfirmScreen(navController)
                         }
+                val navController = rememberNavController()
+                val viewModel: SignInViewModel = viewModel()
+                if (alreadyLoggedIn)
+                    viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
+                NavHost(
+                    navController = navController, startDestination = if (alreadyLoggedIn)
+                        Destinations.MainScreen.route else Destinations.Onboarding.route
+                ) {
+                    composable(Destinations.Onboarding.route) {
+                        Onboarding(navController = navController)
                     }
+                    composable(Destinations.SignIn.route) {
+                        SignInUI(navController = navController)
+                    }
+                    composable(Destinations.OtpVerification.route) {
+                        OTPVerificationUI(navController = navController)
+                    }
+                    composable(Destinations.EmailSignIn.route) {
+                        SignInUsingEmail(navController = navController)
+                    }
+                    composable(Destinations.ForgotPassword.route) {
+                        ForgotPassword(navController = navController)
+                    }
+                    composable(Destinations.MainScreen.route) {
+                        MainScreen(navController = navController)
+                    }
+                    composable(Destinations.PersonalDetails.route) {
+                        PersonalDetails(navigationAfterCompletion = {
+                            navController.popBackStack(navController.graph.startDestinationId, true)
+                            navController.navigate(Destinations.MainScreen.route)
+                        })
+                    }
+                    composable(Destinations.WaitScreen.route) {
+                        WaitScreen(navController)
+
+                    }
+                     composable(Destinations.ItemDetailScreen.route){
+                            ItemDetailScreen(navController)
+                        }
+                        composable(Destinations.OrderConfirmScreen.route){
+                            OrderConfirmScreen(navController)
+                        }
                 }
             }
         }
+    }
 }

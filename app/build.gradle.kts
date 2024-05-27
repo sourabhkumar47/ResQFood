@@ -132,9 +132,18 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.firebase.firestore)
 
-//    Material 3 Core
+
+    Material 3 Core
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
 
     // CLOCK
     implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
+    //Lottie
+    implementation( "com.airbnb.android:lottie-compose:5.2.0")
+
+    //navigation
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+
+    //pager
+    implementation ("com.google.accompanist:accompanist-pager:0.12.0")
 }
