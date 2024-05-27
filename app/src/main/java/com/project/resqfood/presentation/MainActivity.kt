@@ -13,6 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.itemdetailscreen.ItemDetailScreen
+import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
 import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.OTPVerificationUI
@@ -44,6 +46,44 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
+
+                    val navController = rememberNavController()
+                    val viewModel: SignInViewModel = viewModel()
+                    if(alreadyLoggedIn)
+                        viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
+                    NavHost(navController = navController, startDestination = if(alreadyLoggedIn)
+                    Destinations.MainScreen.route else Destinations.SignIn.route) {
+
+                        composable(Destinations.SignIn.route){
+                            SignInUI(navController = navController)
+                        }
+                        composable(Destinations.OtpVerification.route){
+                            OTPVerificationUI(navController = navController)
+                        }
+                        composable(Destinations.EmailSignIn.route){
+                            SignInUsingEmail(navController = navController)
+                        }
+                        composable(Destinations.ForgotPassword.route){
+                            ForgotPassword(navController = navController)
+                        }
+                        composable(Destinations.MainScreen.route){
+                            MainScreen(navController = navController)
+                        }
+                        composable(Destinations.PersonalDetails.route){
+                            PersonalDetails(navigationAfterCompletion = {
+                                navController.popBackStack(navController.graph.startDestinationId, true)
+                                navController.navigate(Destinations.MainScreen.route)
+                            })
+                        }
+                        composable(Destinations.WaitScreen.route){
+                            WaitScreen(navController)
+                        }
+                        composable(Destinations.ItemDetailScreen.route){
+                            ItemDetailScreen(navController)
+                        }
+                        composable(Destinations.OrderConfirmScreen.route){
+                            OrderConfirmScreen(navController)
+                        }
                 val navController = rememberNavController()
                 val viewModel: SignInViewModel = viewModel()
                 if (alreadyLoggedIn)
@@ -78,7 +118,14 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Destinations.WaitScreen.route) {
                         WaitScreen(navController)
+
                     }
+                     composable(Destinations.ItemDetailScreen.route){
+                            ItemDetailScreen(navController)
+                        }
+                        composable(Destinations.OrderConfirmScreen.route){
+                            OrderConfirmScreen(navController)
+                        }
                 }
             }
         }
