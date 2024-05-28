@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.project.resqfood"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -133,7 +133,7 @@ dependencies {
     implementation(libs.firebase.firestore)
 
 
-    Material 3 Core
+//    Material 3 Core
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
 
     // CLOCK
@@ -146,4 +146,5 @@ dependencies {
 
     //pager
     implementation ("com.google.accompanist:accompanist-pager:0.12.0")
+
 }
