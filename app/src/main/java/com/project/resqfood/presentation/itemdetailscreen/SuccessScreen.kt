@@ -49,11 +49,14 @@ fun SuccessScreen(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+        Text(text = "Success!", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Button
         Button(
             onClick = onClick,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
+                .fillMaxWidth(0.8f),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {

@@ -310,7 +310,7 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
                 checked = isFree,
                 onCheckedChange = { isFree = it }
             )
-            Text("Free to Donate")
+            Text("Donate for free.")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -478,7 +478,6 @@ fun getCurrentTime(): String {
     return "%02d:%02d".format(hour, minute)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun parseDateTime(dateStr: String, timeStr: String): LocalDateTime {
     // Parse date
     val dateParts = dateStr.split("/")
@@ -499,41 +498,3 @@ fun isFirstBeforeSecond(firstDateTime: LocalDateTime, secondDateTime: LocalDateT
     return firstDateTime.isBefore(secondDateTime)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun Test(){
-
-    var isExpanded = true
-    ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = {
-        isExpanded = false
-    }) {
-        DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false}) {
-                        FoodCategory.entries.forEach {
-                DropdownMenuItem(text = {
-                                        Text("jljjkhkj")
-                }, onClick = {
-
-                    isExpanded = false
-                })
-            }
-        }
-    }
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        DropdownMenu(
-//            expanded = isExpanded, onDismissRequest = { isExpanded = false },
-//            modifier = Modifier
-//                .align(Alignment.TopStart) // Offset the dropdown slightly below the TextField
-//        ) {
-//            DropdownMenuItem(text = { /*TODO*/ }, onClick = { /*TODO*/ })
-////            FoodCategory.entries.forEach {
-////                DropdownMenuItem(text = {
-////                                        Text("jljjkhkj")
-////                }, onClick = {
-////
-////                    isExpanded = false
-////                })
-////            }
-//        }
-//    }
-}
