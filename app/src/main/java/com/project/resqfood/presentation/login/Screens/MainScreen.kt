@@ -7,6 +7,7 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -74,38 +76,38 @@ fun MainScreen(
     ) {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         Scaffold(
-            modifier = if(selectedItemIndex == 0) Modifier
+            modifier = if (selectedItemIndex == 0) Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
             else
                 Modifier.fillMaxSize(),
             topBar = {
-                if(selectedItemIndex == 1)
+                if (selectedItemIndex == 1)
                     TopAppBarProfileScreen()
                 else
-                LargeTopAppBar(
-                    title = {
-                        Text(text = "ResQFood")
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
-                            )
-                        }
-                    },
-                    actions = {
+                    LargeTopAppBar(
+                        title = {
+                            Text(text = "ResQFood")
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu"
+                                )
+                            }
+                        },
+                        actions = {
 
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.ShoppingCart,
-                                contentDescription = "Cart"
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.ShoppingCart,
+                                    contentDescription = "Cart"
+                                )
+                            }
+                        },
+                        scrollBehavior = scrollBehavior,
+                    )
             },
             bottomBar = {
                 NavigationBar {
@@ -137,7 +139,7 @@ fun MainScreen(
                 }
             }
 
-        ) { values ->
+        ) { paddingValues ->
             AnimatedContent(targetState = selectedItemIndex,
                 label = "",
                 transitionSpec = {
@@ -151,38 +153,34 @@ fun MainScreen(
                         )
                     )
                 }
-            ) {
-                targetState ->
-                when(targetState){
+            ) { targetState ->
+                when (targetState) {
                     0 -> {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(top = values.calculateTopPadding())
+                                .padding(paddingValues),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
                             CardsSection()
-
+                            Button(modifier = Modifier.padding(top = 16.dp), onClick = {
+                                navController.navigate(Destinations.ItemDetailScreen.route)
+                            }) {
+                                Text(text = "View Item Details")
+                            }
                         }
                     }
+
                     1 -> {
-                        ProfileScreen(values, navController)
+                        ProfileScreen(paddingValues, navController)
                     }
                 }
             }
 
-    }
-        Row( modifier = Modifier.fillMaxWidth().padding( top = 500.dp)) {
-            Button(onClick = {
-                navController.navigate(Destinations.ItemDetailScreen.route)
-            }) {
-                Text(text = "View Item Details")
-            }
         }
-
-        }
-
     }
+
+}
 
 
 
