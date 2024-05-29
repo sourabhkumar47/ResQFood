@@ -135,7 +135,6 @@ dependencies {
 
 //    Material 3 Core
     implementation(libs.core)
-
     // CLOCK
     implementation(libs.clock)
     //Lottie
