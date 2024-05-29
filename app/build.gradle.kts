@@ -111,12 +111,12 @@ dependencies {
     //Extended list of material 3 icons
     implementation(libs.androidx.material.icons.extended)
     //Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.hilt:hilt-work:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 
     //Dependencies for Google Sign In suing credential manager
@@ -133,17 +133,17 @@ dependencies {
     implementation(libs.firebase.firestore)
 
 
-    Material 3 Core
-    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
+//    Material 3 Core
+    implementation(libs.core)
 
     // CLOCK
-    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
+    implementation(libs.clock)
     //Lottie
-    implementation( "com.airbnb.android:lottie-compose:5.2.0")
+    implementation( libs.lottie.compose)
 
     //navigation
-    implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation(libs.androidx.navigation.compose)
 
     //pager
-    implementation ("com.google.accompanist:accompanist-pager:0.12.0")
+    implementation (libs.accompanist.pager)
 }
