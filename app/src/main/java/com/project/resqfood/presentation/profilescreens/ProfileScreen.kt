@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -89,7 +90,7 @@ val myOrderList = listOf(
     ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(Destinations.AddingLeftOverScreen.route)}),
     ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
 )
 
@@ -204,6 +205,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                         )
                     }
                 }
+
         }
     }
 }
