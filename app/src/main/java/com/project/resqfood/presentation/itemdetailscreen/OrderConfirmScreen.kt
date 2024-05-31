@@ -38,8 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.project.resqfood.R
-import com.project.resqfood.presentation.Destinations
-import com.project.resqfood.presentation.login.getActivity
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
 import com.project.resqfood.ui.theme.backgroundDark
 import kotlinx.serialization.Serializable
 
@@ -98,7 +97,7 @@ fun OrderConfirmScreen( navController: NavController){LocalContext.current
                         ){
                             IconButton(
                                 onClick = {
-                                    navController.navigate(Destinations.ItemDetailScreen.route)
+                                    navController.navigate(NavItemDetailScreen)
                                 }
                             ) {
                                 Icon(
@@ -150,9 +149,9 @@ fun OrderConfirmScreen( navController: NavController){LocalContext.current
                         Spacer(modifier = Modifier.height(30.dp))
                         Button(onClick = {
                             Toast.makeText(localContext, "Order Placed", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Destinations.MainScreen.route){
+                            navController.navigate(NavMainScreen){
                                 navOptions {
-                                    popUpTo(Destinations.MainScreen.route){
+                                    popUpTo(NavMainScreen){
                                         inclusive = false
                                     }
                                 }

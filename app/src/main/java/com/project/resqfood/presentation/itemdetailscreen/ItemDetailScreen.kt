@@ -47,7 +47,7 @@ import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import com.project.resqfood.R
-import com.project.resqfood.presentation.Destinations
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
 import com.project.resqfood.ui.theme.backgroundDark
 import kotlinx.serialization.Serializable
 
@@ -119,7 +119,7 @@ fun ItemDetailScreen(navController: NavController){
                                 Spacer(modifier = Modifier.width(70.dp))
                                 IconButton(
                                     onClick = {
-                                              navController.navigate(Destinations.MainScreen.route)
+                                              navController.navigate(NavMainScreen)
                                     },
                                     modifier = Modifier
                                         .size(50.dp)
@@ -148,7 +148,7 @@ fun ItemDetailScreen(navController: NavController){
                             Spacer(modifier = Modifier.height(30.dp))
                             Button(onClick = {
                                 if(isTimeSelected){
-                                    navController.navigate(Destinations.OrderConfirmScreen.route)
+                                    navController.navigate(NavOrderConfirmScreen)
                                 }
                                 else{
                                     Toast.makeText(localContext, "Please select timing to proceed", Toast.LENGTH_SHORT).show()

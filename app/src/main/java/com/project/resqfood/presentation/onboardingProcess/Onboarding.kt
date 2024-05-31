@@ -36,8 +36,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.project.resqfood.R
-import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.login.NavSignInUI
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
@@ -148,7 +148,7 @@ fun ButtonsSection(
             }
         } else {
             Button(
-                onClick = { navController.navigate(Destinations.SignIn.route) },
+                onClick = { navController.navigate(NavSignInUI) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()

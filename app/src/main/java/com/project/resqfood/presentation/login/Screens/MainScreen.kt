@@ -1,4 +1,4 @@
-package com.project.resqfood.presentation.login.BottomNavigation
+package com.project.resqfood.presentation.login.Screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
@@ -7,11 +7,8 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -42,7 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.resqfood.presentation.login.Screens.CardsSection
+import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
+import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
 import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 import kotlinx.serialization.Serializable
@@ -166,7 +164,7 @@ fun MainScreen(
                         ) {
                             CardsSection()
                             Button(modifier = Modifier.padding(top = 16.dp), onClick = {
-                                navController.navigate(Destinations.ItemDetailScreen.route)
+                                navController.navigate(NavItemDetailScreen)
                             }) {
                                 Text(text = "View Item Details")
                             }

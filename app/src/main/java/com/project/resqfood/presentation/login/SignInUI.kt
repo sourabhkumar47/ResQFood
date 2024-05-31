@@ -78,7 +78,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
 
 import com.project.resqfood.R
-import com.project.resqfood.presentation.Destinations
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -126,7 +125,7 @@ fun SignInUI(
                 onCodeSent = {
                     //TODO(Make the OTP verification UI visible)
                     MainActivity.phoneNumber = finalPhoneNumber
-                    navController.navigate(Destinations.OtpVerification.route)
+                    navController.navigate(NavOTPVerificationUI)
                 },
                 onRecaptchaVerification = {
                     Toast.makeText(context, "Recaptcha Verification", Toast.LENGTH_LONG).show()
@@ -247,7 +246,7 @@ fun SignInUI(
                             CircleImage(imageVector = Icons.Default.Email, size = 40,
                                 onClick = {
                                     if(!isLoading)
-                                        navController.navigate(Destinations.EmailSignIn.route)
+                                        navController.navigate(NavEmailSignIn)
                                 })
 
                         }
@@ -535,7 +534,7 @@ fun SignInUsingEmail(navController: NavController) {
                     isLoading = true
                     emailAuthentication.forgotPassword(email = email,
                         onSuccessfullySend = {
-                            navController.navigate(Destinations.ForgotPassword.route)
+                            navController.navigate(NavForgotPassword)
                             isLoading = false
                         },
                         onFailed = {
@@ -808,7 +807,7 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean {
 }
 
 fun onSignInSuccessful(navController: NavController){
-    navController.navigate(Destinations.WaitScreen.route)
+    navController.navigate(NavWaitScreen)
 }
 
 fun isInternetAvailable(context: Context): Boolean {

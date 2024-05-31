@@ -19,8 +19,8 @@ import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.itemdetailscreen.NavOrderConfirmScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
-import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
-import com.project.resqfood.presentation.login.BottomNavigation.NavMainScreen
+import com.project.resqfood.presentation.login.Screens.MainScreen
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
 import com.project.resqfood.presentation.login.NavEmailSignIn
 import com.project.resqfood.presentation.login.NavForgotPassword

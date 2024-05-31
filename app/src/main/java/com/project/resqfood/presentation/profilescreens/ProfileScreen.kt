@@ -78,8 +78,10 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.R
-import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
+import com.project.resqfood.presentation.login.NavPersonalDetails
+import com.project.resqfood.presentation.login.NavSignInUI
 import com.project.resqfood.presentation.login.SignInViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -90,12 +92,12 @@ val myOrderList = listOf(
     ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(Destinations.AddingLeftOverScreen.route)}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavAddingLeftovers)}),
     ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
 )
 
 val moreList = listOf(
-    ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(Destinations.PersonalDetails.route) }),
+    ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(NavPersonalDetails) }),
     ProfileItem(vectorImage = Icons.Default.Star, label = "Rate Us", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.Feedback, label = "Send Feedback",onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
@@ -167,7 +169,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                     Spacer(modifier = Modifier.width(16.dp))
                     ProfilePictureView(size = animatedSize, profilePictureUrl = user?.profileUrl ?: "",
                         ){
-                        navController.navigate(Destinations.PersonalDetails.route)
+                        navController.navigate(NavPersonalDetails)
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(
@@ -359,6 +361,6 @@ fun logoutUser(navController: NavController) {
     MainActivity.userEntity = null
     FirebaseAuth.getInstance().signOut()
     navController.popBackStack(navController.graph.startDestinationId, true)
-    navController.navigate(Destinations.SignIn.route)
+    navController.navigate(NavSignInUI)
 }
 
