@@ -42,10 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.login.Screens.CardsSection
 import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
+import kotlinx.serialization.Serializable
+
+@Serializable
+object NavMainScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,8 +65,7 @@ fun MainScreen(
         BottomNavigationItem(
             title = "You",
             selectedIcon = Icons.Filled.AccountCircle,
-            unselectedIcon = Icons.Outlined.AccountCircle,
-            destinationId = Destinations.Profile
+            unselectedIcon = Icons.Outlined.AccountCircle
         ),
     )
     var selectedItemIndex by rememberSaveable {

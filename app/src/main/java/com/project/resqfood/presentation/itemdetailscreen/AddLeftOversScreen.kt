@@ -61,8 +61,13 @@ import androidx.navigation.compose.rememberNavController
 import com.project.resqfood.R
 import com.project.resqfood.model.FoodCategory
 import com.project.resqfood.presentation.Destinations
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.Calendar
+
+
+@Serializable
+object NavAddingLeftovers
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

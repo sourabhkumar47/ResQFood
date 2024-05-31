@@ -85,6 +85,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+
+@Serializable
+object NavPersonalDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -553,6 +557,9 @@ fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit, navController: NavController){
             }
     }
 }
+
+@Serializable
+object NavWaitScreen
 
 @Composable
 fun WaitScreen(navController: NavController){

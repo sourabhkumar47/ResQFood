@@ -41,6 +41,11 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.login.getActivity
 import com.project.resqfood.ui.theme.backgroundDark
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+object NavOrderConfirmScreen
 
 @Composable
 fun OrderConfirmScreen( navController: NavController){LocalContext.current

@@ -79,8 +79,10 @@ import com.project.resqfood.presentation.MainActivity
 
 import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
+import kotlinx.serialization.Serializable
 
-
+@Serializable
+object NavSignInUI
 /**
  * SignInUI is a composable function that provides the UI for the sign-in process.
  * It includes fields for entering phone number and OTP, and buttons for sending OTP, verifying OTP, and signing in with Google.
@@ -282,7 +284,8 @@ fun DividerWithText(text: String = "Or"){
     }
 }
 
-
+@Serializable
+object NavOTPVerificationUI
 /**
  * OTPVerificationUI is a composable function that provides the UI for the OTP verification process.
  * It includes a field for entering the OTP and a button for verifying the OTP.
@@ -427,7 +430,8 @@ fun OTPVerificationUI(navController: NavController){
     }
 }
 
-
+@Serializable
+object NavEmailSignIn
 /**
  * SignInUsingEmail is a composable function that provides the UI for the sign-in process using email.
  * It includes fields for entering email and password, and buttons for signing in and switching to sign-up mode.
@@ -686,6 +690,9 @@ fun SignInUsingEmail(navController: NavController) {
     }
 }
 
+
+@Serializable
+object NavForgotPassword
 /**
  * ForgotPassword is a composable function that provides the UI for the password reset process.
  * It includes a message indicating that a password reset link has been sent, and a button for going back to the sign-in screen.

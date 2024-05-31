@@ -49,12 +49,17 @@ import com.maxkeppeler.sheets.clock.models.ClockSelection
 import com.project.resqfood.R
 import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.ui.theme.backgroundDark
+import kotlinx.serialization.Serializable
 
 
 private val backgroundColor = Color(49, 52, 58)
 private val primaryColor = Color(68, 71, 70)
 private val secondaryColor = Color(68, 71, 70)
 private val selectedColor = Color(104, 220, 255, 255)
+
+@Serializable
+object NavItemDetailScreen
+
 @Composable
 fun ItemDetailScreen(navController: NavController){
     val localContext = LocalContext.current

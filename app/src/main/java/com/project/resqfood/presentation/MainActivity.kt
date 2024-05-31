@@ -15,16 +15,25 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.model.UserEntity
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.ItemDetailScreen
+import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
+import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
+import com.project.resqfood.presentation.itemdetailscreen.NavOrderConfirmScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
 import com.project.resqfood.presentation.login.BottomNavigation.MainScreen
+import com.project.resqfood.presentation.login.BottomNavigation.NavMainScreen
 import com.project.resqfood.presentation.login.ForgotPassword
+import com.project.resqfood.presentation.login.NavEmailSignIn
+import com.project.resqfood.presentation.login.NavForgotPassword
+import com.project.resqfood.presentation.login.NavOTPVerificationUI
+import com.project.resqfood.presentation.login.NavPersonalDetails
+import com.project.resqfood.presentation.login.NavSignInUI
+import com.project.resqfood.presentation.login.NavWaitScreen
 import com.project.resqfood.presentation.login.OTPVerificationUI
 import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
 import com.project.resqfood.presentation.login.SignInViewModel
 import com.project.resqfood.presentation.login.WaitScreen
-import com.project.resqfood.presentation.onboardingProcess.Onboarding
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -54,40 +63,40 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController, 
                     startDestination = if (alreadyLoggedIn)
-                        Destinations.MainScreen.route else Destinations.SignIn.route
+                        NavMainScreen else NavSignInUI
                 ) {
 
-                    composable(Destinations.SignIn.route) {
+                    composable<NavSignInUI> {
                         SignInUI(navController = navController)
                     }
-                    composable(Destinations.OtpVerification.route) {
+                    composable<NavOTPVerificationUI> {
                         OTPVerificationUI(navController = navController)
                     }
-                    composable(Destinations.EmailSignIn.route) {
+                    composable<NavEmailSignIn> {
                         SignInUsingEmail(navController = navController)
                     }
-                    composable(Destinations.ForgotPassword.route) {
+                    composable<NavForgotPassword> {
                         ForgotPassword(navController = navController)
                     }
-                    composable(Destinations.MainScreen.route) {
+                    composable<NavMainScreen> {
                         MainScreen(navController = navController)
                     }
-                    composable(Destinations.PersonalDetails.route) {
+                    composable<NavPersonalDetails> {
                         PersonalDetails(navigationAfterCompletion = {
                             navController.popBackStack(navController.graph.startDestinationId, true)
-                            navController.navigate(Destinations.MainScreen.route)
+                            navController.navigate(NavMainScreen)
                         })
                     }
-                    composable(Destinations.WaitScreen.route) {
+                    composable<NavWaitScreen> {
                         WaitScreen(navController)
                     }
-                    composable(Destinations.ItemDetailScreen.route) {
+                    composable<NavItemDetailScreen> {
                         ItemDetailScreen(navController)
                     }
-                    composable(Destinations.OrderConfirmScreen.route) {
+                    composable<NavOrderConfirmScreen> {
                         OrderConfirmScreen(navController)
                     }
-                    composable(Destinations.AddingLeftOverScreen.route){
+                    composable<NavAddingLeftovers>{
                         AddingLeftovers(navController)
                     }
                 }
