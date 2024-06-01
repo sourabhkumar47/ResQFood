@@ -228,7 +228,6 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
         setIsLoading(true)
         otpState.value = OTPState.VERIFYING_OTP
         try {
-            showSnackbar(snackbarHostState, "$storedVerificationId ${uiState.value.otp}")
         val credential = PhoneAuthProvider.getCredential(storedVerificationId, uiState.value.otp)
         viewModelScope.launch {
             accountService.phoneNumberSignInWithCredential(auth, credential) { task ->
