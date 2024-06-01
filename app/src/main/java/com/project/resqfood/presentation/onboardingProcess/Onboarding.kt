@@ -39,6 +39,10 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+
+@Serializable
+object NavOnboarding
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

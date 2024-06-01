@@ -46,31 +46,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.resqfood.R
-import com.project.resqfood.presentation.login.EmailAuthentication
 import com.project.resqfood.presentation.login.confirmPasswordCheck
 import com.project.resqfood.presentation.login.emailCheck
-import com.project.resqfood.presentation.login.isValidEmail
 import com.project.resqfood.presentation.login.mainlogin.DividerWithText
 import com.project.resqfood.presentation.login.mainlogin.Wait
 import com.project.resqfood.presentation.login.mainlogin.onSignInSuccessful
 import com.project.resqfood.presentation.login.nameCheck
 import com.project.resqfood.presentation.login.passwordCheck
-import com.project.resqfood.presentation.login.validatePassword
 import kotlinx.serialization.Serializable
 
 @Serializable

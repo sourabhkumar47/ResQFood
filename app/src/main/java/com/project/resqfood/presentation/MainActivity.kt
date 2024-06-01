@@ -40,6 +40,8 @@ import com.project.resqfood.presentation.login.emaillogin.NavForgotPassword
 import com.project.resqfood.presentation.login.emaillogin.SignInUsingEmail
 import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModel
 import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModelFactory
+import com.project.resqfood.presentation.onboardingProcess.NavOnboarding
+import com.project.resqfood.presentation.onboardingProcess.Onboarding
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -72,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController, 
                     startDestination = if (alreadyLoggedIn)
-                        NavMainScreen else NavSignInUI
+                        NavMainScreen else NavOnboarding
                 ) {
                     composable<NavSignInUI> {
                         val mainSignInViewModel:MainSignInViewModel = viewModel(factory = MainSignInViewModelFactory(auth, accountService))
@@ -108,6 +110,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<NavAddingLeftovers>{
                         AddingLeftovers(navController)
+                    }
+                    composable<NavOnboarding>{
+                        Onboarding(navController = navController)
                     }
                 }
             }
