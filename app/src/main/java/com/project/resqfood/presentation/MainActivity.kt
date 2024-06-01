@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
+import com.project.resqfood.domain.services.AccountService
+import com.project.resqfood.domain.services.AccountServiceImpl
 import com.project.resqfood.model.UserEntity
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.ItemDetailScreen
@@ -21,19 +23,23 @@ import com.project.resqfood.presentation.itemdetailscreen.NavOrderConfirmScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
 import com.project.resqfood.presentation.login.Screens.MainScreen
 import com.project.resqfood.presentation.login.Screens.NavMainScreen
-import com.project.resqfood.presentation.login.ForgotPassword
-import com.project.resqfood.presentation.login.NavEmailSignIn
-import com.project.resqfood.presentation.login.NavForgotPassword
-import com.project.resqfood.presentation.login.NavOTPVerificationUI
+import com.project.resqfood.presentation.login.mainlogin.NavOTPVerificationUI
 import com.project.resqfood.presentation.login.NavPersonalDetails
-import com.project.resqfood.presentation.login.NavSignInUI
+import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
 import com.project.resqfood.presentation.login.NavWaitScreen
-import com.project.resqfood.presentation.login.OTPVerificationUI
+import com.project.resqfood.presentation.login.mainlogin.OTPVerificationUI
 import com.project.resqfood.presentation.login.PersonalDetails
-import com.project.resqfood.presentation.login.SignInUI
-import com.project.resqfood.presentation.login.SignInUsingEmail
-import com.project.resqfood.presentation.login.SignInViewModel
+import com.project.resqfood.presentation.login.mainlogin.SignInUI
+import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.WaitScreen
+import com.project.resqfood.presentation.login.emaillogin.EmailSignInViewModel
+import com.project.resqfood.presentation.login.emaillogin.EmailSignInViewModelFactory
+import com.project.resqfood.presentation.login.emaillogin.ForgotPassword
+import com.project.resqfood.presentation.login.emaillogin.NavEmailSignIn
+import com.project.resqfood.presentation.login.emaillogin.NavForgotPassword
+import com.project.resqfood.presentation.login.emaillogin.SignInUsingEmail
+import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModel
+import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModelFactory
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -52,12 +58,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val auth = FirebaseAuth.getInstance()
+        val accountService: AccountService = AccountServiceImpl()
         val alreadyLoggedIn = FirebaseAuth.getInstance().currentUser != null
         enableEdgeToEdge()
         setContent {
             AppTheme {
+
                 val navController = rememberNavController()
-                val viewModel: SignInViewModel = viewModel()
+                val viewModel: SignInDataViewModel = viewModel()
                 if (alreadyLoggedIn)
                     viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
                 NavHost(
@@ -65,15 +74,16 @@ class MainActivity : ComponentActivity() {
                     startDestination = if (alreadyLoggedIn)
                         NavMainScreen else NavSignInUI
                 ) {
-
                     composable<NavSignInUI> {
-                        SignInUI(navController = navController)
+                        val mainSignInViewModel:MainSignInViewModel = viewModel(factory = MainSignInViewModelFactory(auth, accountService))
+                        SignInUI(navController = navController, mainSignInViewModel)
                     }
                     composable<NavOTPVerificationUI> {
                         OTPVerificationUI(navController = navController)
                     }
                     composable<NavEmailSignIn> {
-                        SignInUsingEmail(navController = navController)
+                        val emailViewModel: EmailSignInViewModel = viewModel(factory = EmailSignInViewModelFactory(auth, accountService))
+                        SignInUsingEmail(emailViewModel,navController = navController)
                     }
                     composable<NavForgotPassword> {
                         ForgotPassword(navController = navController)

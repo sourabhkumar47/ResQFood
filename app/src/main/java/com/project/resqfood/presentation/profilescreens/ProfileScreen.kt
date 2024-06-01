@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -81,8 +80,8 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
 import com.project.resqfood.presentation.login.NavPersonalDetails
-import com.project.resqfood.presentation.login.NavSignInUI
-import com.project.resqfood.presentation.login.SignInViewModel
+import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
+import com.project.resqfood.presentation.login.SignInDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -113,7 +112,7 @@ enum class TabItem(val label: String){
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
-    val viewModel: SignInViewModel = viewModel()
+    val viewModel: SignInDataViewModel = viewModel()
     val user by viewModel.user.collectAsState()
     Log.i("ProfileScreen", "User data fetched: $user")
     val auth = FirebaseAuth.getInstance()

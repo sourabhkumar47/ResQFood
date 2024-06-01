@@ -201,7 +201,7 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
     val onClickSave = {
         if(name.isEmpty())
             Toast.makeText(context,"Name cannot be empty", Toast.LENGTH_SHORT).show()
-        else if(!emailAuthentication.isValidEmail(email))
+        else if(!isValidEmail(email))
             Toast.makeText(context,"Invalid Email", Toast.LENGTH_SHORT).show()
         else if(selectedGender == "Select Gender")
             Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()

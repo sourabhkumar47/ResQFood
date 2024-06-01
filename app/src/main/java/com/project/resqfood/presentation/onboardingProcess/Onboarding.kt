@@ -37,7 +37,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
-import com.project.resqfood.presentation.login.NavSignInUI
+import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
