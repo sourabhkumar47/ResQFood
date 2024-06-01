@@ -53,4 +53,6 @@ interface AccountService {
         callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks,
         forceResendingToken: PhoneAuthProvider.ForceResendingToken
     )
+
+    fun signInAnonymously(context: Context, auth: FirebaseAuth, onTask: (Task<AuthResult>) -> Unit)
 }

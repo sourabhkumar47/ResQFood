@@ -181,4 +181,13 @@ class AccountServiceImpl: AccountService {
             }
     }
 
+    override fun signInAnonymously(context: Context,auth: FirebaseAuth,onTask: (Task<AuthResult>) -> Unit){
+        context.getActivity()?.let {
+            auth.signInAnonymously()
+                .addOnCompleteListener(it) { task ->
+                    onTask(task)
+                }
+        }
+    }
+
 }

@@ -38,7 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
-import com.project.resqfood.presentation.login.PhoneNumberSignIn
 import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.otpCheck
 import kotlinx.serialization.Serializable
@@ -100,7 +99,7 @@ fun OTPVerificationUI(mainSignInViewModel: MainSignInViewModel,navController: Na
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(text = "We have sent a verification code to")
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = MainActivity.phoneNumber)
+                Text(text = mainUi.phoneNumber)
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(text = "Enter OTP")
                 Spacer(modifier = Modifier.height(8.dp))

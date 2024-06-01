@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -49,11 +50,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         var userEntity: UserEntity? = null
-        var phoneNumber: String = ""
-        var storedVerificationId = ""
-        var forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
-        var countDownTime = MutableStateFlow(60000)
-        var isResendButtonEnabled = MutableStateFlow(false)
+        var isUserAnonymous = mutableStateOf(false)
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)

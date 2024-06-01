@@ -18,6 +18,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.R
 import com.project.resqfood.domain.services.AccountService
+import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import java.util.UUID
@@ -78,6 +80,25 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
 
     fun otpErrorStateChange(isError: Boolean, errorText: String){
         uiState.value = uiState.value.copy(isOtpValid = !isError, otpError = errorText)
+    }
+
+    fun loginAnonymously(snackbarHostState: SnackbarHostState, context: Context, navController: NavController){
+        if(uiState.value.isLoading)
+            return
+        setIsLoading(true)
+        viewModelScope.launch {
+            accountService.signInAnonymously(context,auth) { task ->
+                setIsLoading(false)
+                if (task.isSuccessful) {
+                    MainActivity.isUserAnonymous.value = true
+                    navController.navigate(NavMainScreen)
+                } else if (task.exception != null) {
+                    showSnackbar(snackbarHostState, task.exception!!.message ?: "Failed to login")
+                } else {
+                    showSnackbar(snackbarHostState, "Failed to login")
+                }
+            }
+        }
     }
 
     private fun showSnackbar(snackbarHostState: SnackbarHostState, message: String) {
