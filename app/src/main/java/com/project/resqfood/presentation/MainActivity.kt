@@ -6,6 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -73,23 +79,59 @@ class MainActivity : ComponentActivity() {
                     startDestination = if (alreadyLoggedIn)
                         NavMainScreen else NavOnboarding
                 ) {
-                    composable<NavSignInUI> {
+                    composable<NavSignInUI>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                          SignInUI(navController = navController, mainSignInViewModel)
                     }
-                    composable<NavOTPVerificationUI> {
+                    composable<NavOTPVerificationUI>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                         OTPVerificationUI(navController = navController, mainSignInViewModel = mainSignInViewModel)
                     }
-                    composable<NavEmailSignIn> {
+                    composable<NavEmailSignIn>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                         val emailViewModel: EmailSignInViewModel = viewModel(factory = EmailSignInViewModelFactory(auth, accountService))
                         SignInUsingEmail(emailViewModel,navController = navController)
                     }
-                    composable<NavForgotPassword> {
+                    composable<NavForgotPassword>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                         ForgotPassword(navController = navController)
                     }
-                    composable<NavMainScreen> {
+                    composable<NavMainScreen>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                         MainScreen(navController = navController)
                     }
-                    composable<NavPersonalDetails> {
+                    composable<NavPersonalDetails>(
+                        enterTransition = {
+                            slideInHorizontally(animationSpec = tween(300),
+                                initialOffsetX = { fullWidth->fullWidth }
+                            )
+                        },
+                    ) {
                         PersonalDetails(navigationAfterCompletion = {
                             navController.popBackStack(navController.graph.startDestinationId, true)
                             navController.navigate(NavMainScreen)
