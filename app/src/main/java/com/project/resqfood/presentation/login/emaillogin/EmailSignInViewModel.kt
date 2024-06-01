@@ -1,21 +1,20 @@
 package com.project.resqfood.presentation.login.emaillogin
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.domain.services.AccountService
 import com.project.resqfood.domain.services.AccountServiceImpl
 import kotlinx.coroutines.launch
 
-class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: AccountService): ViewModel() {
+class EmailSignInViewModel(val auth: FirebaseAuth, val accountServiceImpl: AccountService) :
+    ViewModel() {
     var uiState = mutableStateOf(EmailUIState())
-    private set
+        private set
 
     var isSignInMode = mutableStateOf(true)
         private set
@@ -57,7 +56,13 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
         uiState.value = uiState.value.copy(isNameValid = !isError, nameError = errorText)
     }
 
-    fun forgotPassword(context: Context, navController: NavController, onSuccess: () -> Unit){
+    fun showSnackBar(snackbarHostState: SnackbarHostState, message: String) {
+        viewModelScope.launch {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    fun forgotPassword(snackbarHostState: SnackbarHostState, onSuccess: () -> Unit) {
         if (uiState.value.isLoading) return
         uiState.value = uiState.value.copy(isLoading = true)
         viewModelScope.launch {
@@ -65,11 +70,11 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
                 uiState.value = uiState.value.copy(isLoading = false)
                 if (task.isSuccessful) {
                     onSuccess()
-                    Toast.makeText(context, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                    showSnackBar(snackbarHostState, "Password reset email sent")
                 } else if (task.exception != null) {
-                    Toast.makeText(context, task.exception!!.message ?: "Failed to send email", Toast.LENGTH_SHORT).show()
+                    showSnackBar(snackbarHostState, task.exception!!.message ?: "Failed to send email")
                 } else {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    showSnackBar(snackbarHostState, "Something went wrong")
                 }
             }
         }
@@ -77,8 +82,7 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
 
 
     fun login(
-        context: Context,
-        navController: NavController,
+        snackbarHostState: SnackbarHostState,
         onSuccess: () -> Unit
     ) {
         if (uiState.value.isLoading) return
@@ -90,39 +94,44 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
                 uiState.value.password
             ) { task ->
                 uiState.value = uiState.value.copy(isLoading = false)
-                if (task.isSuccessful){
+                if (task.isSuccessful) {
                     onSuccess()
                 } else if (task.exception != null) {
-                    Toast.makeText(context, task.exception!!.message ?: "Failed to login", Toast.LENGTH_SHORT).show()
+                    showSnackBar(
+                        snackbarHostState,
+                        task.exception!!.message ?: "Failed to login"
+                    )
                 } else {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    showSnackBar(
+                        snackbarHostState,
+                        "Failed to login. Something went wrong"
+                    )
                 }
             }
         }
     }
 
-    private fun addNameInAccount(onSuccess: () -> Unit, context: Context) {
+    private fun addNameInAccount(onSuccess: () -> Unit, snackbarHostState: SnackbarHostState) {
         viewModelScope.launch {
             AccountServiceImpl().updateUserProfile(auth, uiState.value.name) { task ->
                 uiState.value = uiState.value.copy(isLoading = false)
                 if (task.isSuccessful) {
                     onSuccess()
                 } else if (task.exception != null) {
-                    Toast.makeText(
-                        context,
-                        task.exception!!.message ?: "Failed to add name in account",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showSnackBar(
+                        snackbarHostState,
+                        task.exception!!.message ?: "Failed to add name in account"
+                    )
                     Log.e("CreateAccountViewModel", "Failed to add name in account", task.exception)
                 } else {
-                    Toast.makeText(context, "Failed to add name in account", Toast.LENGTH_SHORT).show()
+                    showSnackBar(snackbarHostState, "Failed to add name in account")
                     Log.e("CreateAccountViewModel", "Failed to add name in account")
                 }
             }
         }
     }
 
-    fun createAccount(context: Context, onSuccess: () -> Unit) {
+    fun createAccount(snackbarHostState: SnackbarHostState, onSuccess: () -> Unit) {
         if (uiState.value.isLoading)
             return
         uiState.value = uiState.value.copy(isLoading = true)
@@ -134,18 +143,17 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
                 uiState.value.name
             ) { task ->
                 if (task.isSuccessful) {
-                    addNameInAccount(onSuccess, context)
+                    addNameInAccount(onSuccess, snackbarHostState)
                 } else if (task.exception != null) {
                     uiState.value = uiState.value.copy(isLoading = false)
-                    Toast.makeText(
-                        context,
-                        task.exception!!.message ?: "Failed to create account",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showSnackBar(
+                        snackbarHostState,
+                        task.exception!!.message ?: "Failed to create account"
+                    )
                     Log.e("CreateAccountViewModel", "Failed to create account", task.exception)
                 } else {
                     uiState.value = uiState.value.copy(isLoading = false)
-                    Toast.makeText(context, "Failed to create account", Toast.LENGTH_SHORT).show()
+                    showSnackBar(snackbarHostState, "Failed to create account")
                     Log.e("CreateAccountViewModel", "Failed to create account")
 
                 }
@@ -154,7 +162,8 @@ class EmailSignInViewModel(val auth:FirebaseAuth, val accountServiceImpl: Accoun
     }
 }
 
-class EmailSignInViewModelFactory(val auth: FirebaseAuth, val accountServiceImpl: AccountService) : ViewModelProvider.Factory {
+class EmailSignInViewModelFactory(val auth: FirebaseAuth, val accountServiceImpl: AccountService) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EmailSignInViewModel::class.java))
             return EmailSignInViewModel(auth, accountServiceImpl) as T

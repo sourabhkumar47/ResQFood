@@ -29,10 +29,6 @@ class SignInDataViewModel: ViewModel() {
         userDataRepository.setUserData(user)
     }
 
-    fun addVerificationIds(verificationId: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken){
-        MainActivity.storedVerificationId = verificationId
-        MainActivity.forceResendingToken = forceResendingToken
-    }
 }
 
 class SignInDataViewModelFactory() : ViewModelProvider.Factory {

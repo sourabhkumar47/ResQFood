@@ -1,5 +1,7 @@
 package com.project.resqfood.presentation.login
 
+import androidx.core.text.isDigitsOnly
+
 
 fun nameCheck(name: String, error: (Boolean, String)-> Unit): Boolean{
     if(name.isEmpty()){
@@ -25,6 +27,15 @@ fun phoneNumberCheck(phoneNumber: String, error: (Boolean, String) -> Unit): Boo
         return false
     }
     error(true, "Invalid phone number format")
+    return true
+}
+
+fun otpCheck(otp: String, error: (Boolean, String) -> Unit): Boolean{
+    if(otp.length == 6 && otp.isDigitsOnly()){
+        error(false, "")
+        return false
+    }
+    error(true, "OTP must be 6 digits long number")
     return true
 }
 
