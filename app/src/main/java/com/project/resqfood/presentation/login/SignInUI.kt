@@ -40,6 +40,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -107,10 +108,10 @@ fun SignInUI(
     val auth = FirebaseAuth.getInstance()
     val onSendOTP = {
         val finalPhoneNumber = "+91$phoneNumber"
-        if(!isValidPhoneNumber(finalPhoneNumber)){
+        if (!isValidPhoneNumber(finalPhoneNumber)) {
             Toast.makeText(context, "Invalid Phone Number", Toast.LENGTH_SHORT).show()
             isLoading = false
-        }else {
+        } else {
             isLoading = true
             phoneNumberSignIn.onLoginClicked(
                 auth,
@@ -142,13 +143,15 @@ fun SignInUI(
         }
     }
     Surface(
-        color = if(!isSystemInDarkTheme())MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
-    ){
-        Spacer(modifier =Modifier.height(32.dp))
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.25f),
-            contentAlignment = Alignment.Center) {
+        color = if (!isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.25f),
+            contentAlignment = Alignment.Center
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_without_background),
                 contentDescription = null,
@@ -160,16 +163,16 @@ fun SignInUI(
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter,
         ) {
-            Card(shape = RoundedCornerShape(24.dp),
+            Card(
+                shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.75f)
-                    ,
+                    .fillMaxHeight(0.75f),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
             ) {
-                if(isLoading)
+                if (isLoading)
                     Wait()
                 Box(
                     modifier = Modifier
@@ -187,7 +190,8 @@ fun SignInUI(
                             .verticalScroll(scrollView)
                     ) {
 
-                        Text(text = stringResource(id = R.string.LoginIntro),
+                        Text(
+                            text = stringResource(id = R.string.LoginIntro),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
@@ -199,7 +203,7 @@ fun SignInUI(
                             value = phoneNumber,
                             onValueChange = { phoneNumber = it },
 //                        label = { Text("Phone Number")},
-                            placeholder = { Text("Enter Phone Number")},
+                            placeholder = { Text("Enter Phone Number") },
                             modifier = Modifier.fillMaxWidth(),
                             prefix = {
                                 Row {
@@ -221,14 +225,16 @@ fun SignInUI(
                                     onSendOTP()
                                 }
                             )
-                            )
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = onSendOTP,
+                        Button(
+                            onClick = onSendOTP,
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = !isLoading) {
+                            enabled = !isLoading
+                        ) {
                             Text(text = "Send OTP")
                         }
-                        Spacer(modifier =Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
                         DividerWithText(text = "or")
                         Spacer(modifier = Modifier.height(32.dp))
                         Row {
@@ -244,10 +250,13 @@ fun SignInUI(
                             Spacer(modifier = Modifier.width(48.dp))
                             CircleImage(imageVector = Icons.Default.Email, size = 40,
                                 onClick = {
-                                    if(!isLoading)
+                                    if (!isLoading)
                                         navController.navigate(Destinations.EmailSignIn.route)
                                 })
 
+                        }
+                        Button(onClick = { navController.navigate(Destinations.MainScreen.route) }, modifier = Modifier.padding(top = 12.dp)) {
+                            Text(text = "Continue as Guest User")
                         }
                     }
                 }
@@ -257,7 +266,7 @@ fun SignInUI(
 }
 
 @Composable
-fun DividerWithText(text: String = "Or"){
+fun DividerWithText(text: String = "Or") {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -292,7 +301,7 @@ fun DividerWithText(text: String = "Or"){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OTPVerificationUI(navController: NavController){
+fun OTPVerificationUI(navController: NavController) {
     val scrollable = rememberScrollState()
     var isLoading by remember {
         mutableStateOf(false)
@@ -307,15 +316,14 @@ fun OTPVerificationUI(navController: NavController){
     val context = LocalContext.current
     val onVerificationComplete = {
         onSignInSuccessful(navController)
-            isLoading = false
+        isLoading = false
     }
     val onClickVerifyOTP = {
         isLoading = true
         if (MainActivity.storedVerificationId.isEmpty()) {
             Toast.makeText(context, "Verification Id is empty", Toast.LENGTH_SHORT)
                 .show()
-        }
-        else {
+        } else {
             phoneNumberSignIn.verifyPhoneNumberWithCode(
                 FirebaseAuth.getInstance(),
                 context,
@@ -331,8 +339,9 @@ fun OTPVerificationUI(navController: NavController){
             )
         }
     }
+
     @Composable
-    fun TopAppBarOTP(){
+    fun TopAppBarOTP() {
         TopAppBar(title = {
             Text(text = "OTP Verification")
         },
@@ -340,7 +349,10 @@ fun OTPVerificationUI(navController: NavController){
                 IconButton(onClick = {
                     navController.popBackStack()
                 }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
                 }
             })
     }
@@ -358,7 +370,7 @@ fun OTPVerificationUI(navController: NavController){
                     .verticalScroll(scrollable),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(isLoading)
+                if (isLoading)
                     Wait()
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(text = "We have sent a verification code to")
@@ -367,9 +379,10 @@ fun OTPVerificationUI(navController: NavController){
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(text = "Enter OTP")
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(value = otp, onValueChange = {
-                    otp = it
-                },
+                OutlinedTextField(
+                    value = otp, onValueChange = {
+                        otp = it
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(
                         onDone = {
@@ -460,6 +473,7 @@ fun SignInUsingEmail(navController: NavController) {
     }
     val emailAuthentication = EmailAuthentication()
     val scrollView = rememberScrollState()
+
     @Composable
     fun SignIn() {
         Column(
@@ -471,7 +485,7 @@ fun SignInUsingEmail(navController: NavController) {
                 .verticalScroll(scrollView)
         ) {
             Text(text = "Welcome Back!", style = MaterialTheme.typography.headlineLarge)
-            Text(text= "Sign In", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Sign In", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(value = email, onValueChange = {
                 email = it
@@ -484,10 +498,10 @@ fun SignInUsingEmail(navController: NavController) {
             },
                 isError = passwordError != null,
                 supportingText = {
-                    if(passwordError != null)
+                    if (passwordError != null)
                         Text(text = passwordError!!)
                 },
-                placeholder = { Text("Enter Password")},
+                placeholder = { Text("Enter Password") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -499,51 +513,51 @@ fun SignInUsingEmail(navController: NavController) {
                     }
                 })
             Spacer(modifier = Modifier.height(16.dp))
-            Button(enabled = !isLoading,onClick = {
-                //Implement password and email validity here
-                if(!emailAuthentication.isValidEmail(email))
-                {
-                    Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-                passwordError = emailAuthentication.validatePassword(password)
-                if(passwordError != null){
-                    Toast.makeText(context, passwordError!!, Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-                isLoading = true
-                EmailAuthentication().signInWithEmail(email, password, context,
-                    onSuccess = {
-                        onSignInSuccessful(navController)
-                        isLoading = false
-                    },
-                    onFailure = {
-                        isLoading = false
-                    })
-            },
-                modifier = Modifier.fillMaxWidth()) {
+            Button(
+                enabled = !isLoading, onClick = {
+                    //Implement password and email validity here
+                    if (!emailAuthentication.isValidEmail(email)) {
+                        Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                    passwordError = emailAuthentication.validatePassword(password)
+                    if (passwordError != null) {
+                        Toast.makeText(context, passwordError!!, Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                    isLoading = true
+                    EmailAuthentication().signInWithEmail(email, password, context,
+                        onSuccess = {
+                            onSignInSuccessful(navController)
+                            isLoading = false
+                        },
+                        onFailure = {
+                            isLoading = false
+                        })
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = "Sign In")
             }
             Spacer(Modifier.height(8.dp))
             TextButton(enabled = !isLoading,
                 onClick = {
-                if(emailAuthentication.isValidEmail(email)) {
-                    isLoading = true
-                    emailAuthentication.forgotPassword(email = email,
-                        onSuccessfullySend = {
-                            navController.navigate(Destinations.ForgotPassword.route)
-                            isLoading = false
-                        },
-                        onFailed = {
-                            Toast.makeText(context, "Could not send email", Toast.LENGTH_SHORT)
-                                .show()
-                            isLoading = false
-                        })
-                }
-                else{
-                    Toast.makeText(context,"Invalid Email Format",Toast.LENGTH_SHORT).show()
-                }
-            }) {
+                    if (emailAuthentication.isValidEmail(email)) {
+                        isLoading = true
+                        emailAuthentication.forgotPassword(email = email,
+                            onSuccessfullySend = {
+                                navController.navigate(Destinations.ForgotPassword.route)
+                                isLoading = false
+                            },
+                            onFailed = {
+                                Toast.makeText(context, "Could not send email", Toast.LENGTH_SHORT)
+                                    .show()
+                                isLoading = false
+                            })
+                    } else {
+                        Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
+                    }
+                }) {
                 Text("Forgot Password?")
             }
             Spacer(Modifier.height(8.dp))
@@ -556,8 +570,9 @@ fun SignInUsingEmail(navController: NavController) {
             }
         }
     }
+
     @Composable
-    fun SignUp(){
+    fun SignUp() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -567,7 +582,7 @@ fun SignInUsingEmail(navController: NavController) {
                 .verticalScroll(scrollView)
         ) {
             Text(text = "New User?", style = MaterialTheme.typography.headlineLarge)
-            Text(text= "Sign Up", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Sign Up", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(32.dp))
             OutlinedTextField(value = email, onValueChange = {
                 email = it
@@ -577,8 +592,8 @@ fun SignInUsingEmail(navController: NavController) {
             OutlinedTextField(value = password, onValueChange = {
                 password = it
                 passwordError = null
-            }, placeholder = {Text("Create Password")},
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            }, placeholder = { Text("Create Password") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
@@ -591,12 +606,14 @@ fun SignInUsingEmail(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it
-                                passwordError = null},
+                onValueChange = {
+                    confirmPassword = it
+                    passwordError = null
+                },
                 placeholder = { Text("Confirm Password") },
                 isError = passwordError != null,
                 supportingText = {
-                    if(passwordError != null)
+                    if (passwordError != null)
                         Text(text = passwordError!!)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -617,11 +634,10 @@ fun SignInUsingEmail(navController: NavController) {
                     Toast.makeText(context, "Invalid Email Format", Toast.LENGTH_SHORT).show()
                 else if (passwordError != null)
                     Toast.makeText(context, passwordError!!, Toast.LENGTH_SHORT).show()
-                else if(password != confirmPassword){
+                else if (password != confirmPassword) {
                     passwordError = "Passwords do not match"
                     Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                }
-                else {
+                } else {
                     isLoading = true
                     EmailAuthentication().signUpWithEmail(email, password, context,
                         onSuccess = {
@@ -639,7 +655,7 @@ fun SignInUsingEmail(navController: NavController) {
 
     }
     Surface(
-        color = if(!isSystemInDarkTheme())MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+        color = if (!isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         Box(
@@ -676,7 +692,7 @@ fun SignInUsingEmail(navController: NavController) {
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    if(isSignInMode)
+                    if (isSignInMode)
                         SignIn()
                     else
                         SignUp()
@@ -694,27 +710,32 @@ fun SignInUsingEmail(navController: NavController) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForgotPassword(navController: NavController){
+fun ForgotPassword(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Reset Password") }, navigationIcon = {
                 IconButton(onClick = {
                     navController.popBackStack()
                 }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
                 }
             })
         }
     ) {
-        Column(modifier = Modifier
-            .padding(it)
-            .fillMaxSize(),
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
             CircleImage(size = 80, imageVector = Icons.Default.MarkEmailUnread)
             Spacer(modifier = Modifier.height(16.dp))
             Text("Password reset link has been sent on mail")
-            Spacer(modifier =Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text("Please check your mail")
             Spacer(modifier = Modifier.height(32.dp))
             TextButton(onClick = {
@@ -741,14 +762,15 @@ fun CircleImage(
     imageVector: ImageVector? = null,
     size: Int,
     onClick: () -> Unit = {}
-){
-    Box(contentAlignment =
-    Alignment.Center,modifier = Modifier
-        .size(size.dp)
-        .border(1.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
-        .clickable(onClick = onClick)
+) {
+    Box(
+        contentAlignment =
+        Alignment.Center, modifier = Modifier
+            .size(size.dp)
+            .border(1.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+            .clickable(onClick = onClick)
     ) {
-        if(painterId != null)
+        if (painterId != null)
             Image(
                 painter = painterResource(painterId),
                 contentDescription = null,
@@ -757,7 +779,7 @@ fun CircleImage(
                     .width((size - 8).dp)
                     .clip(CircleShape)
             )
-        else if(imageVector != null){
+        else if (imageVector != null) {
             Image(
                 imageVector = imageVector,
                 contentDescription = null,
@@ -772,7 +794,7 @@ fun CircleImage(
     }
 }
 
-fun Context.getActivity(): Activity ?= when(this){
+fun Context.getActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> null
@@ -783,9 +805,10 @@ fun Context.getActivity(): Activity ?= when(this){
  * Wait is a composable function that displays a linear progress indicator.
  */
 @Composable
-fun Wait(){
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth()
-        )
+fun Wait() {
+    LinearProgressIndicator(
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 
@@ -800,12 +823,13 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean {
     return regex.matches(phoneNumber)
 }
 
-fun onSignInSuccessful(navController: NavController){
+fun onSignInSuccessful(navController: NavController) {
     navController.navigate(Destinations.WaitScreen.route)
 }
 
 fun isInternetAvailable(context: Context): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = connectivityManager.activeNetwork ?: return false
     val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
     return when {

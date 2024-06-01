@@ -54,9 +54,11 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController, 
                     startDestination = if (alreadyLoggedIn)
-                        Destinations.MainScreen.route else Destinations.SignIn.route
+                        Destinations.MainScreen.route else Destinations.Onboarding.route
                 ) {
-
+                    composable(Destinations.Onboarding.route){
+                        Onboarding(navController = navController)
+                    }
                     composable(Destinations.SignIn.route) {
                         SignInUI(navController = navController)
                     }

@@ -145,4 +145,7 @@ dependencies {
 
     //pager
     implementation (libs.accompanist.pager)
+    //Motion Layout
+    implementation(libs.constraintlayout.compose)
+
 }

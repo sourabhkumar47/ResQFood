@@ -4,6 +4,7 @@ accompanistPager = "0.12.0"
 agp = "8.4.1"
 
 coilCompose = "2.6.0"
+constraintlayoutComposeVersion = "1.0.1"
 core = "1.0.2"
 credentialsPlayServicesAuth = "1.3.0-alpha04"
 firebaseAnalytics = "22.0.0"
@@ -52,6 +53,7 @@ androidx-navigation-compose-v273 = { module = "androidx.navigation:navigation-co
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 clock = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "clock", version.ref = "core" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutComposeVersion" }
 core = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "core", version.ref = "core" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
