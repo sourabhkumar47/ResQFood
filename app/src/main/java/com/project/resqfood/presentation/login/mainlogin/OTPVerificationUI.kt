@@ -129,7 +129,9 @@ fun OTPVerificationUI(mainSignInViewModel: MainSignInViewModel,navController: Na
                 }, enabled = otpState.isResendOTPButtonEnable && !otpState.isLoading) {
                     Text(
                         text =
-                        if (otpState.isResendOTPButtonEnable) "Resend OTP" else "Resend OTP in ${mainSignInViewModel.countDownTime.value/1000} seconds"
+                        if (otpState.isResendOTPButtonEnable) "Resend OTP"
+                        else if(otpState.isLoading) "Resend OTP"
+                        else "Resend OTP in ${mainSignInViewModel.countDownTime.value/1000} seconds"
                     )
                 }
                 Spacer(modifier = Modifier.height(54.dp))

@@ -44,9 +44,12 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
         forceResendingToken = forceResendingTokenIn
     }
 
+    var countDownTimer: CountDownTimer? = null
+
     fun startCountDown(){
+        stopCountDown()
         otpState.value = OTPState.OTP_TIMER_RUNNING
-        object : CountDownTimer(60000, 1000) {
+        countDownTimer = object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 viewModelScope.launch {
                     countDownTime.value = millisUntilFinished.toInt()
@@ -60,6 +63,11 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
                 }
             }
         }.start()
+    }
+
+    fun stopCountDown(){
+        countDownTimer?.cancel()
+        countDownTime.value = 0
     }
 
     fun setIsLoading(isLoading: Boolean) {
@@ -236,6 +244,7 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
                     otpState.value = OTPState.OTP_TIMER_STOPPED
                     onSignInSuccessful(navController)
                 } else if (task.exception != null) {
+                    otpState.value = OTPState.OTP_TIMER_STOPPED
                     showSnackbar(
                         snackbarHostState,
                         task.exception!!.message ?: "Failed to login"
