@@ -24,15 +24,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAddAlt1
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -43,7 +39,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -61,11 +56,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
@@ -79,12 +72,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
 import com.project.resqfood.R
 import com.project.resqfood.model.UserEntity
-import com.project.resqfood.presentation.Destinations
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+
+@Serializable
+object NavPersonalDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -204,7 +201,7 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
     val onClickSave = {
         if(name.isEmpty())
             Toast.makeText(context,"Name cannot be empty", Toast.LENGTH_SHORT).show()
-        else if(!emailAuthentication.isValidEmail(email))
+        else if(!isValidEmail(email))
             Toast.makeText(context,"Invalid Email", Toast.LENGTH_SHORT).show()
         else if(selectedGender == "Select Gender")
             Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()
@@ -554,6 +551,9 @@ fun isNewUser(isNew: ()-> Unit, isOld: ()-> Unit, navController: NavController){
     }
 }
 
+@Serializable
+object NavWaitScreen
+
 @Composable
 fun WaitScreen(navController: NavController){
     val auth = FirebaseAuth.getInstance()
@@ -563,11 +563,11 @@ fun WaitScreen(navController: NavController){
             if (user != null) {
                 isNewUser(
                     isNew = {
-                        navController.navigate(Destinations.PersonalDetails.route)
+                        navController.navigate(NavPersonalDetails)
                     },
                     isOld = {
                         navController.popBackStack(navController.graph.startDestinationId, true)
-                        navController.navigate(Destinations.MainScreen.route)
+                        navController.navigate(NavMainScreen)
                     },
                     navController = navController
                 )

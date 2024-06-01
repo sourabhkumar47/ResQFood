@@ -1,8 +1,6 @@
 package com.project.resqfood.presentation.itemdetailscreen
 
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -34,7 +32,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -50,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,9 +56,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.project.resqfood.R
 import com.project.resqfood.model.FoodCategory
-import com.project.resqfood.presentation.Destinations
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.Calendar
+
+
+@Serializable
+object NavAddingLeftovers
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,7 +153,9 @@ fun AddingLeftovers(outerNavController: NavController) {
                 }
             ) {
                 SuccessScreen(buttonText = "Next", onClick = {
-                                                             outerNavController.navigate(Destinations.MainScreen.route)
+                                                             outerNavController.navigate(
+                                                                 NavMainScreen
+                                                             )
                 }, animationJsonResId = R.raw.successanimation)
             }
         }

@@ -125,41 +125,4 @@ class EmailAuthentication {
     }
 
 
-    /**
-     * validatePassword is a function that validates a password based on certain criteria.
-     *
-     * @param password The password to be validated.
-     * @return A string containing the validation error message if the password is invalid, or null if the password is valid.
-     */
-    fun validatePassword(password: String): String? {
-        if (password.length < 8) {
-            return "Password should be at least 8 characters long"
-        }
-        if (!password.any { it.isUpperCase() }) {
-            return "Password should contain at least one uppercase letter"
-        }
-        if (!password.any { it.isLowerCase() }) {
-            return "Password should contain at least one lowercase letter"
-        }
-        if (!password.any { it.isDigit() }) {
-            return "Password should contain at least one digit"
-        }
-        if (!password.contains(Regex("[@#$%^&+=]"))) {
-            return "Password should contain at least one special character (@, #, $, %, ^, &, +, =)"
-        }
-        return null
-    }
-
-
-    /**
-     * isValidEmail is a function that checks if an email is valid.
-     *
-     * @param email The email to be checked.
-     * @return A boolean indicating whether the email is valid.
-     */
-    fun isValidEmail(email: String): Boolean {
-        val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
-        return email.matches(emailRegex.toRegex())
-    }
-
 }

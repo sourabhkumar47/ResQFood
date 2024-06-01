@@ -15,10 +15,10 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.project.resqfood.R
+import com.project.resqfood.presentation.login.mainlogin.CircleImage
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import java.util.UUID
@@ -90,9 +90,4 @@ fun GoogleSignInButton(onClickUI: () -> Unit, onFailureUI: () -> Unit, onSuccess
             }
         }
     }
-    CircleImage(painterId = R.drawable.google, size = 40,
-        onClick = {
-            onClickUI()
-            onClick()
-        })
 }

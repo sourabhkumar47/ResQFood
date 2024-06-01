@@ -2,6 +2,7 @@ package com.project.resqfood.presentation.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.domain.repository.UserDataRepository
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class SignInViewModel: ViewModel() {
+class SignInDataViewModel: ViewModel() {
 
     private val userDataRepository = UserDataRepository()
     private val _user = MutableStateFlow(MainActivity.userEntity)
@@ -31,5 +32,13 @@ class SignInViewModel: ViewModel() {
     fun addVerificationIds(verificationId: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken){
         MainActivity.storedVerificationId = verificationId
         MainActivity.forceResendingToken = forceResendingToken
+    }
+}
+
+class SignInDataViewModelFactory() : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SignInDataViewModel::class.java))
+            return SignInDataViewModel() as T
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

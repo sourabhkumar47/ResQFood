@@ -13,6 +13,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.login.mainlogin.getActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,8 +62,8 @@ class PhoneNumberSignIn {
      */
     fun onLoginClicked(auth: FirebaseAuth,
                        context: Context,
-                       phoneNumber: String, viewModel: SignInViewModel, onCodeSent:() -> Unit
-    ,onAutoVerify:() -> Unit, onInvalidRequest: () -> Unit,
+                       phoneNumber: String, viewModel: SignInDataViewModel, onCodeSent:() -> Unit
+                       , onAutoVerify:() -> Unit, onInvalidRequest: () -> Unit,
                        onQuotaExceeded: () -> Unit,
                        onRecaptchaVerification: () -> Unit){
         auth.setLanguageCode("en")
@@ -180,7 +181,7 @@ class PhoneNumberSignIn {
      * @param onInvalidRequest A function to be invoked when the verification request is invalid.
      * @param onCodeSent A function to be invoked when the verification code is sent.
      */
-    fun resendVerificationCode(auth: FirebaseAuth, context: Context, phoneNumber: String,viewModel: SignInViewModel
+    fun resendVerificationCode(auth: FirebaseAuth, context: Context, phoneNumber: String,viewModel: SignInDataViewModel
     ,onVerificationCompleted: () -> Unit, onRecaptchaVerification: () -> Unit, onQuotaExceeded: () -> Unit, onInvalidRequest: () -> Unit,
                                onCodeSent: () -> Unit){
         val callback = object: PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
