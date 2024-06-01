@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -38,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
 import com.project.resqfood.presentation.login.PhoneNumberSignIn
 import com.project.resqfood.presentation.login.SignInDataViewModel
+import com.project.resqfood.presentation.login.otpCheck
 import kotlinx.serialization.Serializable
 
 
@@ -52,45 +55,16 @@ object NavOTPVerificationUI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OTPVerificationUI(navController: NavController){
+fun OTPVerificationUI(mainSignInViewModel: MainSignInViewModel,navController: NavController){
     val scrollable = rememberScrollState()
-    var isLoading by remember {
-        mutableStateOf(false)
-    }
-    val countDownTime by MainActivity.countDownTime.collectAsState(initial = 60000)
-    val isResendEnabled by MainActivity.isResendButtonEnabled.collectAsState(initial = false)
-    val phoneNumberSignIn = PhoneNumberSignIn()
-    var otp by remember {
-        mutableStateOf("")
-    }
-    val viewModel: SignInDataViewModel = viewModel()
     val context = LocalContext.current
-    val onVerificationComplete = {
-        onSignInSuccessful(navController)
-        isLoading = false
+    val mainUi by mainSignInViewModel.uiState
+    val otpState by mainSignInViewModel.otpState
+    val snackbarHostState = remember {
+        SnackbarHostState()
     }
-    val onClickVerifyOTP = {
-        isLoading = true
-        if (MainActivity.storedVerificationId.isEmpty()) {
-            Toast.makeText(context, "Verification Id is empty", Toast.LENGTH_SHORT)
-                .show()
-        }
-        else {
-            phoneNumberSignIn.verifyPhoneNumberWithCode(
-                FirebaseAuth.getInstance(),
-                context,
-                MainActivity.storedVerificationId,
-                otp,
-                onVerificationCompleted = onVerificationComplete,
-                onVerificationFailed = {
-                    isLoading = false
-                },
-                onInvalidOTP = {
-                    isLoading = false
-                }
-            )
-        }
-    }
+    if(!mainUi.isOtpValid)
+        otpCheck(mainUi.otp, mainSignInViewModel::otpErrorStateChange)
     @Composable
     fun TopAppBarOTP(){
         TopAppBar(title = {
@@ -105,6 +79,9 @@ fun OTPVerificationUI(navController: NavController){
             })
     }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBarOTP()
         }
@@ -118,7 +95,7 @@ fun OTPVerificationUI(navController: NavController){
                     .verticalScroll(scrollable),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(isLoading)
+                if(otpState.isLoading)
                     Wait()
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(text = "We have sent a verification code to")
@@ -127,53 +104,33 @@ fun OTPVerificationUI(navController: NavController){
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(text = "Enter OTP")
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(value = otp, onValueChange = {
-                    otp = it
-                },
+                OutlinedTextField(value = mainUi.otp, onValueChange = mainSignInViewModel::otpChange,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onClickVerifyOTP()
-                        })
+                    keyboardActions = KeyboardActions(),
+                    isError = !mainUi.isOtpValid,
+                    supportingText = {
+                        if(!mainUi.isOtpValid)
+                            Text(text = mainUi.otpError)
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = onClickVerifyOTP,
-                    enabled = !isLoading
+                    onClick = {
+                        if(otpCheck(mainUi.otp, mainSignInViewModel::otpErrorStateChange))
+                            return@Button
+                        mainSignInViewModel.otpVerifyButton(navController, snackbarHostState =snackbarHostState )
+                    },
+                    enabled = otpState.isLoginButtonEnabled
                 ) {
                     Text(text = "Verify OTP")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 TextButton(onClick = {
-                    isLoading = true
-                    phoneNumberSignIn.resendVerificationCode(
-                        FirebaseAuth.getInstance(),
-                        context,
-                        MainActivity.phoneNumber,
-                        viewModel,
-                        onVerificationCompleted = onVerificationComplete,
-                        onInvalidRequest = {
-                            Toast.makeText(context, "Invalid Request", Toast.LENGTH_SHORT).show()
-                            isLoading = false
-                        },
-                        onQuotaExceeded = {
-                            Toast.makeText(context, "Quota Exceeded", Toast.LENGTH_SHORT).show()
-                            isLoading = false
-                        },
-                        onRecaptchaVerification = {
-                            Toast.makeText(context, "Recaptcha Verification", Toast.LENGTH_SHORT)
-                                .show()
-                            isLoading = false
-                        },
-                        onCodeSent = {
-                            MainActivity.isResendButtonEnabled.value = false
-                            isLoading = false
-                        }
-                    )
-                }, enabled = isResendEnabled && !isLoading) {
+                    mainSignInViewModel.resendOTPButton(context,snackbarHostState,navController)
+                }, enabled = otpState.isResendOTPButtonEnable && !otpState.isLoading) {
                     Text(
                         text =
-                        if (isResendEnabled) "Resend OTP" else "Resend OTP in $countDownTime seconds"
+                        if (otpState.isResendOTPButtonEnable) "Resend OTP" else "Resend OTP in ${mainSignInViewModel.countDownTime.value/1000} seconds"
                     )
                 }
                 Spacer(modifier = Modifier.height(54.dp))

@@ -66,9 +66,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-
                 val navController = rememberNavController()
                 val viewModel: SignInDataViewModel = viewModel()
+                val mainSignInViewModel:MainSignInViewModel = viewModel(factory = MainSignInViewModelFactory(auth, accountService))
                 if (alreadyLoggedIn)
                     viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
                 NavHost(
@@ -77,11 +77,10 @@ class MainActivity : ComponentActivity() {
                         NavMainScreen else NavOnboarding
                 ) {
                     composable<NavSignInUI> {
-                        val mainSignInViewModel:MainSignInViewModel = viewModel(factory = MainSignInViewModelFactory(auth, accountService))
-                        SignInUI(navController = navController, mainSignInViewModel)
+                         SignInUI(navController = navController, mainSignInViewModel)
                     }
                     composable<NavOTPVerificationUI> {
-                        OTPVerificationUI(navController = navController)
+                        OTPVerificationUI(navController = navController, mainSignInViewModel = mainSignInViewModel)
                     }
                     composable<NavEmailSignIn> {
                         val emailViewModel: EmailSignInViewModel = viewModel(factory = EmailSignInViewModelFactory(auth, accountService))

@@ -35,6 +35,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -85,7 +87,7 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
         confirmPasswordCheck(uiState.password, uiState.confirmPassword, viewModel::onConfirmPasswordErrorStateChange)
     if(!uiState.isEmailValid)
         emailCheck(uiState.email, viewModel::onEmailErrorStateChange)
-
+    val snackbarHostState = remember{SnackbarHostState()}
     @Composable
     fun SignIn() {
         LazyColumn(
@@ -140,7 +142,7 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
                         if(passwordCheck(uiState.password, viewModel::onPasswordErrorStateChange)) {
                             return@Button
                         }
-                        viewModel.login(context, navController) {
+                        viewModel.login(snackbarHostState) {
                             onSignInSuccessful(navController)
                         }
                     },
@@ -156,7 +158,7 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
                         if(emailCheck(uiState.email, viewModel::onEmailErrorStateChange)) {
                             return@TextButton
                         }
-                        viewModel.forgotPassword(context, navController) {
+                        viewModel.forgotPassword(snackbarHostState) {
                             navController.navigate(NavForgotPassword)
                         }
                     }) {
@@ -266,7 +268,7 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
                     if(confirmPasswordCheck(uiState.password, uiState.confirmPassword, viewModel::onConfirmPasswordErrorStateChange)) {
                         return@Button
                     }
-                    viewModel.createAccount(context){
+                    viewModel.createAccount(snackbarHostState){
                         onSignInSuccessful(navController)
                     }
                 }, modifier = Modifier.fillMaxWidth()) {
@@ -277,10 +279,14 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
 
     }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
         ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()
+        Box(modifier = Modifier
+            .fillMaxSize()
 
-                .background(color = if (!isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer),
+            .background(color = if (!isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer),
 
             ) {
             Spacer(modifier = Modifier.height(32.dp))

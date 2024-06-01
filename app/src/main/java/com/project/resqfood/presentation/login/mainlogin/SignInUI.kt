@@ -9,6 +9,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -48,6 +49,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -78,13 +81,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.presentation.MainActivity
 
 import com.project.resqfood.R
-import com.project.resqfood.presentation.login.EmailAuthentication
 import com.project.resqfood.presentation.login.GoogleSignInButton
 import com.project.resqfood.presentation.login.NavWaitScreen
 import com.project.resqfood.presentation.login.PhoneNumberSignIn
 import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.emaillogin.NavEmailSignIn
 import com.project.resqfood.presentation.login.isValidPhoneNumber
+import com.project.resqfood.presentation.login.phoneNumberCheck
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -104,149 +107,136 @@ fun SignInUI(
 ) {
    val uiState by mainSignInViewModel.uiState
     val context = LocalContext.current
-    val phoneNumberSignIn = PhoneNumberSignIn()
-    val auth = FirebaseAuth.getInstance()
-    val dataViewModel = viewModel<SignInDataViewModel>()
-    val onSendOTP = {
-        val finalPhoneNumber = "+91${uiState.phoneNumber}"
-        if(!isValidPhoneNumber(finalPhoneNumber)){
-            Toast.makeText(context, "Invalid Phone Number", Toast.LENGTH_SHORT).show()
-            mainSignInViewModel.setIsLoading(false)
-        }else {
-            mainSignInViewModel.setIsLoading(false)
-            phoneNumberSignIn.onLoginClicked(
-                auth,
-                context,
-                finalPhoneNumber,
-                onAutoVerify = {
-                    onSignInSuccessful(navController)
-                    mainSignInViewModel.setIsLoading(false)
-                },
-                viewModel = dataViewModel,
-                onCodeSent = {
-                    //TODO(Make the OTP verification UI visible)
-                    MainActivity.phoneNumber = finalPhoneNumber
-                    navController.navigate(NavOTPVerificationUI)
-                },
-                onRecaptchaVerification = {
-                    Toast.makeText(context, "Recaptcha Verification", Toast.LENGTH_LONG).show()
-                    mainSignInViewModel.setIsLoading(false)
-                },
-                onInvalidRequest = {
-                    Toast.makeText(context, "Invalid Request", Toast.LENGTH_LONG).show()
-                    mainSignInViewModel.setIsLoading(false)
-                },
-                onQuotaExceeded = {
-                    Toast.makeText(context, "Quota Exceeded, Use Other Method", Toast.LENGTH_LONG)
-                        .show()
-                    mainSignInViewModel.setIsLoading(false)
-                })
-        }
+    val snackbarHostState = remember {
+        SnackbarHostState()
     }
-    Surface(
-        color = if(!isSystemInDarkTheme())MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
-    ){
-        Spacer(modifier =Modifier.height(32.dp))
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.25f),
-            contentAlignment = Alignment.Center) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_without_background),
-                contentDescription = null,
-            )
+    if(!uiState.isPhoneNumberValid)
+        phoneNumberCheck(uiState.phoneNumber, mainSignInViewModel::onPhoneNumberErrorStateChange)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         }
-        Spacer(modifier = Modifier.height(32.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter,
-        ) {
-            Card(shape = RoundedCornerShape(24.dp),
+    ) {
+        paddingValues->
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = if (!isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+            ) ){
+            Spacer(modifier = Modifier.height(32.dp))
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.75f)
-                    ,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
+                    .fillMaxHeight(0.25f),
+                contentAlignment = Alignment.Center
             ) {
-                if(uiState.isLoading)
-                    Wait()
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.logo_without_background),
+                    modifier = Modifier.padding(paddingValues),
+                    contentDescription = null,
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Card(
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.75f),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.background
+                    ),
                 ) {
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
+                    if (uiState.isLoading)
+                        Wait()
+                    Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .width(300.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
                     ) {
 
-                        Text(text = stringResource(id = R.string.LoginIntro),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(48.dp))
-                        DividerWithText("Log in or sign up")
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedTextField(
-                            value = uiState.phoneNumber,
-                            onValueChange = mainSignInViewModel::onPhoneNumberChange,
-//                        label = { Text("Phone Number")},
-                            placeholder = { Text("Enter Phone Number")},
-                            modifier = Modifier.fillMaxWidth(),
-                            prefix = {
-                                Row {
-                                    Image(
-                                        painterResource(id = R.drawable.india),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .height(24.dp)
-                                            .width(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(text = "+91")
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    onSendOTP()
-                                }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(300.dp)
+                        ) {
+
+                            Text(
+                                text = stringResource(id = R.string.LoginIntro),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
                             )
-                            )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = onSendOTP,
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = !uiState.isLoading) {
-                            Text(text = "Send OTP")
-                        }
-                        Spacer(modifier =Modifier.height(32.dp))
-                        DividerWithText(text = "or")
-                        Spacer(modifier = Modifier.height(32.dp))
-                        Row {
-                            CircleImage(painterId = R.drawable.google, size = 40,
-                                onClick = {
-                                    mainSignInViewModel.googleLogIn(context){
-                                        onSignInSuccessful(navController)
+                            Spacer(modifier = Modifier.height(48.dp))
+                            DividerWithText("Log in or sign up")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            OutlinedTextField(
+                                value = if(uiState.phoneNumber.length > 3)uiState.phoneNumber.substring(3) else "",
+                                onValueChange = mainSignInViewModel::onPhoneNumberChange,
+                                placeholder = { Text("Enter Phone Number") },
+                                modifier = Modifier.fillMaxWidth(),
+                                isError = !uiState.isPhoneNumberValid,
+                                supportingText = {
+                                    if(!uiState.isPhoneNumberValid){
+                                        Text(text = uiState.phoneNumberError)
                                     }
-                                })
-
-                            Spacer(modifier = Modifier.width(48.dp))
-                            CircleImage(imageVector = Icons.Default.Email, size = 40,
+                                },
+                                prefix = {
+                                    Row {
+                                        Image(
+                                            painterResource(id = R.drawable.india),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .height(24.dp)
+                                                .width(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(text = "+91")
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                    }
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
                                 onClick = {
-                                    if(!uiState.isLoading)
-                                        navController.navigate(NavEmailSignIn)
-                                })
+                                    if(phoneNumberCheck(phoneNumber = uiState.phoneNumber, mainSignInViewModel::onPhoneNumberErrorStateChange))
+                                        return@Button
+                                    mainSignInViewModel.sendOTPbutton(
+                                        context,snackbarHostState,navController
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !uiState.isLoading
+                            ) {
+                                Text(text = "Send OTP")
+                            }
+                            Spacer(modifier = Modifier.height(32.dp))
+                            DividerWithText(text = "or")
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Row {
+                                CircleImage(painterId = R.drawable.google, size = 40,
+                                    onClick = {
+                                        mainSignInViewModel.googleLogIn(context, snackbarHostState) {
+                                            onSignInSuccessful(navController)
+                                        }
+                                    })
 
+                                Spacer(modifier = Modifier.width(48.dp))
+                                CircleImage(imageVector = Icons.Default.Email, size = 40,
+                                    onClick = {
+                                        if (!uiState.isLoading)
+                                            navController.navigate(NavEmailSignIn)
+                                    })
+
+                            }
                         }
                     }
                 }

@@ -197,7 +197,6 @@ fun PersonalDetails(navigationAfterCompletion: () -> Unit = {},
             }
         }
     }
-    val emailAuthentication = EmailAuthentication()
     val onClickSave = {
         if(name.isEmpty())
             Toast.makeText(context,"Name cannot be empty", Toast.LENGTH_SHORT).show()
