@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -103,8 +102,8 @@ val moreList = listOf(
 )
 
 enum class TabItem(val label: String){
-    MyOrders(label ="My Orders"),
-    More(label = "More")
+    MY_ORDERS(label ="My Orders"),
+    MORE(label = "More")
 }
 
 
@@ -193,12 +192,12 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                 ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
                 HorizontalPager(state = pagerState) { index ->
                     when(index){
-                        TabItem.MyOrders.ordinal -> TabItemContent(
+                        TabItem.MY_ORDERS.ordinal -> TabItemContent(
                             scrollState = scrollState,
                             profileItemList = myOrderList,
                             navController = navController
                         )
-                        TabItem.More.ordinal -> TabItemContent(
+                        TabItem.MORE.ordinal -> TabItemContent(
                             scrollState = scrollState,
                             profileItemList = moreList,
                             navController = navController

@@ -25,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -36,7 +34,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +49,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CommunityScreen(modifier: Modifier = Modifier, navigateBackToHome: () -> Unit) {
+fun CommunityScreen(
+    modifier: Modifier = Modifier,
+    navigateBackToHome: () -> Unit,
+    navigateToPost: () -> Unit
+) {
     val pagerState = rememberPagerState { CommunityTabItem.entries.size }
 
     val selectedTabItemIndex by remember {
@@ -78,10 +79,25 @@ fun CommunityScreen(modifier: Modifier = Modifier, navigateBackToHome: () -> Uni
             HorizontalPager(state = pagerState) { index ->
                 when (index) {
                     // Changes to be made when using real data, replace list according to the category
-                    CommunityTabItem.POPULAR.ordinal -> Posts(list = listOfHeadingPosts)
-                    CommunityTabItem.NEW.ordinal -> Posts(list = listOfHeadingPosts)
-                    CommunityTabItem.FOLLOWING.ordinal -> Posts(list = listOfHeadingPosts)
-                    CommunityTabItem.MY_THREAD.ordinal -> Posts(list = listOfHeadingPosts)
+                    CommunityTabItem.POPULAR.ordinal -> HeadingPosts(
+                        list = listOfHeadingPosts,
+                        navigateToPost = navigateToPost
+                    )
+
+                    CommunityTabItem.NEW.ordinal -> HeadingPosts(
+                        list = listOfHeadingPosts,
+                        navigateToPost = navigateToPost
+                    )
+
+                    CommunityTabItem.FOLLOWING.ordinal -> HeadingPosts(
+                        list = listOfHeadingPosts,
+                        navigateToPost = navigateToPost
+                    )
+
+                    CommunityTabItem.MY_THREAD.ordinal -> HeadingPosts(
+                        list = listOfHeadingPosts,
+                        navigateToPost = navigateToPost
+                    )
                 }
             }
         }
@@ -95,7 +111,6 @@ private fun CommunityTopAppBar(navigateBackToHome: () -> Unit) {
         title = {
             Text(
                 text = "Community",
-                color = Color.Black,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold
             )
@@ -122,16 +137,7 @@ private fun CommunityTabRow(
     scope: CoroutineScope
 ) {
     TabRow(
-        selectedTabIndex = selectedTabIndex,
-        indicator = @Composable { tabPositions ->
-            if (selectedTabIndex < tabPositions.size) {
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(
-                        tabPositions[selectedTabIndex]
-                    )
-                )
-            }
-        }
+        selectedTabIndex = selectedTabIndex
     ) {
         CommunityTabItem.entries.forEach { tabItem ->
             Tab(
@@ -151,14 +157,21 @@ private fun CommunityTabRow(
     }
 }
 
-
 @Composable
-fun Posts(modifier: Modifier = Modifier, list: List<HeadingPost>) {
+fun HeadingPosts(
+    modifier: Modifier = Modifier,
+    list: List<HeadingPost>,
+    navigateToPost: () -> Unit
+) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(
-            items = listOfHeadingPosts,
+            items = list,
             key = { item: HeadingPost -> item.id }) { headingPost ->
-            HeadingPostContent(modifier = Modifier.fillMaxWidth(), post = headingPost)
+            HeadingPostContent(
+                modifier = Modifier.fillMaxWidth(),
+                post = headingPost,
+                navigateToPost = navigateToPost
+            )
         }
     }
 }
@@ -166,10 +179,15 @@ fun Posts(modifier: Modifier = Modifier, list: List<HeadingPost>) {
 @Composable
 fun HeadingPostContent(
     modifier: Modifier = Modifier,
-    post: HeadingPost
+    post: HeadingPost,
+    navigateToPost: () -> Unit
 ) {
     Row(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                navigateToPost()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -188,13 +206,13 @@ fun HeadingPostContent(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = post.title, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Text(
-                text = "${post.replies} ${replyOrReplies(post.replies)}",
-                color = MaterialTheme.colorScheme.onSurface,
+                text = "${post.noOfReplies} ${replyOrReplies(post.noOfReplies)}",
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
                 text = "Posted by ${post.author} on ${post.date}",
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -208,11 +226,11 @@ private fun replyOrReplies(numOfReplies: Int): String {
 @Preview(showBackground = true)
 @Composable
 private fun PreviewHeadingPostContent() {
-    HeadingPostContent(post = listOfHeadingPosts[0])
+    HeadingPostContent(post = listOfHeadingPosts[0], navigateToPost = {})
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PreviewCommunityScreen() {
-    CommunityScreen(navigateBackToHome = {})
+    CommunityScreen(navigateBackToHome = {}, navigateToPost = {})
 }

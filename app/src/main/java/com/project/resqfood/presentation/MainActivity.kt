@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.communityScreen.CommunityScreen
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.ItemDetailScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
@@ -24,7 +25,7 @@ import com.project.resqfood.presentation.login.SignInUI
 import com.project.resqfood.presentation.login.SignInUsingEmail
 import com.project.resqfood.presentation.login.SignInViewModel
 import com.project.resqfood.presentation.login.WaitScreen
-import com.project.resqfood.presentation.onboardingProcess.Onboarding
+import com.project.resqfood.presentation.postScreen.PostScreen
 import com.project.resqfood.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -89,6 +90,22 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Destinations.AddingLeftOverScreen.route){
                         AddingLeftovers(navController)
+                    }
+                    composable(Destinations.CommunityScreen.route){
+                        CommunityScreen(navigateBackToHome = {
+                            navController.navigate(Destinations.MainScreen.route){
+                                popUpTo(Destinations.MainScreen.route){
+                                    inclusive = false
+                                }
+                            }
+                        }){
+                            navController.navigate(Destinations.PostScreen.route)
+                        }
+                    }
+                    composable(Destinations.PostScreen.route){
+                        PostScreen{
+                            navController.popBackStack()
+                        }
                     }
                 }
             }
