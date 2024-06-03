@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.resqfood.presentation.communityScreen.NavCommunityScreen
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
 import com.project.resqfood.presentation.profilescreens.ProfileScreen

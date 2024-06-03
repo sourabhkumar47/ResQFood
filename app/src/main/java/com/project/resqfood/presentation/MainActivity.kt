@@ -6,37 +6,31 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthProvider
 import com.project.resqfood.domain.services.AccountService
 import com.project.resqfood.domain.services.AccountServiceImpl
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.communityScreen.CommunityScreen
+import com.project.resqfood.presentation.communityScreen.NavCommunityScreen
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.ItemDetailScreen
 import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.itemdetailscreen.NavOrderConfirmScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
+import com.project.resqfood.presentation.login.NavPersonalDetails
+import com.project.resqfood.presentation.login.NavWaitScreen
+import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.Screens.MainScreen
 import com.project.resqfood.presentation.login.Screens.NavMainScreen
-import com.project.resqfood.presentation.login.mainlogin.NavOTPVerificationUI
-import com.project.resqfood.presentation.login.NavPersonalDetails
-import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
-import com.project.resqfood.presentation.login.NavWaitScreen
-import com.project.resqfood.presentation.login.mainlogin.OTPVerificationUI
-import com.project.resqfood.presentation.login.PersonalDetails
-import com.project.resqfood.presentation.login.mainlogin.SignInUI
 import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.WaitScreen
 import com.project.resqfood.presentation.login.emaillogin.EmailSignInViewModel
@@ -47,10 +41,15 @@ import com.project.resqfood.presentation.login.emaillogin.NavForgotPassword
 import com.project.resqfood.presentation.login.emaillogin.SignInUsingEmail
 import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModel
 import com.project.resqfood.presentation.login.mainlogin.MainSignInViewModelFactory
+import com.project.resqfood.presentation.login.mainlogin.NavOTPVerificationUI
+import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
+import com.project.resqfood.presentation.login.mainlogin.OTPVerificationUI
+import com.project.resqfood.presentation.login.mainlogin.SignInUI
 import com.project.resqfood.presentation.onboardingProcess.NavOnboarding
 import com.project.resqfood.presentation.onboardingProcess.Onboarding
+import com.project.resqfood.presentation.postScreen.NavPostScreen
+import com.project.resqfood.presentation.postScreen.PostScreen
 import com.project.resqfood.ui.theme.AppTheme
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
 
@@ -71,65 +70,58 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val navController = rememberNavController()
                 val viewModel: SignInDataViewModel = viewModel()
-                val mainSignInViewModel:MainSignInViewModel = viewModel(factory = MainSignInViewModelFactory(auth, accountService))
+                val mainSignInViewModel: MainSignInViewModel =
+                    viewModel(factory = MainSignInViewModelFactory(auth, accountService))
                 if (alreadyLoggedIn)
                     viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
                 NavHost(
-                    navController = navController, 
+                    navController = navController,
                     startDestination = if (alreadyLoggedIn)
                         NavMainScreen else NavOnboarding
                 ) {
                     composable<NavSignInUI>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
-                         SignInUI(navController = navController, mainSignInViewModel)
+                        SignInUI(navController = navController, mainSignInViewModel)
                     }
                     composable<NavOTPVerificationUI>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
-                        OTPVerificationUI(navController = navController, mainSignInViewModel = mainSignInViewModel)
+                        OTPVerificationUI(
+                            navController = navController,
+                            mainSignInViewModel = mainSignInViewModel
+                        )
                     }
                     composable<NavEmailSignIn>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
-                        val emailViewModel: EmailSignInViewModel = viewModel(factory = EmailSignInViewModelFactory(auth, accountService))
-                        SignInUsingEmail(emailViewModel,navController = navController)
+                        val emailViewModel: EmailSignInViewModel =
+                            viewModel(factory = EmailSignInViewModelFactory(auth, accountService))
+                        SignInUsingEmail(emailViewModel, navController = navController)
                     }
                     composable<NavForgotPassword>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
                         ForgotPassword(navController = navController)
                     }
                     composable<NavMainScreen>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
                         MainScreen(navController = navController)
                     }
                     composable<NavPersonalDetails>(
                         enterTransition = {
-                            slideInHorizontally(animationSpec = tween(300),
-                                initialOffsetX = { fullWidth->fullWidth }
-                            )
+                            slideHorizontallyAnimation()
                         },
                     ) {
                         PersonalDetails(navigationAfterCompletion = {
@@ -146,14 +138,36 @@ class MainActivity : ComponentActivity() {
                     composable<NavOrderConfirmScreen> {
                         OrderConfirmScreen(navController)
                     }
-                    composable<NavAddingLeftovers>{
+                    composable<NavAddingLeftovers> {
                         AddingLeftovers(navController)
                     }
-                    composable<NavOnboarding>{
-                        Onboarding(navController = navController)
+                    composable<NavCommunityScreen> {
+                        CommunityScreen(navigateBackToHome = {
+                            navController.navigate(NavMainScreen) {
+                                popUpTo(NavMainScreen) {
+                                    inclusive = false
+                                }
+                            }
+                        }) {
+                            navController.navigate(NavPostScreen)
+                        }
+                    }
+                    composable<NavPostScreen> {
+                        PostScreen {
+                            navController.popBackStack()
+                        }
+                        composable<NavOnboarding> {
+                            Onboarding(navController = navController)
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun slideHorizontallyAnimation(): EnterTransition {
+        return slideInHorizontally(animationSpec = tween(300),
+            initialOffsetX = { fullWidth -> fullWidth }
+        )
     }
 }

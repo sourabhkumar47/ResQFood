@@ -104,8 +104,8 @@ val moreList = listOf(
 )
 
 enum class TabItem(val label: String){
-    MyOrders(label ="My Orders"),
-    More(label = "More")
+    MY_ORDERS(label ="My Orders"),
+    MORE(label = "More")
 }
 
 
@@ -194,12 +194,12 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                 ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
                 HorizontalPager(state = pagerState) { index ->
                     when(index){
-                        TabItem.MyOrders.ordinal -> TabItemContent(
+                        TabItem.MY_ORDERS.ordinal -> TabItemContent(
                             scrollState = scrollState,
                             profileItemList = myOrderList,
                             navController = navController
                         )
-                        TabItem.More.ordinal -> TabItemContent(
+                        TabItem.MORE.ordinal -> TabItemContent(
                             scrollState = scrollState,
                             profileItemList = moreList,
                             navController = navController
