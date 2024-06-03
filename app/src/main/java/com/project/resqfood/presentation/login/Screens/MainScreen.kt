@@ -165,8 +165,7 @@ fun MainScreen(
                         ) {
                             CardsSection()
                             Button(modifier = Modifier.padding(top = 16.dp), onClick = {
-//                                navController.navigate(NavItemDetailScreen)
-                                navController.navigate(NavCommunityScreen)
+                                navController.navigate(NavItemDetailScreen)
                             }) {
                                 Text(text = "View Item Details")
                             }
