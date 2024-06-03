@@ -46,8 +46,11 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.communityScreen.FakeCommunityData.Companion.listOfHeadingPosts
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalFoundationApi::class)
+@Serializable
+object NavCommunityScreen
+
 @Composable
 fun CommunityScreen(
     modifier: Modifier = Modifier,

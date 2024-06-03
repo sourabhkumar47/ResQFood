@@ -46,6 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.project.resqfood.R
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+object NavPostScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
