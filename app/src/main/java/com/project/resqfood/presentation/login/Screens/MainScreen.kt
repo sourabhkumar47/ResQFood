@@ -172,11 +172,26 @@ fun MainScreen(
             }
 
     }
-        Row( modifier = Modifier.fillMaxWidth().padding( top = 500.dp)) {
-            Button(onClick = {
-                navController.navigate(Destinations.ItemDetailScreen.route)
-            }) {
-                Text(text = "View Item Details")
+        Column {
+            Row( modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 500.dp)) {
+                Button(onClick = {
+                    navController.navigate(Destinations.ItemDetailScreen.route)
+                }) {
+                    Text(text = "View Item Details")
+                }
+            }
+        }
+        Column {
+            Row( modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 550.dp)) {
+                Button(onClick = {
+                    navController.navigate(Destinations.AddItemScreen.route)
+                }) {
+                    Text(text = "Add items")
+                }
             }
         }
 

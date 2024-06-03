@@ -20,4 +20,18 @@
     <string name="des2">Join the fight against food waste by rescuing perfectly good meals. Every dish you enjoy helps reduce the impact on our environment. Together, we can make a difference, one meal at a time.</string>
     <string name="des3">Show your love for local eateries by giving their surplus food a second chance. Help small businesses thrive while indulging in their delicious offerings. Your support makes a big impact.</string>
     <string name="des4">Show your love for local eateries by giving their surplus food a second chance. Help small businesses thrive while indulging in their delicious offerings. Your support makes a big impact.</string>
+    <string name="add_item">Add Item</string>
+    <string name="item_name">Item name</string>
+    <string name="item_description">Item Description</string>
+    <string name="item_quantity">Item Quantity</string>
+    <string name="item_estimated_value">Estimated Value</string>
+    <string name="save_item">Save Item</string>
+    <string name="set_price_and_pick_time">Set Price and Pick Time</string>
+    <string name="set_price">Set Price</string>
+    <string name="categorize_your_leftover">Categorize your leftover</string>
+    <string name="menu_category">Menu Category</string>
+    <string name="menu_courses">Menu Courses</string>
+    <string name="price">Price</string>
+    <string name="pick_time">Pick Time</string>
+    <string name="confirm_save_item">Confirm Save Item</string>
 </resources>

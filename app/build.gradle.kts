@@ -133,7 +133,7 @@ dependencies {
     implementation(libs.firebase.firestore)
 
 
-    Material 3 Core
+//    Material 3 Core
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
 
     // CLOCK
@@ -146,4 +146,13 @@ dependencies {
 
     //pager
     implementation ("com.google.accompanist:accompanist-pager:0.12.0")
+
+    // Compose
+    implementation("androidx.compose.ui:ui:1.0.0")
+    implementation("androidx.compose.material:material:1.0.0")
+    implementation("androidx.activity:activity-compose:1.3.0")
+
+// Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }

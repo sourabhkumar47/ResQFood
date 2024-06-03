@@ -12,4 +12,8 @@ sealed class Destinations(val route: String) {
     data object Profile: Destinations("profile")
     data object ItemDetailScreen: Destinations("itemDetail")
     data object OrderConfirmScreen: Destinations("orderConfirm")
+    data object AddItemScreen: Destinations("addItem")
+    data object SetPriceScreen: Destinations("setPrice")
+    data object PickTimeScreen: Destinations("pickTime")
+    data object ImageUploadScreen: Destinations("imageUpload")
 }
