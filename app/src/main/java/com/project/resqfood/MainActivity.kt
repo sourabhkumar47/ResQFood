@@ -2,7 +2,6 @@ package com.project.resqfood
 
 
 import android.app.AlertDialog
-
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -86,7 +85,7 @@ class MainActivity : ComponentActivity() {
             super.onBackPressed()
         }
         BackDialog.setNegativeButton("Yes"){dialog, which ->
-         null
+
         }
         BackDialog.create()
         BackDialog.show()
