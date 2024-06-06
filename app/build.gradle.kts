@@ -93,7 +93,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
-
+    implementation (libs.sdk.mappls.android.sdk)
+    implementation (libs.annotation.plugin)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     //Adding Firebase BOM
     implementation(libs.firebase.bom)
 
