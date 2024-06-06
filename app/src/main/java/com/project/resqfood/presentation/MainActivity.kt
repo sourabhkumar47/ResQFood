@@ -156,9 +156,13 @@ class MainActivity : ComponentActivity() {
                         PostScreen {
                             navController.popBackStack()
                         }
+
                         composable<NavOnboarding> {
                             Onboarding(navController = navController)
                         }
+                    }
+                    composable<NavOnboarding>{
+                        Onboarding(navController = navController)
                     }
                 }
             }

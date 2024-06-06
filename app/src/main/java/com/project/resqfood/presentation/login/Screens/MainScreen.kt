@@ -1,7 +1,8 @@
 package com.project.resqfood.presentation.login.Screens
 
 
-import android.provider.CalendarContract.Colors
+import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
@@ -9,15 +10,12 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -25,10 +23,8 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,7 +48,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +58,6 @@ import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
 import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -126,6 +120,15 @@ fun MainScreen(
                         onClick = {
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 1
+                        },
+                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
+                    )
+                    NavigationDrawerItem(
+                        label = { Text("view Map") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            selectedItemIndex = 2
                         },
                         icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
                     )
@@ -232,6 +235,17 @@ fun MainScreen(
                             1 -> {
                                 ProfileScreen(paddingValues, navController)
                             }
+
+
+                            2 -> {
+                                Log.d("MainScreen", "View Map")
+                                val context = LocalContext.current
+                                selectedItemIndex = 0
+                                val intent = Intent(context, MapScreen::class.java)
+                                context.startActivity(intent)
+
+
+                            }
                         }
                     }
                 }
@@ -247,6 +261,12 @@ fun MainScreenPreview() {
     val context = LocalContext.current
     MainScreen(navController = NavController(context = context))
 }
+
+
+
+
+
+
 
 
 
