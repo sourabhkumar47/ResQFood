@@ -46,6 +46,7 @@ material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
 carUiLib = "2.6.0"
+googleGmsGoogleServicesVersion = "4.4.2"
 
 
 [libraries]
@@ -107,6 +108,7 @@ car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = 
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServicesVersion" }
 
 
 

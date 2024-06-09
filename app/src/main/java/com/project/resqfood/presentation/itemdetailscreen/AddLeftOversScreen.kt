@@ -1,5 +1,7 @@
 package com.project.resqfood.presentation.itemdetailscreen
 
+
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -51,9 +53,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.project.resqfood.R
 import com.project.resqfood.model.FoodCategory
 import com.project.resqfood.presentation.login.Screens.NavMainScreen
@@ -62,8 +68,11 @@ import java.time.LocalDateTime
 import java.util.Calendar
 
 
+
+
 @Serializable
 object NavAddingLeftovers
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +88,7 @@ fun AddingLeftovers(outerNavController: NavController) {
         )
     }) { paddingValues ->
         val navController = rememberNavController()
-        val viewModel : LeftOverViewModel = viewModel()
+        val viewModel: LeftOverViewModel = viewModel()
         NavHost(
             navController = navController,
             startDestination = "screen1",
@@ -88,82 +97,150 @@ fun AddingLeftovers(outerNavController: NavController) {
             composable(
                 "screen1",
                 enterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 },
                 popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 }
             ) {
-                Screen1(paddingValues,viewModel,navController)
+                Screen1(paddingValues, viewModel, navController)
             }
 
+
             composable(
-                "screen2",
+                "screen2/{itemName}/{description}/{category}",
+                arguments = listOf(
+                    navArgument("itemName") { type = NavType.StringType },
+                    navArgument("description") { type = NavType.StringType },
+                    navArgument("category") { type = NavType.StringType }  // Assuming FoodCategory can be represented as a string
+                ),
                 enterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 },
                 popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 }
-            ) {
-                Screen2(paddingValues,navController, viewModel)
+            ) { backStackEntry ->
+                val itemName = backStackEntry.arguments?.getString("itemName") ?: ""
+                val description = backStackEntry.arguments?.getString("description") ?: ""
+                val category = backStackEntry.arguments?.getString("category") ?: ""
+                Screen2(paddingValues,navController, viewModel, itemName,description, category)
             }
+
+
             composable(
                 "screen3",
                 enterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 },
                 popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 }
-            ){
-                AddImagesScreen(paddingValues = paddingValues, navController = navController, viewModel = viewModel)
+            ) {
+                AddImagesScreen(
+                    paddingValues = paddingValues,
+                    navController = navController,
+                    viewModel = viewModel
+                )
             }
             composable(
                 "success",
                 enterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 },
                 popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(700)) + fadeIn(animationSpec = tween(700))
+                    slideInHorizontally(
+                        initialOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeIn(animationSpec = tween(700))
                 },
                 popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(700)) + fadeOut(animationSpec = tween(700))
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = tween(700)
+                    ) + fadeOut(animationSpec = tween(700))
                 }
             ) {
                 SuccessScreen(buttonText = "Next", onClick = {
-                                                             outerNavController.navigate(
-                                                                 NavMainScreen
-                                                             )
+                    outerNavController.navigate(
+                        NavMainScreen
+                    )
                 }, animationJsonResId = R.raw.successanimation)
             }
         }
     }
 }
 
+
 @Composable
-private fun Screen1(paddingValues: PaddingValues, viewModel: LeftOverViewModel, navController: NavController){
+private fun Screen1(
+    paddingValues: PaddingValues,
+    viewModel: LeftOverViewModel,
+    navController: NavController
+) {
     var itemName by remember {
         mutableStateOf("")
     }
@@ -189,11 +266,13 @@ private fun Screen1(paddingValues: PaddingValues, viewModel: LeftOverViewModel, 
         ) {
             item {
 
+
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = { itemName = it },
                     label = { Text("Item Name") },
-                    modifier = Modifier.fillMaxWidth(0.8f))
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -203,7 +282,8 @@ private fun Screen1(paddingValues: PaddingValues, viewModel: LeftOverViewModel, 
                     label = { Text("Description...") },
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .height(100.dp))
+                        .height(100.dp)
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -224,9 +304,11 @@ private fun Screen1(paddingValues: PaddingValues, viewModel: LeftOverViewModel, 
                     label = { Text("Category") })
             }
             item {
-                Box(modifier = Modifier.fillMaxWidth(0.8f)
-                    ) {
-                    DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false },
+                Box(
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                ) {
+                    DropdownMenu(
+                        expanded = isExpanded, onDismissRequest = { isExpanded = false },
                         modifier = Modifier
                             .align(Alignment.BottomCenter) // Align dropdown with top left corner of TextField
                             .offset(
@@ -249,32 +331,44 @@ private fun Screen1(paddingValues: PaddingValues, viewModel: LeftOverViewModel, 
             }
         }
 
-        Button(onClick = {
-            if(itemName.isEmpty() || description.isEmpty()) {
-                Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
-                return@Button
-            }
-            if(category == null){
-                Toast.makeText(context, "Please select the category", Toast.LENGTH_SHORT).show()
-                return@Button
-            }
-                         viewModel.leftOverItem.name = itemName
-            viewModel.leftOverItem.description = description
-            viewModel.leftOverItem.category = category as FoodCategory
-            navController.navigate("screen2")
-        },
+
+        Button(
+            onClick = {
+                if (itemName.isEmpty() || description.isEmpty()) {
+                    Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                if (category == null) {
+                    Toast.makeText(context, "Please select the category", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                viewModel.leftOverItem.name = itemName
+                viewModel.leftOverItem.description = description
+                viewModel.leftOverItem.category = category as FoodCategory
+                navController.navigate("screen2/$itemName/$description/${category?.name}")
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
-                .fillMaxWidth()) {
+                .fillMaxWidth()
+        ) {
             Text(text = "Next")
         }
     }
 }
 
+
 @Composable
-private fun Screen2(paddingValues: PaddingValues, navController: NavController, viewModel: LeftOverViewModel){
+private fun Screen2(
+    paddingValues: PaddingValues,
+    navController: NavController,
+    viewModel: LeftOverViewModel,
+    itemName: String,
+    description: String,
+    category: String
+) {
     var quantity by remember { mutableStateOf("") }
+    val db = Firebase.firestore
     var estimatedPrice by remember { mutableStateOf("") }
     var isFree by remember { mutableStateOf(false) }
     var deliveryStartTime by remember { mutableStateOf(getCurrentTime()) }
@@ -285,6 +379,8 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
     var deliveryEndDate by remember {
         mutableStateOf(getCurrentDate())
     }
+    Log.d("Screen2", "Item Name: $itemName, Description: $description, Category: $category")
+
 
     val context = LocalContext.current
     Column(
@@ -302,7 +398,9 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
+
         Spacer(modifier = Modifier.height(16.dp))
+
 
         // Free Checkbox
         Row(
@@ -316,6 +414,7 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
             Text("Donate for free.")
         }
 
+
         Spacer(modifier = Modifier.height(16.dp))
         AnimatedVisibility(visible = !isFree) {
             // Estimated Price Input
@@ -327,15 +426,17 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
+
         }
         Spacer(modifier = Modifier.height(16.dp))
         // Delivery Time Window Inputs
 
+
         DatePickerDialog(label = "Pick Start Date", selectedDate = deliveryStartDate) {
-                deliveryStartDate = it
+            deliveryStartDate = it
         }
         Spacer(modifier = Modifier.height(16.dp))
-        TimePickerDialog(label = "Pick Start Time", selectedTime = deliveryStartTime){
+        TimePickerDialog(label = "Pick Start Time", selectedTime = deliveryStartTime) {
             deliveryStartTime = it
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -348,16 +449,17 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
         }
         Spacer(modifier = Modifier.height(16.dp))
 
+
         // Submit Button
         Button(
             onClick = {
-                if(estimatedPrice.isEmpty() && !isFree){
+                if (estimatedPrice.isEmpty() && !isFree) {
                     // Show error message
-                    Toast.makeText(context, "Please enter the estimated price", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Please enter the estimated price", Toast.LENGTH_SHORT)
+                        .show()
                     return@Button
                 }
-                if((!estimatedPrice.isDigitsOnly()) && !isFree)
-                {
+                if ((!estimatedPrice.isDigitsOnly()) && !isFree) {
                     // Show error message
                     Toast.makeText(context, "Please enter a valid price", Toast.LENGTH_SHORT).show()
                     return@Button
@@ -365,16 +467,45 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
                 // Handle form submission logic
                 val startDateTime = parseDateTime(deliveryStartDate, deliveryStartTime)
                 val endDateTime = parseDateTime(deliveryEndDate, deliveryEndTime)
-                if(isFirstBeforeSecond(startDateTime, endDateTime)){
+                if (isFirstBeforeSecond(startDateTime, endDateTime)) {
                     // Show error message
-                    Toast.makeText(context, "End time must be after start time", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "End time must be after start time", Toast.LENGTH_SHORT)
+                        .show()
                     return@Button
                 }
                 viewModel.leftOverItem.pickUpTimeWindow = Pair(startDateTime, endDateTime)
-                if(!isFree)
-                viewModel.leftOverItem.estimatedPrice = estimatedPrice.toInt()
+                if (!isFree)
+                    viewModel.leftOverItem.estimatedPrice = estimatedPrice.toInt()
                 else
                     viewModel.leftOverItem.estimatedPrice = 0
+
+
+                val leftOverFood = hashMapOf(
+                    "name" to itemName,
+                    "description" to description,
+                    "category" to category,
+                    "quantity" to quantity,
+                    "estimatedPrice" to estimatedPrice,
+                    "isFree" to isFree,
+                    "deliveryStartTime" to deliveryStartTime,
+                    "deliveryEndTime" to deliveryEndTime,
+                    "deliveryStartDate" to deliveryStartDate,
+                    "deliveryEndDate" to deliveryEndDate
+                )
+                try {
+                    db.collection("leftOverFood")
+                        .add(leftOverFood)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("Added!@#$", "DocumentSnapshot added with ID: ${documentReference.id}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Failure", "Error adding document", e)
+                        }
+                }catch (e:Exception){
+                    Log.d("Error",e.toString())
+                }
+
+
                 navController.navigate("screen3")
             },
             modifier = Modifier.align(Alignment.End)
@@ -383,6 +514,7 @@ private fun Screen2(paddingValues: PaddingValues, navController: NavController, 
         }
     }
 }
+
 
 
 
@@ -395,7 +527,9 @@ fun DatePickerDialog(
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
+
     var showDialog by remember { mutableStateOf(false) }
+
 
     OutlinedTextField(
         value = selectedDate,
@@ -409,6 +543,7 @@ fun DatePickerDialog(
             }
         }
     )
+
 
     if (showDialog) {
         val datePickerDialog = android.app.DatePickerDialog(
@@ -426,6 +561,7 @@ fun DatePickerDialog(
     }
 }
 
+
 @Composable
 fun TimePickerDialog(
     label: String,
@@ -435,7 +571,9 @@ fun TimePickerDialog(
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
+
     var showDialog by remember { mutableStateOf(false) }
+
 
     OutlinedTextField(
         value = selectedTime,
@@ -449,6 +587,7 @@ fun TimePickerDialog(
             }
         }
     )
+
 
     if (showDialog) {
         val timePickerDialog = android.app.TimePickerDialog(
@@ -466,6 +605,7 @@ fun TimePickerDialog(
     }
 }
 
+
 fun getCurrentDate(): String {
     val calendar = Calendar.getInstance()
     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -474,12 +614,14 @@ fun getCurrentDate(): String {
     return "$dayOfMonth/$month/$year"
 }
 
+
 fun getCurrentTime(): String {
     val calendar = Calendar.getInstance()
     val hour = calendar.get(Calendar.HOUR_OF_DAY) // 24-hour format
     val minute = calendar.get(Calendar.MINUTE)
     return "%02d:%02d".format(hour, minute)
 }
+
 
 fun parseDateTime(dateStr: String, timeStr: String): LocalDateTime {
     // Parse date
@@ -488,16 +630,21 @@ fun parseDateTime(dateStr: String, timeStr: String): LocalDateTime {
     val month = dateParts[1].toInt()
     val year = dateParts[2].toInt()
 
+
     // Parse time
     val timeParts = timeStr.split(":")
     val hour = timeParts[0].toInt()
     val minute = timeParts[1].toInt()
 
+
     // Construct LocalDateTime object
     return LocalDateTime.of(year, month, dayOfMonth, hour, minute)
 }
 
+
 fun isFirstBeforeSecond(firstDateTime: LocalDateTime, secondDateTime: LocalDateTime): Boolean {
     return firstDateTime.isBefore(secondDateTime)
 }
+
+
 
