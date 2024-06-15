@@ -17,6 +17,12 @@ contributing to a more sustainable and compassionate food ecosystem.
 It is a mobile app designed to connect restaurants with individuals looking for a delicious and affordable 
 meal while tackling food waste. It empowers restaurants to utilize leftover food instead of discarding it
 and provides individuals with access to great deals on quality food.
+# 💻 Tech Stack: 
+<!-- Kotlin -->
+<img src="https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin logo">
+
+<!-- Jetpack Compose -->
+<img src="https://img.shields.io/badge/jetpack%20compose-%233D3D3D.svg?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="Jetpack Compose logo">
 
 ## App Features: *TODO*
 
