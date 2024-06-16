@@ -215,16 +215,16 @@ our [learn](learn.md) to get started.
 2. **Clone the repository:**
    Clone the forked repository to your local machine using the following command in your terminal.
    ```bash
-   git clone https://github.com/<your-github-username>/ResQFood
+   git clone https://github.com/sourabhkumar47/ResQFood
    ```
    
-3.**Change the repository to your working repository:**
+3. **Change the repository to your working repository:**
 
     cd ResQFood
    
 4. **Add a remote upstream:**
    ```bash
-   git remote add upstream https://github.com/<original-owner-username/ResQFood
+   git remote add upstream https://github.com/sourabhkumar47/ResQFood
    ```
    
 5. **Create a new branch:**
