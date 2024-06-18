@@ -1,5 +1,11 @@
 package com.project.resqfood.presentation.restaurantonboarding
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -119,7 +125,8 @@ fun ListingRestaurantScreen(
                     )
                     .padding(12.dp),
                     isFirst = (uiState == ListingUIState.RESTAURANT_SUCCESS_SCREEN || uiState == ListingUIState.RESTAURANT_DETAILS_SCREEN),
-                    onNext = { restaurantListingViewModel.onNextClick(snackbarHostState) }) {
+                    onNext = { restaurantListingViewModel.onNextClick(navController = navController, snackbarHostState = snackbarHostState) }) {
+                    restaurantListingViewModel.onBackClick()
                 }
                 Column(
                     modifier = Modifier
@@ -132,43 +139,60 @@ fun ListingRestaurantScreen(
                             .width(460.dp)
                             .padding(top = 32.dp, bottom = 32.dp, start = 32.dp, end = 32.dp)
                     ) {
-                        when (uiState) {
-                            ListingUIState.RESTAURANT_DETAILS_SCREEN -> RestaurantDetailScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                        AnimatedContent(
+                            targetState = uiState,
+                            label = "",
+//                            transitionSpec = {
+//                                slideIntoContainer(
+//                                    animationSpec = tween(300, easing = EaseIn),
+//                                    towards = AnimatedContentTransitionScope.SlideDirection.Left
+//                                ).togetherWith(
+//                                    slideOutOfContainer(
+//                                        animationSpec = tween(300, easing = EaseOut),
+//                                        towards = AnimatedContentTransitionScope.SlideDirection.Left
+//                                    )
+//                                )
+//                            }
+                        ) { targetState ->
+                            when (targetState) {
+                                ListingUIState.RESTAURANT_DETAILS_SCREEN -> RestaurantDetailScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_CONTACT_DETAILS_SCREEN -> RestaurantContactScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                                ListingUIState.RESTAURANT_CONTACT_DETAILS_SCREEN -> RestaurantContactScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_OWNER_DETAILS_SCREEN -> RestaurantOwnerDetailScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                                ListingUIState.RESTAURANT_OWNER_DETAILS_SCREEN -> RestaurantOwnerDetailScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_TYPE_SCREEN -> RestaurantTypeScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                                ListingUIState.RESTAURANT_TYPE_SCREEN -> RestaurantTypeScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_WORKING_WEEK_SCREEN -> RestaurantOpenDaysScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                                ListingUIState.RESTAURANT_WORKING_WEEK_SCREEN -> RestaurantOpenDaysScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_WORKING_HOURS_SCREEN -> RestaurantOperationalHoursScreen(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
+                                ListingUIState.RESTAURANT_WORKING_HOURS_SCREEN -> RestaurantOperationalHoursScreen(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
 
-                            ListingUIState.RESTAURANT_IMAGES_SCREEN -> AddRestaurantImages(
-                                data = data,
-                                restaurantListingViewModel = restaurantListingViewModel
-                            )
-                            ListingUIState.RESTAURANT_LOADING_SCREEN -> RestaurantLoadingScreen()
-                            ListingUIState.RESTAURANT_SUCCESS_SCREEN -> RestaurantSuccessScreen()
+                                ListingUIState.RESTAURANT_IMAGES_SCREEN -> AddRestaurantImages(
+                                    data = data,
+                                    restaurantListingViewModel = restaurantListingViewModel
+                                )
+
+                                ListingUIState.RESTAURANT_LOADING_SCREEN -> RestaurantLoadingScreen()
+                                ListingUIState.RESTAURANT_SUCCESS_SCREEN -> RestaurantSuccessScreen()
+                            }
                         }
                     }
                 }

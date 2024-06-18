@@ -83,9 +83,8 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController,
                     startDestination =
-                        NavListingRestaurant
-//                    if (alreadyLoggedIn)
-//                        NavMainScreen else NavOnboarding
+                    if (alreadyLoggedIn)
+                        NavMainScreen else NavOnboarding
                 ) {
                     composable<NavSignInUI>(
                         enterTransition = {

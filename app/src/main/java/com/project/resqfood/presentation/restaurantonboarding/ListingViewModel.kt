@@ -6,12 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.google.firebase.storage.FirebaseStorage
+import com.project.resqfood.domain.repository.RestaurantDataRepository
+import com.project.resqfood.model.RestaurantEntity
 import com.project.resqfood.model.RestaurantType
 import com.project.resqfood.presentation.login.emailCheck
-import com.project.resqfood.presentation.login.passwordCheck
 import com.project.resqfood.presentation.login.phoneNumberCheck
-import com.project.resqfood.presentation.login.validatePassword
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ListingViewModel : ViewModel() {
     var uiState = mutableStateOf(ListingUIState.RESTAURANT_DETAILS_SCREEN)
@@ -22,10 +25,14 @@ class ListingViewModel : ViewModel() {
     var isStart = true
     private var currentIndex = 0
 
-    fun onNextClick(snackbarHostState: SnackbarHostState){
+    fun onNextClick(snackbarHostState: SnackbarHostState, navController: NavController) {
         isStart = false
-        when(currentIndex){
-            in 0..(order.size-3) -> {
+        if (uiState.value == ListingUIState.RESTAURANT_SUCCESS_SCREEN)
+            navController.navigateUp()
+        if (uiState.value == ListingUIState.RESTAURANT_IMAGES_SCREEN)
+            saveData()
+        when (currentIndex) {
+            in 0..(order.size - 3) -> {
                 if (validateRestaurantDetails(snackbarHostState)) {
                     currentIndex++
                     uiState.value = order[currentIndex]
@@ -45,6 +52,14 @@ class ListingViewModel : ViewModel() {
 //            ListingUIState.RESTAURANT_LOADING_SCREEN -> TODO()
 //            ListingUIState.RESTAURANT_SUCCESS_SCREEN -> TODO()
 //        }
+
+    }
+
+    fun onBackClick() {
+        if (currentIndex > 0) {
+            currentIndex--
+            uiState.value = order[currentIndex]
+        }
     }
 
     fun validateRestaurantDetails(snackbarHostState: SnackbarHostState): Boolean {
@@ -69,21 +84,26 @@ class ListingViewModel : ViewModel() {
             showSnackbar(snackbarHostState, "Postal code cannot be empty")
             return false
         }
-        if(currentIndex == 0)
+        if (currentIndex == 0)
             return true
         if (phoneNumberCheck(listingData.value.phoneNumber, ::onPhoneNumberErrorChanged, false)) {
             showSnackbar(snackbarHostState, listingData.value.phoneNumberError)
             return false
         }
-        if (phoneNumberCheck(listingData.value.alternatePhoneNumber, ::onAlternatePhoneNumberErrorChanged, false)) {
+        if (phoneNumberCheck(
+                listingData.value.alternatePhoneNumber,
+                ::onAlternatePhoneNumberErrorChanged,
+                false
+            )
+        ) {
             showSnackbar(snackbarHostState, listingData.value.alternatePhoneNumberError)
             return false
         }
-        if(emailCheck(listingData.value.email, ::onEmailErrorChanged)){
+        if (emailCheck(listingData.value.email, ::onEmailErrorChanged)) {
             showSnackbar(snackbarHostState, listingData.value.emailError)
             return false
         }
-        if(currentIndex == 1)
+        if (currentIndex == 1)
             return true
         if (listingData.value.ownerName.isEmpty()) {
             onOwnerNameErrorChanged(true, "Owner name cannot be empty")
@@ -96,25 +116,61 @@ class ListingViewModel : ViewModel() {
             return false
         }
 
-        if (phoneNumberCheck(listingData.value.ownerMobileNumber, ::onOwnerMobileNumberErrorChanged, false)) {
+        if (phoneNumberCheck(
+                listingData.value.ownerMobileNumber,
+                ::onOwnerMobileNumberErrorChanged,
+                false
+            )
+        ) {
             showSnackbar(snackbarHostState, listingData.value.ownerMobileNumberError)
             return false
         }
-        if(currentIndex == 2)
+        if (currentIndex == 2)
             return true
 
         if (listingData.value.selectedRestaurantType.isEmpty()) {
             showSnackbar(snackbarHostState, "Please select at least one restaurant type")
             return false
         }
-        if(currentIndex == 3)
+        if (currentIndex == 3)
             return true
         if (listingData.value.workingDaysList.isEmpty()) {
             showSnackbar(snackbarHostState, "Please select at least one working day")
             return false
         }
-
         return true
+    }
+
+    private fun saveData() {
+        uiState.value = ListingUIState.RESTAURANT_LOADING_SCREEN
+        val restaurantDataRepository = RestaurantDataRepository()
+        viewModelScope.launch {
+            val imageUrls = mutableListOf<String>()
+            for (image in listingData.value.restaurantImages) {
+                val imageUrl = uploadImageToFirebaseStorage(image)
+                if (imageUrl != null)
+                    imageUrls.add(imageUrl)
+            }
+            restaurantDataRepository.setRestaurantData(
+                RestaurantEntity(
+                    restaurantName = listingData.value.restaurantName,
+                    restaurantAddress = listingData.value.restaurantAddress,
+                    phoneNumber = listingData.value.phoneNumber,
+                    alternatePhoneNumber = listingData.value.alternatePhoneNumber,
+                    email = listingData.value.email,
+                    ownerMobileNumber = listingData.value.ownerMobileNumber,
+                    ownerName = listingData.value.ownerName,
+                    ownerEmail = listingData.value.ownerEmail,
+                    isOwnerEmailSameAsRestaurantEmail = listingData.value.isOwnerEmailSameAsRestaurantEmail,
+                    isOwnerMobileSameAsRestaurantMobile = listingData.value.isOwnerMobileSameAsRestaurantMobile,
+                    selectedRestaurantType = listingData.value.selectedRestaurantType,
+                    workingDaysList = listingData.value.workingDaysList,
+                    timeSlots = listingData.value.timeSlots,
+                    restaurantImages = imageUrls
+                )
+            )
+            uiState.value = ListingUIState.RESTAURANT_SUCCESS_SCREEN
+        }
     }
 
     private fun showSnackbar(snackbarHostState: SnackbarHostState, message: String) {
@@ -125,7 +181,7 @@ class ListingViewModel : ViewModel() {
 
     fun onRestaurantNameChanged(restaurantName: String) {
         listingData.value = listingData.value.copy(restaurantName = restaurantName)
-        if(restaurantName.isNotEmpty())
+        if (restaurantName.isNotEmpty())
             onRestaurantErrorChanged(false, "")
     }
 
@@ -144,7 +200,7 @@ class ListingViewModel : ViewModel() {
 
     fun onPhoneNumberChanged(phoneNumber: String) {
         listingData.value = listingData.value.copy(phoneNumber = phoneNumber)
-        if(listingData.value.isPhoneNumberError)
+        if (listingData.value.isPhoneNumberError)
             phoneNumberCheck(phoneNumber, ::onPhoneNumberErrorChanged, false)
     }
 
@@ -155,7 +211,7 @@ class ListingViewModel : ViewModel() {
 
     fun onAlternatePhoneNumberChanged(alternatePhoneNumber: String) {
         listingData.value = listingData.value.copy(alternatePhoneNumber = alternatePhoneNumber)
-        if(listingData.value.isAlternatePhoneNumberError)
+        if (listingData.value.isAlternatePhoneNumberError)
             phoneNumberCheck(alternatePhoneNumber, ::onAlternatePhoneNumberErrorChanged, false)
     }
 
@@ -168,7 +224,7 @@ class ListingViewModel : ViewModel() {
 
     fun onEmailChanged(email: String) {
         listingData.value = listingData.value.copy(email = email)
-        if(listingData.value.isEmailError)
+        if (listingData.value.isEmailError)
             emailCheck(email, ::onEmailErrorChanged)
     }
 
@@ -178,7 +234,7 @@ class ListingViewModel : ViewModel() {
 
     fun onOwnerNameChanged(ownerName: String) {
         listingData.value = listingData.value.copy(ownerName = ownerName)
-        if(ownerName.isNotEmpty())
+        if (ownerName.isNotEmpty())
             onOwnerNameErrorChanged(false, "")
     }
 
@@ -190,7 +246,7 @@ class ListingViewModel : ViewModel() {
     fun onOwnerEmailChanged(ownerEmail: String) {
         listingData.value = listingData.value.copy(ownerEmail = ownerEmail)
         onOwnerEmailSameAsRestaurantEmailChanged(listingData.value.isOwnerEmailSameAsRestaurantEmail)
-        if(listingData.value.isOwnerEmailError)
+        if (listingData.value.isOwnerEmailError)
             emailCheck(ownerEmail, ::onOwnerEmailErrorChanged)
     }
 
@@ -202,8 +258,8 @@ class ListingViewModel : ViewModel() {
     fun onOwnerMobileNumberChanged(ownerMobileNumber: String) {
         listingData.value = listingData.value.copy(ownerMobileNumber = ownerMobileNumber)
         onOwnerMobileSameAsRestaurantMobileChanged(listingData.value.isOwnerMobileSameAsRestaurantMobile)
-        if(listingData.value.isOwnerMobileNumberError)
-            phoneNumberCheck(ownerMobileNumber,::onOwnerMobileNumberErrorChanged, false)
+        if (listingData.value.isOwnerMobileNumberError)
+            phoneNumberCheck(ownerMobileNumber, ::onOwnerMobileNumberErrorChanged, false)
     }
 
     fun onOwnerMobileNumberErrorChanged(isError: Boolean, error: String) {
@@ -317,4 +373,13 @@ fun ListingViewModelFactory(): ViewModelProvider.Factory {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+}
+
+suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String? {
+    val storageRef =
+        FirebaseStorage.getInstance().reference.child("images/${imageUri.lastPathSegment}")
+    val uploadTask = storageRef.putFile(imageUri)
+    val taskSnapshot =
+        uploadTask.await() // This will suspend the coroutine until the upload is complete
+    return taskSnapshot.storage.downloadUrl.await().toString()
 }
