@@ -21,8 +21,8 @@ fun emailCheck(email: String, error: (Boolean, String) -> Unit): Boolean{
     return true
 }
 
-fun phoneNumberCheck(phoneNumber: String, error: (Boolean, String) -> Unit): Boolean{
-    if(isValidPhoneNumber(phoneNumber)){
+fun phoneNumberCheck(phoneNumber: String, error: (Boolean, String) -> Unit, containsStart: Boolean = true): Boolean{
+    if(isValidPhoneNumber(if(containsStart)phoneNumber else "+91$phoneNumber")){
         error(false, "")
         return false
     }

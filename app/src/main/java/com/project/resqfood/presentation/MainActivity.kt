@@ -11,6 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,6 +50,10 @@ import com.project.resqfood.presentation.onboardingProcess.NavOnboarding
 import com.project.resqfood.presentation.onboardingProcess.Onboarding
 import com.project.resqfood.presentation.postScreen.NavPostScreen
 import com.project.resqfood.presentation.postScreen.PostScreen
+import com.project.resqfood.presentation.restaurantonboarding.ListingRestaurantScreen
+import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
+import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
+import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -65,6 +70,7 @@ class MainActivity : ComponentActivity() {
         val auth = FirebaseAuth.getInstance()
         val accountService: AccountService = AccountServiceImpl()
         val alreadyLoggedIn = FirebaseAuth.getInstance().currentUser != null
+        val restaurantListingViewModel: ListingViewModel = ListingViewModelFactory().create(ListingViewModel::class.java)
         enableEdgeToEdge()
         setContent {
             AppTheme {
@@ -76,7 +82,8 @@ class MainActivity : ComponentActivity() {
                     viewModel.getUserData(FirebaseAuth.getInstance().currentUser!!.uid)
                 NavHost(
                     navController = navController,
-                    startDestination = if (alreadyLoggedIn)
+                    startDestination =
+                    if (alreadyLoggedIn)
                         NavMainScreen else NavOnboarding
                 ) {
                     composable<NavSignInUI>(
@@ -163,6 +170,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<NavOnboarding>{
                         Onboarding(navController = navController)
+                    }
+                    composable<NavListingRestaurant> {
+                        ListingRestaurantScreen(restaurantListingViewModel, navController)
                     }
                 }
             }

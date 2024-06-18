@@ -82,6 +82,7 @@ import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
 import com.project.resqfood.presentation.login.NavPersonalDetails
 import com.project.resqfood.presentation.login.mainlogin.NavSignInUI
 import com.project.resqfood.presentation.login.SignInDataViewModel
+import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -90,8 +91,8 @@ data class ProfileItem(val vectorImage: ImageVector, val label: String, val onCl
 val myOrderList = listOf(
     ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavAddingLeftovers)}),
+    ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {it.navigate(NavAddingLeftovers)}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavListingRestaurant)}),
     ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
 )
 
