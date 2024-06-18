@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +18,10 @@ import androidx.compose.ui.unit.sp
 import com.project.resqfood.ui.theme.displayFontFamily
 
 @Composable
-fun RestaurantContactScreen(data: ListingUIStateData, restaurantListingViewModel: ListingViewModel) {
+fun RestaurantContactScreen(
+    data: ListingUIStateData,
+    restaurantListingViewModel: ListingViewModel
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Contact Number at Restaurant",
@@ -29,7 +34,7 @@ fun RestaurantContactScreen(data: ListingUIStateData, restaurantListingViewModel
                 fontSize = 14.sp,
                 fontFamily = displayFontFamily,
                 fontWeight = FontWeight(500),
-                color = if(isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outlineVariant
+                color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outlineVariant
             )
         )
         Spacer(modifier = Modifier.height(48.dp))
@@ -59,10 +64,11 @@ fun RestaurantContactScreen(data: ListingUIStateData, restaurantListingViewModel
             valueInitial = data.ownerEmail,
             placeholderText = "Enter email address",
             labelText = "Owner email",
-            supportingText = data.ownerEmailError,
-            isError = data.isOwnerEmailError
+            supportingText = data.emailError,
+            leadingIcon = Icons.Default.Email,
+            isError = data.isEmailError
         ) {
-            restaurantListingViewModel.onOwnerEmailChanged(it)
+            restaurantListingViewModel.onEmailChanged(it)
         }
     }
 }

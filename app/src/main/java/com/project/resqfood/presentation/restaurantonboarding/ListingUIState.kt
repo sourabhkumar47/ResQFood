@@ -1,10 +1,18 @@
 package com.project.resqfood.presentation.restaurantonboarding
 
+import android.net.Uri
 import com.project.resqfood.model.RestaurantType
 
-enum class ListingUIState(val progress: Float){
-    RESTAURANT_DETAILS_SCREEN(0.1f),
-    CONTACT_DETAILS_SCREEN(0.2f),
+enum class ListingUIState(val order: Int){
+    RESTAURANT_DETAILS_SCREEN(1),
+    RESTAURANT_CONTACT_DETAILS_SCREEN(2),
+    RESTAURANT_OWNER_DETAILS_SCREEN(3),
+    RESTAURANT_TYPE_SCREEN(4),
+    RESTAURANT_WORKING_WEEK_SCREEN(5),
+    RESTAURANT_WORKING_HOURS_SCREEN(6),
+    RESTAURANT_IMAGES_SCREEN(7),
+    RESTAURANT_LOADING_SCREEN(8),
+    RESTAURANT_SUCCESS_SCREEN(9)
 }
 
 data class ListingUIStateData(
@@ -42,6 +50,7 @@ data class ListingUIStateData(
     val workingDaysList: List<DayOfWeek> = emptyList(),
     val workingDaysRadioOption: RadioButtonOption? = null,
     val timeSlots: List<RestaurantTimeSlot> = listOf(RestaurantTimeSlot()),
+    val restaurantImages: List<Uri> = emptyList()
 )
 
 data class AddressEntity(

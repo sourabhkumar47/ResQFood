@@ -25,9 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,9 +54,15 @@ fun ListingRestaurantScreen(
     val scrollState = rememberScrollState()
     val data by restaurantListingViewModel.listingData
     val uiState by restaurantListingViewModel.uiState
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+//    if(!restaurantListingViewModel.isStart)
+//    restaurantListingViewModel.validateRestaurantDetails(snackbarHostState)
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
 
     ) {
         val padding = it
@@ -108,32 +117,59 @@ fun ListingRestaurantScreen(
                     .align(
                         Alignment.BottomEnd
                     )
-                    .padding(12.dp), onNext = { /*TODO*/ }) {
-
+                    .padding(12.dp),
+                    isFirst = (uiState == ListingUIState.RESTAURANT_SUCCESS_SCREEN || uiState == ListingUIState.RESTAURANT_DETAILS_SCREEN),
+                    onNext = { restaurantListingViewModel.onNextClick(snackbarHostState) }) {
                 }
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 64.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 64.dp)
+                ) {
                     Column(
                         modifier = Modifier
                             .verticalScroll(scrollState)
-                            .width(360.dp)
+                            .width(460.dp)
                             .padding(top = 32.dp, bottom = 32.dp, start = 32.dp, end = 32.dp)
                     ) {
-//                    MapsScreen()
-//                        RestaurantOwnerDetailScreen(
-//                            data = data,
-//                            restaurantListingViewModel = restaurantListingViewModel
-//                        )
-//                        RestaurantDetailScreen(data, restaurantListingViewModel)
-//                        RestaurantContactScreen(data = data, restaurantListingViewModel = restaurantListingViewModel)
-//                        RestaurantTypeScreen(data = data, restaurantListingViewModel =restaurantListingViewModel)
-//                        RestaurantOpenDaysScreen(data = data, restaurantListingViewModel = restaurantListingViewModel)
-//                        RestaurantOperationalHoursScreen(
-//                            data = data,
-//                            restaurantListingViewModel = restaurantListingViewModel
-//                        )
-                        AddRestaurantImages(data = data, restaurantListingViewModel = restaurantListingViewModel)
+                        when (uiState) {
+                            ListingUIState.RESTAURANT_DETAILS_SCREEN -> RestaurantDetailScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_CONTACT_DETAILS_SCREEN -> RestaurantContactScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_OWNER_DETAILS_SCREEN -> RestaurantOwnerDetailScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_TYPE_SCREEN -> RestaurantTypeScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_WORKING_WEEK_SCREEN -> RestaurantOpenDaysScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_WORKING_HOURS_SCREEN -> RestaurantOperationalHoursScreen(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+
+                            ListingUIState.RESTAURANT_IMAGES_SCREEN -> AddRestaurantImages(
+                                data = data,
+                                restaurantListingViewModel = restaurantListingViewModel
+                            )
+                            ListingUIState.RESTAURANT_LOADING_SCREEN -> RestaurantLoadingScreen()
+                            ListingUIState.RESTAURANT_SUCCESS_SCREEN -> RestaurantSuccessScreen()
+                        }
                     }
                 }
 
@@ -175,7 +211,7 @@ private fun BottomScreen(
     Row(
         modifier = modifier
     ) {
-        if (isFirst) {
+        if (!isFirst) {
             OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth(0.5f)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
@@ -185,7 +221,7 @@ private fun BottomScreen(
         }
         Button(
             onClick = onNext,
-            modifier = Modifier.fillMaxWidth(if (isFirst) 1f else 0.5f)
+            modifier = Modifier.fillMaxWidth(if (isFirst) 1f else 1.0f)
         ) {
             Text(text = "Next")
             Spacer(modifier = Modifier.width(8.dp))
