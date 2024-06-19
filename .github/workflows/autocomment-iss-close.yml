@@ -6,6 +6,9 @@ on:
 
 jobs:
   greet-on-close:
+    permissions:
+      contents: read
+      issues: write
     runs-on: ubuntu-latest
 
     steps:
