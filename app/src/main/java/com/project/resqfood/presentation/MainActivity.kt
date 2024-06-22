@@ -1,5 +1,8 @@
 package com.project.resqfood.presentation
 
+
+import NavOrderingPickup
+import OrderingPickup
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,11 +14,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.project.resqfood.R
 import com.project.resqfood.domain.services.AccountService
 import com.project.resqfood.domain.services.AccountServiceImpl
 import com.project.resqfood.model.UserEntity
@@ -27,6 +30,7 @@ import com.project.resqfood.presentation.itemdetailscreen.NavAddingLeftovers
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.itemdetailscreen.NavOrderConfirmScreen
 import com.project.resqfood.presentation.itemdetailscreen.OrderConfirmScreen
+import com.project.resqfood.presentation.itemdetailscreen.SuccessScreen
 import com.project.resqfood.presentation.login.NavPersonalDetails
 import com.project.resqfood.presentation.login.NavWaitScreen
 import com.project.resqfood.presentation.login.PersonalDetails
@@ -56,16 +60,20 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFa
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
 
+
 class MainActivity : ComponentActivity() {
+
 
     companion object {
         var userEntity: UserEntity? = null
         var isUserAnonymous = mutableStateOf(false)
     }
 
+
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         val auth = FirebaseAuth.getInstance()
         val accountService: AccountService = AccountServiceImpl()
@@ -148,6 +156,22 @@ class MainActivity : ComponentActivity() {
                     composable<NavAddingLeftovers> {
                         AddingLeftovers(navController)
                     }
+                    composable<NavOrderingPickup> {
+                        OrderingPickup(navController)
+                    }
+                    composable<SuccessScreen> {
+                        SuccessScreen(
+                            buttonText = "Continue",
+                            onClick = {
+                                navController.navigate(NavMainScreen) {
+                                    popUpTo(NavMainScreen) {
+                                        inclusive = false
+                                    }
+                                }
+                            },
+                            animationJsonResId = R.raw.successanimation
+                        )
+                    }
                     composable<NavCommunityScreen> {
                         CommunityScreen(navigateBackToHome = {
                             navController.navigate(NavMainScreen) {
@@ -164,6 +188,7 @@ class MainActivity : ComponentActivity() {
                             navController.popBackStack()
                         }
 
+
                         composable<NavOnboarding> {
                             Onboarding(navController = navController)
                         }
@@ -179,9 +204,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     private fun slideHorizontallyAnimation(): EnterTransition {
         return slideInHorizontally(animationSpec = tween(300),
             initialOffsetX = { fullWidth -> fullWidth }
         )
     }
 }
+

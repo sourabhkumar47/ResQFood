@@ -1,5 +1,7 @@
 package com.project.resqfood.presentation.profilescreens
 
+
+import NavOrderingPickup
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -41,6 +43,7 @@ import androidx.compose.material.icons.filled.HouseSiding
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ButtonDefaults
@@ -86,15 +89,19 @@ import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaura
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+
 data class ProfileItem(val vectorImage: ImageVector, val label: String, val onClick: (NavController) -> Unit)
+
 
 val myOrderList = listOf(
     ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {it.navigate(NavAddingLeftovers)}),
     ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavListingRestaurant)}),
-    ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/})
+    ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/}),
+    ProfileItem(vectorImage = Icons.Default.ShoppingCart, label = "Ordering and Pickup", onClick = {it.navigate(NavOrderingPickup)})
 )
+
 
 val moreList = listOf(
     ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(NavPersonalDetails) }),
@@ -104,10 +111,13 @@ val moreList = listOf(
     ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
 )
 
+
 enum class TabItem(val label: String){
     MY_ORDERS(label ="My Orders"),
     MORE(label = "More")
 }
+
+
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -129,7 +139,9 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
         mutableStateOf(true)
     }
 
+
     val pagerState = rememberPagerState { TabItem.entries.size }
+
 
     val selectedTabItemIndex by remember {
         derivedStateOf {
@@ -157,18 +169,20 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
         Log.i("scroll", "scroll value: ${scrollState.value} && size = $sizeState && are")
     }
 
+
     Column(
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxWidth()
 
+
     ) {
-            Column {
-                Box {
+        Column {
+            Box {
                 Row {
                     Spacer(modifier = Modifier.width(16.dp))
                     ProfilePictureView(size = animatedSize, profilePictureUrl = user?.profileUrl ?: "",
-                        ){
+                    ){
                         navController.navigate(NavPersonalDetails)
                     }
                     Spacer(modifier = Modifier.width(16.dp))
@@ -183,34 +197,37 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                 }
             }
             //This Row has to be removed while animating
-                AnimatedVisibility(visible = areButtonsVisible) {
-                        Row(modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly) {
-                            AnimatedCards(vectorImage = Icons.Default.StarRate, text = "Rating", onClick = { /*TODO*/ })
-                            AnimatedCards(vectorImage = Icons.Default.Favorite, text = "Favorites", onClick = { /*TODO*/ }, width = 1f)
-                        }
-                    }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
-                HorizontalPager(state = pagerState) { index ->
-                    when(index){
-                        TabItem.MY_ORDERS.ordinal -> TabItemContent(
-                            scrollState = scrollState,
-                            profileItemList = myOrderList,
-                            navController = navController
-                        )
-                        TabItem.MORE.ordinal -> TabItemContent(
-                            scrollState = scrollState,
-                            profileItemList = moreList,
-                            navController = navController
-                        )
-                    }
+            AnimatedVisibility(visible = areButtonsVisible) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                    AnimatedCards(vectorImage = Icons.Default.StarRate, text = "Rating", onClick = { /*TODO*/ })
+                    AnimatedCards(vectorImage = Icons.Default.Favorite, text = "Favorites", onClick = { /*TODO*/ }, width = 1f)
                 }
+            }
+
+
+            Spacer(modifier = Modifier.height(8.dp))
+            ProfileTabRow(selectedTabItemIndex = selectedTabItemIndex, pagerState = pagerState, scope = scope)
+            HorizontalPager(state = pagerState) { index ->
+                when(index){
+                    TabItem.MY_ORDERS.ordinal -> TabItemContent(
+                        scrollState = scrollState,
+                        profileItemList = myOrderList,
+                        navController = navController
+                    )
+                    TabItem.MORE.ordinal -> TabItemContent(
+                        scrollState = scrollState,
+                        profileItemList = moreList,
+                        navController = navController
+                    )
+                }
+            }
+
 
         }
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -238,6 +255,7 @@ fun ProfileTabRow(selectedTabItemIndex: Int, pagerState: PagerState, scope: Coro
     }
 }
 
+
 @Composable
 fun TabItemContent(scrollState: ScrollState, profileItemList: List<ProfileItem>, navController: NavController) {
     Column(
@@ -254,6 +272,7 @@ fun TabItemContent(scrollState: ScrollState, profileItemList: List<ProfileItem>,
         Spacer(modifier =Modifier.height(180.dp))
     }
 }
+
 
 @Composable
 fun RowOfProfile(vectorImage: ImageVector, text: String, onClick: () -> Unit){
@@ -282,6 +301,7 @@ fun RowOfProfile(vectorImage: ImageVector, text: String, onClick: () -> Unit){
     }
 }
 
+
 @Composable
 fun AnimatedCards(vectorImage: ImageVector, text: String, onClick: () -> Unit,
                   width: Float = 0.5f){
@@ -291,11 +311,12 @@ fun AnimatedCards(vectorImage: ImageVector, text: String, onClick: () -> Unit,
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
         modifier = Modifier.width(180.dp)) {
-            Icon(imageVector = vectorImage, contentDescription = text)
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(text = text)
+        Icon(imageVector = vectorImage, contentDescription = text)
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = text)
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -304,6 +325,7 @@ fun TopAppBarProfileScreen(){
         Text("Profile")
     })
 }
+
 
 @Composable
 fun ProfilePictureView(profilePictureUrl: String = "", size: Dp = 100.dp, onClick: () -> Unit){
@@ -337,6 +359,7 @@ fun ProfilePictureView(profilePictureUrl: String = "", size: Dp = 100.dp, onClic
                         )
                 )
 
+
             } else {
                 AsyncImage(
                     model = profilePictureUrl,
@@ -357,10 +380,13 @@ fun ProfilePictureView(profilePictureUrl: String = "", size: Dp = 100.dp, onClic
     }
 }
 
+
 fun logoutUser(navController: NavController) {
     MainActivity.userEntity = null
     FirebaseAuth.getInstance().signOut()
     navController.popBackStack(navController.graph.startDestinationId, true)
     navController.navigate(NavSignInUI)
 }
+
+
 
