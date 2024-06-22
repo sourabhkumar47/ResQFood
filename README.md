@@ -24,11 +24,14 @@ and provides individuals with access to great deals on quality food.
 <!-- Jetpack Compose -->
 <img src="https://img.shields.io/badge/jetpack%20compose-%233D3D3D.svg?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="Jetpack Compose logo">
 
+# ⛏️ Tools: 
+- Firebase
+- Google Map SDK
+
 ## App Features: *TODO*
 
 ## Design Idea:
 - https://www.figma.com/design/93qkrzana3qZ1jup0D6GjY/Untitled?node-id=0%3A1&t=Rxda2auBzo0To2WM-1
-- https://www.usegalileo.ai/create/59c8618f-a769-4962-90dc-690430d2a7a7
 
 ## Welcome & Onboarding Screens
    
