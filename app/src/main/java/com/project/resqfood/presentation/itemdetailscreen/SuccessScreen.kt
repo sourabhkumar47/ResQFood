@@ -1,5 +1,6 @@
 package com.project.resqfood.presentation.itemdetailscreen
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -19,6 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
 import com.project.resqfood.R
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+object SuccessScreen
+
 
 @Composable
 fun SuccessScreen(
@@ -48,9 +55,11 @@ fun SuccessScreen(
                 .size(200.dp)
         )
 
+
         Spacer(modifier = Modifier.height(32.dp))
         Text(text = "Success!", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(32.dp))
+
 
         // Button
         Button(
@@ -65,6 +74,7 @@ fun SuccessScreen(
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewSuccessScreen() {
@@ -74,3 +84,4 @@ fun PreviewSuccessScreen() {
         animationJsonResId = R.raw.successanimation
     )
 }
+
