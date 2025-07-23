@@ -104,7 +104,7 @@ fun SignInUI(
                 Image(
                     painter = painterResource(id = R.drawable.logo_without_background),
                     modifier = Modifier.padding(paddingValues),
-                    contentDescription = null,
+                    contentDescription = "ResQFood Logo",
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))

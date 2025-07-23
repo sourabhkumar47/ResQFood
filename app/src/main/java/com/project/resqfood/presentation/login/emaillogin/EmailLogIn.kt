@@ -299,7 +299,7 @@ fun SignInUsingEmail(viewModel: EmailSignInViewModel, navController: NavControll
                 Image(
                     modifier = Modifier.padding(paddingValues),
                     painter = painterResource(id = R.drawable.logo_without_background),
-                    contentDescription = null,
+                    contentDescription = "ResQFood Logo",
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
