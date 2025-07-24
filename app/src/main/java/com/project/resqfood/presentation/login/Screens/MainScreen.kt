@@ -4,6 +4,7 @@ package com.project.resqfood.presentation.login.Screens
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.core.EaseIn
@@ -201,19 +202,25 @@ fun MainScreen(
                 ) { paddingValues ->
                     AnimatedContent(
                         targetState = selectedItemIndex,
-                        label = "",
+                        label = "ScreenAnimation",
                         transitionSpec = {
+                            val direction = if (targetState > initialState) {
+                                AnimatedContentTransitionScope.SlideDirection.Left
+                            } else {
+                                AnimatedContentTransitionScope.SlideDirection.Right
+                            }
                             slideIntoContainer(
-                                animationSpec = tween(300, easing = EaseIn),
-                                towards = Up
+                                towards = direction,
+                                animationSpec = tween(300, easing = EaseIn)
                             ).togetherWith(
                                 slideOutOfContainer(
-                                    animationSpec = tween(300, easing = EaseOut),
-                                    towards = Down
+                                    towards = direction,
+                                    animationSpec = tween(300, easing = EaseOut)
                                 )
                             )
                         }
-                    ) { targetState ->
+
+                        ) { targetState ->
                         when (targetState) {
                             0 -> {
                                 Column(
