@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         var userEntity: UserEntity? = null
         var isUserAnonymous = mutableStateOf(false)
+        var isDarkModeEnabled = mutableStateOf(false) //darkthemeoffhere
     }
 
 
@@ -81,7 +82,7 @@ class MainActivity : ComponentActivity() {
         val restaurantListingViewModel: ListingViewModel = ListingViewModelFactory().create(ListingViewModel::class.java)
         enableEdgeToEdge()
         setContent {
-            AppTheme {
+            AppTheme (useDarkTheme = isDarkModeEnabled.value){
                 val navController = rememberNavController()
                 val viewModel: SignInDataViewModel = viewModel()
                 val mainSignInViewModel: MainSignInViewModel =

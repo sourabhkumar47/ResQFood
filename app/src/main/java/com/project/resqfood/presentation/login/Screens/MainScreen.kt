@@ -3,7 +3,9 @@ package com.project.resqfood.presentation.login.Screens
 
 import android.content.Intent
 import android.util.Log
+
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.core.EaseIn
@@ -71,7 +73,9 @@ import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import timber.log.Timber
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import com.project.resqfood.presentation.MainActivity
 
 @Serializable
 object NavMainScreen
@@ -142,6 +146,30 @@ fun MainScreen(
                         },
                         icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
                     )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, end = 16.dp, top = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Dark Mode",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = MainActivity.isDarkModeEnabled.value,
+                            onCheckedChange = { isChecked ->
+                                MainActivity.isDarkModeEnabled.value = isChecked
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
                     // Add more items as needed
                 }
             }
@@ -213,19 +241,25 @@ fun MainScreen(
                 ) { paddingValues ->
                     AnimatedContent(
                         targetState = selectedItemIndex,
-                        label = "",
+                        label = "ScreenAnimation",
                         transitionSpec = {
+                            val direction = if (targetState > initialState) {
+                                AnimatedContentTransitionScope.SlideDirection.Left
+                            } else {
+                                AnimatedContentTransitionScope.SlideDirection.Right
+                            }
                             slideIntoContainer(
-                                animationSpec = tween(300, easing = EaseIn),
-                                towards = Up
+                                towards = direction,
+                                animationSpec = tween(300, easing = EaseIn)
                             ).togetherWith(
                                 slideOutOfContainer(
-                                    animationSpec = tween(300, easing = EaseOut),
-                                    towards = Down
+                                    towards = direction,
+                                    animationSpec = tween(300, easing = EaseOut)
                                 )
                             )
                         }
-                    ) { targetState ->
+
+                        ) { targetState ->
                         when (targetState) {
                             0 -> {
                                 Column(
