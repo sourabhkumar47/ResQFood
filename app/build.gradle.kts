@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.androidx.material3.android)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.androidx.benchmark.traceprocessor.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
