@@ -14,10 +14,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoStories
@@ -29,6 +34,7 @@ import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,7 +63,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.project.resqfood.model.TopOffersViewModel
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
 import com.project.resqfood.presentation.profilescreens.ProfileScreen
@@ -68,10 +77,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import com.project.resqfood.presentation.MainActivity
 
-
 @Serializable
 object NavMainScreen
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,6 +180,8 @@ fun MainScreen(
                 color = MaterialTheme.colorScheme.background
             ) {
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                // --- ADD VIEWMODEL INJECTION ---
+                val topOffersViewModel: TopOffersViewModel = viewModel()
                 Scaffold(
                     modifier = if (selectedItemIndex == 0) Modifier
                         .fillMaxSize()
@@ -259,7 +268,14 @@ fun MainScreen(
                                         .padding(paddingValues),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    CardsSection()
+                                    // --- CATEGORY CHIP ROW UI ---
+                                    CategoryChipRow(
+                                        categories = topOffersViewModel.categories,
+                                        selected = topOffersViewModel.selectedCategories,
+                                        onChipClick = { topOffersViewModel.onCategoryChipClick(it) }
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    CardsSection(offers = topOffersViewModel.filteredOffers)
                                     Button(modifier = Modifier.padding(top = 16.dp), onClick = {
                                         navController.navigate(NavItemDetailScreen)
                                     }) {
@@ -267,30 +283,55 @@ fun MainScreen(
                                     }
                                 }
                             }
-
-
                             1 -> {
                                 ProfileScreen(paddingValues, navController)
                             }
-
-
                             2 -> {
-                                Log.d("MainScreen", "View Map")
+                                Timber.tag("MainScreen").d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
                                 val intent = Intent(context, MapScreen::class.java)
                                 context.startActivity(intent)
-
-
                             }
                         }
                     }
                 }
             }
-        }
-    )
-}
+        })
+    }
 
+/**
+ * CategoryChipRow renders a horizontal list of selectable category chips.
+ * @param categories List of all category names (including 'All').
+ * @param selected Set of currently selected categories (show highlighted).
+ * @param onChipClick Lambda invoked with category when chip is clicked.
+ */
+@Composable
+fun CategoryChipRow(
+    categories: List<String>,
+    selected: Set<String>,
+    onChipClick: (String) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier
+            .padding(top = 14.dp, bottom = 0.dp, start = 12.dp, end = 12.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(categories) { cat ->
+            val isSelected = selected.contains(cat)
+            FilterChip(
+                selected = isSelected,
+                onClick = { onChipClick(cat) },
+                label = {
+                    Text(cat, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
+                },
+                modifier = Modifier,
+                shape = RoundedCornerShape(24.dp)
+            )
+        }
+    }
+}
 
 @Preview
 @Composable
@@ -298,14 +339,3 @@ fun MainScreenPreview() {
     val context = LocalContext.current
     MainScreen(navController = NavController(context = context))
 }
-
-
-
-
-
-
-
-
-
-
-
