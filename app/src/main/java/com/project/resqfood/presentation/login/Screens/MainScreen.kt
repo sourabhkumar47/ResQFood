@@ -3,6 +3,7 @@ package com.project.resqfood.presentation.login.Screens
 
 import android.content.Intent
 import android.util.Log
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
@@ -13,7 +14,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -61,6 +64,9 @@ import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import com.project.resqfood.presentation.MainActivity
 
 
 @Serializable
@@ -133,6 +139,30 @@ fun MainScreen(
                         },
                         icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
                     )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, end = 16.dp, top = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Dark Mode",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = MainActivity.isDarkModeEnabled.value,
+                            onCheckedChange = { isChecked ->
+                                MainActivity.isDarkModeEnabled.value = isChecked
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
                     // Add more items as needed
                 }
             }
