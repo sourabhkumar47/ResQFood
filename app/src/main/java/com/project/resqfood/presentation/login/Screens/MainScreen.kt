@@ -166,7 +166,7 @@ fun MainScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        ) { //toogle fix
                             Text(
                                 text = "Dark Mode",
                                 style = MaterialTheme.typography.bodyLarge
