@@ -76,6 +76,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.graphics.Color
 import com.project.resqfood.presentation.MainActivity
 import timber.log.Timber
 
@@ -157,22 +158,36 @@ fun MainScreen(
                             .padding(16.dp, end = 16.dp, top = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Dark Mode",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Switch(
-                            checked = MainActivity.isDarkModeEnabled.value,
-                            onCheckedChange = { isChecked ->
-                                MainActivity.isDarkModeEnabled.value = isChecked
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.primary
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Dark Mode",
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                        )
+
+                            Switch(
+                                checked = MainActivity.isDarkModeEnabled.value,
+                                onCheckedChange = { isChecked ->
+                                    MainActivity.isDarkModeEnabled.value = isChecked
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color(0xFFFFD600),
+                                    checkedTrackColor = Color(0xFFFFD600).copy(alpha = 0.3f),
+                                    uncheckedThumbColor = Color.Gray,
+                                    uncheckedTrackColor = Color.Gray.copy(alpha = 0.3f)
+                                )
+                            )
+                        }
                     }
-                    // Add more items as needed
+
+                        // Add more items as needed
                 }
             }
         },

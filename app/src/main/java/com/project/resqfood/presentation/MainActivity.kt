@@ -188,8 +188,6 @@ class MainActivity : ComponentActivity() {
                         PostScreen {
                             navController.popBackStack()
                         }
-
-
                         composable<NavOnboarding> {
                             Onboarding(navController = navController)
                         }
@@ -200,6 +198,7 @@ class MainActivity : ComponentActivity() {
                     composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
                     }
+
                 }
             }
         }
