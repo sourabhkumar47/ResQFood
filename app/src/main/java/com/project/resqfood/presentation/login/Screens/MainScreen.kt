@@ -2,12 +2,11 @@ package com.project.resqfood.presentation.login.Screens
 
 
 import android.content.Intent
-import android.util.Log
+
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
+
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
@@ -166,7 +165,7 @@ fun MainScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
-                        ) { //toogle fix
+                        ) {
                             Text(
                                 text = "Dark Mode",
                                 style = MaterialTheme.typography.bodyLarge
