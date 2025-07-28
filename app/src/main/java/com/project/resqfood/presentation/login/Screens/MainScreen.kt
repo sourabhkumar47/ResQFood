@@ -295,7 +295,7 @@ fun MainScreen(
                             2 -> {
                                 @Suppress("WrongTimberUsage")
 
-                                Timber.tag("MainScreen").d("View Map")
+                                Timber.d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
                                 val intent = Intent(context, MapScreen::class.java)
