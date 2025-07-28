@@ -12,6 +12,7 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -81,6 +82,8 @@ import kotlinx.serialization.Serializable
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
 import timber.log.Timber
 
@@ -124,11 +127,10 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 24.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(36.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_without_background),
+                            contentDescription = "App Logo",
+                            modifier = Modifier.size(36.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -210,6 +212,7 @@ fun MainScreen(
                             )
                         )
                     }
+
             // Add more items as needed
                 }
             }
