@@ -24,10 +24,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
@@ -76,6 +80,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.graphics.Color
 import com.project.resqfood.presentation.MainActivity
 import timber.log.Timber
 
@@ -109,18 +114,33 @@ fun MainScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Column {
-                    Box(
-                        modifier = Modifier.padding(16.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    // Top Row: Icon + App Name
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 24.dp)
                     ) {
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "App Icon",
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "ResQFood",
-                            fontSize = 48.sp,
-                            modifier = Modifier.padding(16.dp)
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    HorizontalDivider()
-                    // Add navigation items
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    // Main Navigation Items
                     NavigationDrawerItem(
                         label = { Text("Home") },
                         selected = false,
@@ -128,8 +148,10 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 0
                         },
-                        icon = { Icon(Icons.Default.Home, contentDescription = null) }
+                        icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                        modifier = Modifier.fillMaxWidth()
                     )
+
                     NavigationDrawerItem(
                         label = { Text("Profile") },
                         selected = false,
@@ -137,42 +159,58 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 1
                         },
-                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
+                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) },
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    // Spacer to visually separate bottom section
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    // View Map
                     NavigationDrawerItem(
-                        label = { Text("view Map") },
+                        label = { Text("View Map") },
                         selected = false,
                         onClick = {
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 2
                         },
-                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
+                        icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-
+                    // Dark Mode in SAME LINE with Switch
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp, end = 16.dp, top = 12.dp),
+                            .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Dark Mode",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.DarkMode,
+                                contentDescription = "Dark Mode Icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(text = "Dark Mode", style = MaterialTheme.typography.bodyLarge)
+                        }
+
                         Switch(
                             checked = MainActivity.isDarkModeEnabled.value,
                             onCheckedChange = { isChecked ->
                                 MainActivity.isDarkModeEnabled.value = isChecked
                             },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.primary
+                                checkedThumbColor = Color(0xFFFFD600),
+                                checkedTrackColor = Color(0xFFFFD600).copy(alpha = 0.4f),
+                                uncheckedThumbColor = Color.Gray,
+                                uncheckedTrackColor = Color.Gray.copy(alpha = 0.3f)
                             )
                         )
                     }
-                    // Add more items as needed
+            // Add more items as needed
                 }
             }
         },
@@ -289,7 +327,9 @@ fun MainScreen(
                                 ProfileScreen(paddingValues, navController)
                             }
                             2 -> {
-                                Timber.tag("MainScreen").d("View Map")
+                                @Suppress("WrongTimberUsage")
+
+                                Timber.d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
                                 val intent = Intent(context, MapScreen::class.java)
