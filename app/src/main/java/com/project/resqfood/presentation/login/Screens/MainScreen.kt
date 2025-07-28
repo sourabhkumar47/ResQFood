@@ -76,6 +76,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.graphics.Color
 import com.project.resqfood.presentation.MainActivity
 import timber.log.Timber
 
@@ -168,7 +169,10 @@ fun MainScreen(
                                 MainActivity.isDarkModeEnabled.value = isChecked
                             },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.primary
+                                checkedThumbColor = Color(0xFFFFD600),       // Bright Yellow thumb
+                                checkedTrackColor = Color(0xFFFFF59D),       // Soft Yellow track
+                                uncheckedThumbColor = Color(0xFFB0BEC5),     // Grey thumb when off
+                                uncheckedTrackColor = Color(0xFFECEFF1)      // Light grey track
                             )
                         )
                     }
