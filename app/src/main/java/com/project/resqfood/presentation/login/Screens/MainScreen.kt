@@ -293,6 +293,8 @@ fun MainScreen(
                                 ProfileScreen(paddingValues, navController)
                             }
                             2 -> {
+                                @Suppress("WrongTimberUsage")
+
                                 Timber.tag("MainScreen").d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
