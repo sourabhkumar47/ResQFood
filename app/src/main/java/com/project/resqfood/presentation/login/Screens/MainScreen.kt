@@ -24,14 +24,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoStories
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
@@ -114,33 +110,18 @@ fun MainScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    // Top Row: Icon + App Name
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 24.dp)
+                Column {
+                    Box(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(36.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "ResQFood",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onSurface
+                            fontSize = 48.sp,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
-
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // Main Navigation Items
+                    HorizontalDivider()
+                    // Add navigation items
                     NavigationDrawerItem(
                         label = { Text("Home") },
                         selected = false,
@@ -148,10 +129,8 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 0
                         },
-                        icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                        modifier = Modifier.fillMaxWidth()
+                        icon = { Icon(Icons.Default.Home, contentDescription = null) }
                     )
-
                     NavigationDrawerItem(
                         label = { Text("Profile") },
                         selected = false,
@@ -159,62 +138,49 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 1
                         },
-                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) },
-                        modifier = Modifier.fillMaxWidth()
+                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
                     )
-
-                    // Spacer to visually separate bottom section
-                    Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // View Map
                     NavigationDrawerItem(
-                        label = { Text("View Map") },
+                        label = { Text("view Map") },
                         selected = false,
                         onClick = {
                             scope.launch { drawerState.close() }
                             selectedItemIndex = 2
                         },
-                        icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
-                        modifier = Modifier.fillMaxWidth()
+                        icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) }
                     )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                    // Dark Mode in SAME LINE with Switch
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                            .padding(16.dp, end = 16.dp, top = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.DarkMode,
-                                contentDescription = "Dark Mode Icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = "Dark Mode", style = MaterialTheme.typography.bodyLarge)
-                        }
-
+                        Text(
+                            text = "Dark Mode",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
+                        )
                         Switch(
                             checked = MainActivity.isDarkModeEnabled.value,
                             onCheckedChange = { isChecked ->
                                 MainActivity.isDarkModeEnabled.value = isChecked
                             },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFD600),
-                                checkedTrackColor = Color(0xFFFFD600).copy(alpha = 0.4f),
-                                uncheckedThumbColor = Color.Gray,
-                                uncheckedTrackColor = Color.Gray.copy(alpha = 0.3f)
+                                checkedThumbColor = Color(0xFFFFD600),       // Bright Yellow thumb
+                                checkedTrackColor = Color(0xFFFFF59D),       // Soft Yellow track
+                                uncheckedThumbColor = Color(0xFFB0BEC5),     // Grey thumb when off
+                                uncheckedTrackColor = Color(0xFFECEFF1)      // Light grey track
                             )
                         )
                     }
+                    // Add more items as needed
                 }
             }
-
         },
-            content = {
+        content = {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
