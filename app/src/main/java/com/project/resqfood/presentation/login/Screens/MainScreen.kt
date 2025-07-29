@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,6 +35,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -87,13 +89,19 @@ import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
 import timber.log.Timber
 
+
 @Serializable
 object NavMainScreen
+@Serializable
+object ShoppingCartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun MainScreen(
-    navController: NavController
+    navController: NavController,
+
+
 ) {
     val isRequestDrawer = rememberSaveable { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -247,12 +255,16 @@ fun MainScreen(
                                     }
                                 },
                                 actions = {
-                                    IconButton(onClick = { /*TODO*/ }) {
+                                    IconButton(onClick = {
+                                        navController.navigate(ShoppingCartScreen)
+                                    }) {
                                         Icon(
-                                            imageVector = Icons.Rounded.ShoppingCart,
-                                            contentDescription = "Cart"
+                                            imageVector = Icons.Default.ShoppingCart,
+                                            contentDescription = "Cart",
+                                            tint = Color.Black
                                         )
                                     }
+
                                 },
                                 scrollBehavior = scrollBehavior,
                             )

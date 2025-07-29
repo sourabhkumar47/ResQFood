@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -59,6 +60,7 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
+import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -200,6 +202,16 @@ class MainActivity : ComponentActivity() {
                     composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
                     }
+                    //added the shopping cart screen
+                    composable<ShoppingCartScreen>(
+                        enterTransition = { slideHorizontallyAnimation() }
+                    ) {
+                        ShoppingCartScreen(
+                            onBackClick = { navController.popBackStack() },
+                            padding = PaddingValues()
+                        )
+                    }
+
                 }
             }
         }
