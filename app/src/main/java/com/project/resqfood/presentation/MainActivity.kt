@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -59,6 +60,8 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
+import com.project.resqfood.presentation.ShoppingCartScreen
+
 
 
 class MainActivity : ComponentActivity() {
@@ -67,6 +70,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         var userEntity: UserEntity? = null
         var isUserAnonymous = mutableStateOf(false)
+        var isDarkModeEnabled = mutableStateOf(false) //darkthemeoffhere
     }
 
 
@@ -81,7 +85,7 @@ class MainActivity : ComponentActivity() {
         val restaurantListingViewModel: ListingViewModel = ListingViewModelFactory().create(ListingViewModel::class.java)
         enableEdgeToEdge()
         setContent {
-            AppTheme {
+            AppTheme (useDarkTheme = isDarkModeEnabled.value){
                 val navController = rememberNavController()
                 val viewModel: SignInDataViewModel = viewModel()
                 val mainSignInViewModel: MainSignInViewModel =
@@ -199,6 +203,16 @@ class MainActivity : ComponentActivity() {
                     composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
                     }
+                    //added the shopping cart screen
+                    composable<ShoppingCartScreen>(
+                        enterTransition = { slideHorizontallyAnimation() }
+                    ) {
+                        ShoppingCartScreen(
+                            onBackClick = { navController.popBackStack() },
+                            padding = PaddingValues()
+                        )
+                    }
+
                 }
             }
         }

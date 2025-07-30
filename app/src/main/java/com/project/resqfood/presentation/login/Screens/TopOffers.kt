@@ -43,40 +43,79 @@ data class Card(
     val RestroName: String,
     val Offer: String,
     val Icon: ImageVector,
-    val color: Brush
+    val color: Brush,
+    val categories: List<String>
+)
+
+val allCategories = listOf(
+    "Appetizer", "Main Course", "Dessert", "Beverage", "Snack", "Salad"
 )
 
 val cards = listOf(
-
     Card(
-        Menu = "Menu",
+        Menu = "Tandoori Chicken",
         RestroName = "Chelani's Restro",
         Offer = "Up to 60% Off",
         Icon = Icons.Rounded.ArrowForwardIos,
-        color = getGradiet(PurpleStart, PurpleEnd)
+        color = getGradiet(PurpleStart, PurpleEnd),
+        categories = listOf("Main Course", "Appetizer")
     ),
     Card(
-        Menu = "Menu",
+        Menu = "Samosa Platter",
         RestroName = "Tripathi Brothers",
         Offer = "Up to 50% Off",
         Icon = Icons.Rounded.ArrowForwardIos,
-        color = getGradiet(BlueStart, BlueEnd)
+        color = getGradiet(BlueStart, BlueEnd),
+        categories = listOf("Snack", "Appetizer")
     ),
     Card(
-        Menu = "Menu",
+        Menu = "Fruit Salad",
         RestroName = "Khan Bandu",
         Offer = "Up to 70% Off",
         Icon = Icons.Rounded.ArrowForwardIos,
-        color = getGradiet(OrangeStart, OrangeEnd)
+        color = getGradiet(OrangeStart, OrangeEnd),
+        categories = listOf("Dessert", "Salad")
     ),
     Card(
-        Menu = "Menu",
+        Menu = "Gulab Jamun",
         RestroName = "Just Ride On Food",
         Offer = "Up to 80% Off",
         Icon = Icons.Rounded.ArrowForwardIos,
-        color = getGradiet(GreenStart, GreenEnd)
+        color = getGradiet(GreenStart, GreenEnd),
+        categories = listOf("Dessert")
+    ),
+    Card(
+        Menu = "Paneer Roll",
+        RestroName = "Zesty Bites",
+        Offer = "Flat 40% Off",
+        Icon = Icons.Rounded.ArrowForwardIos,
+        color = getGradiet(PurpleStart, GreenEnd),
+        categories = listOf("Main Course", "Snack")
+    ),
+    Card(
+        Menu = "Mango Lassi",
+        RestroName = "Sweet Chillers",
+        Offer = "Only ₹49",
+        Icon = Icons.Rounded.ArrowForwardIos,
+        color = getGradiet(OrangeStart, BlueEnd),
+        categories = listOf("Beverage", "Dessert")
+    ),
+    Card(
+        Menu = "Veg Salad",
+        RestroName = "Healthy Harvest",
+        Offer = "Save 30%",
+        Icon = Icons.Rounded.ArrowForwardIos,
+        color = getGradiet(GreenStart, OrangeEnd),
+        categories = listOf("Salad", "Appetizer")
+    ),
+    Card(
+        Menu = "Brownie",
+        RestroName = "Choco Heaven",
+        Offer = "Buy 1 Get 1",
+        Icon = Icons.Rounded.ArrowForwardIos,
+        color = getGradiet(PurpleEnd, BlueEnd),
+        categories = listOf("Dessert", "Snack")
     )
-
 )
 
 fun getGradiet(
@@ -91,27 +130,39 @@ fun getGradiet(
 @Preview
 @Composable
 fun CardsSection() {
-    LazyRow {
-        items(cards.size) { index ->
-            TopOffers(index)
+    CardsSection(cards)
+}
+
+@Composable
+fun CardsSection(
+    offers: List<Card>
+) {
+    if (offers.isEmpty()) {
+        Box(
+            Modifier
+                .height(120.dp)
+                .padding(horizontal = 16.dp),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            Text("No offers available in this category")
+        }
+    } else {
+        LazyRow {
+            items(offers.size) { index ->
+                TopOffers(offers[index])
+            }
         }
     }
 }
 
 @Composable
 fun TopOffers(
-    index: Int
+    card: Card
 ) {
-    val card = cards[index]
-    var lastItemPaddingEnd = 0.dp
-    if (index == cards.size - 1) {
-        lastItemPaddingEnd = 16.dp
-    }
-
-
+    val lastItemPaddingEnd = 0.dp
+    // This padding decision will be handled in the row for the last card
     Box(
-        modifier = Modifier
-            .padding(start = 16.dp, end = lastItemPaddingEnd)
+        modifier = Modifier.padding(start = 16.dp, end = lastItemPaddingEnd)
     ) {
         Column(
             modifier = Modifier
@@ -135,9 +186,7 @@ fun TopOffers(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
-            Row(
-
-            ) {
+            Row() {
                 Text(
                     text = card.Menu,
                     color = Color.White,
@@ -145,16 +194,13 @@ fun TopOffers(
                     fontWeight = FontWeight.Bold
                 )
                 Icon(
-                    modifier = Modifier.clickable {
-
-                    },
+                    modifier = Modifier.clickable { },
                     tint = Color.White,
                     imageVector = card.Icon,
-                    contentDescription = " Menu")
-
+                    contentDescription = " Menu"
+                )
             }
-
-
         }
     }
 }
+

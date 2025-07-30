@@ -57,11 +57,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.resqfood.presentation.itemdetailscreen.NavItemDetailScreen
 import com.project.resqfood.presentation.login.BottomNavigation.BottomNavigationItem
+import com.project.resqfood.presentation.login.Screens.searchFilters.SearchFilterScreen
 import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import com.project.resqfood.presentation.login.Screens.searchFilters.SearchFilterScreen
 
 
 @Serializable
@@ -92,9 +92,8 @@ fun MainScreen(
         mutableStateOf(0)
     }
 
-    var showSearchModal by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showSearchScreen by rememberSaveable { mutableStateOf(false) }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -169,15 +168,17 @@ fun MainScreen(
                                         )
                                     }
                                 },
-                                actions ={
-                                    IconButton(onClick = {
-                                       showSearchModal = true
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Search,
-                                            contentDescription = "Search"
-                                        )
-                                    }
+                                actions = {
+
+                                        // Add the search icon
+                                        IconButton(onClick = {
+                                            showSearchScreen = true
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = "Search"
+                                            )
+                                        }
                                     IconButton(onClick = { /*TODO*/ }) {
                                         Icon(
                                             imageVector = Icons.Rounded.ShoppingCart,
@@ -263,16 +264,16 @@ fun MainScreen(
                         }
                     }
                 }
-                if (showSearchModal){
-                   SearchFilterScreen(
-                       onClose = {
-                           showSearchModal = false
-                       }
-                   )
-                }
             }
         }
     )
+    if (showSearchScreen) {
+        SearchFilterScreen(
+            onClose = {
+                showSearchScreen = false
+            }
+        )
+    }
 }
 
 
