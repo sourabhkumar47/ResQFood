@@ -73,7 +73,7 @@ fun PostScreen(navigateBackToCommunity: () -> Unit) {
             })
         }
     ) { paddingValues ->
-        Column(
+        gitColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
