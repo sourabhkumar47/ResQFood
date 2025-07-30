@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -60,6 +61,7 @@ import com.project.resqfood.presentation.profilescreens.ProfileScreen
 import com.project.resqfood.presentation.profilescreens.TopAppBarProfileScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import com.project.resqfood.presentation.login.Screens.searchFilters.SearchFilterScreen
 
 
 @Serializable
@@ -88,6 +90,10 @@ fun MainScreen(
     )
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
+    }
+
+    var showSearchModal by rememberSaveable {
+        mutableStateOf(false)
     }
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -163,7 +169,15 @@ fun MainScreen(
                                         )
                                     }
                                 },
-                                actions = {
+                                actions ={
+                                    IconButton(onClick = {
+                                       showSearchModal = true
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search"
+                                        )
+                                    }
                                     IconButton(onClick = { /*TODO*/ }) {
                                         Icon(
                                             imageVector = Icons.Rounded.ShoppingCart,
@@ -248,6 +262,13 @@ fun MainScreen(
                             }
                         }
                     }
+                }
+                if (showSearchModal){
+                   SearchFilterScreen(
+                       onClose = {
+                           showSearchModal = false
+                       }
+                   )
                 }
             }
         }
