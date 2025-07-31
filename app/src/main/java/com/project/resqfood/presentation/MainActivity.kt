@@ -60,7 +60,8 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
-import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+import com.project.resqfood.presentation.ShoppingCartScreen
+
 
 
 class MainActivity : ComponentActivity() {
