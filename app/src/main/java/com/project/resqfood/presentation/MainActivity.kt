@@ -18,11 +18,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.R
 import com.project.resqfood.domain.services.AccountService
 import com.project.resqfood.domain.services.AccountServiceImpl
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.address.AddAddressScreen
+import com.project.resqfood.presentation.address.AddressScreen
 import com.project.resqfood.presentation.communityScreen.CommunityScreen
 import com.project.resqfood.presentation.communityScreen.NavCommunityScreen
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
@@ -60,8 +63,7 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
-import com.project.resqfood.presentation.ShoppingCartScreen
-
+import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -71,6 +73,9 @@ class MainActivity : ComponentActivity() {
         var userEntity: UserEntity? = null
         var isUserAnonymous = mutableStateOf(false)
         var isDarkModeEnabled = mutableStateOf(false) //darkthemeoffhere
+        const val NavAddressScreen = "address"
+        const val NavAddAddressScreen = "add_address"
+
     }
 
 
@@ -83,6 +88,7 @@ class MainActivity : ComponentActivity() {
         val accountService: AccountService = AccountServiceImpl()
         val alreadyLoggedIn = FirebaseAuth.getInstance().currentUser != null
         val restaurantListingViewModel: ListingViewModel = ListingViewModelFactory().create(ListingViewModel::class.java)
+
         enableEdgeToEdge()
         setContent {
             AppTheme (useDarkTheme = isDarkModeEnabled.value){
@@ -212,6 +218,25 @@ class MainActivity : ComponentActivity() {
                             padding = PaddingValues()
                         )
                     }
+                    composable("address_screen") {
+                        AddressScreen(
+                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                            onAddClick = { navController.navigate("add_address_screen")
+                            }
+                        )
+                    }
+
+
+                    composable("add_address_screen") {
+                        AddAddressScreen(
+                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                            onSaveSuccess = {
+                                navController.popBackStack() // go back to AddressScreen
+                            }
+                        )
+                    }
+
+
 
                 }
             }
