@@ -235,6 +235,13 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                    //forfedback
+                    composable("feedback/{userId}") { backStackEntry ->
+                        val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                        FeedbackScreen(userId = userId)
+                    }
+
+
 
 
 
