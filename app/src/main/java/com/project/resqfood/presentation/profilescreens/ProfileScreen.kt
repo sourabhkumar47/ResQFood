@@ -111,7 +111,14 @@ val myOrderList = listOf(
 val moreList = listOf(
     ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(NavPersonalDetails) }),
     ProfileItem(vectorImage = Icons.Default.Star, label = "Rate Us", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Feedback, label = "Send Feedback",onClick = {/*TODO*/}),
+    ProfileItem(
+        vectorImage = Icons.Default.Feedback,
+        label = "Send Feedback",
+        onClick = {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@ProfileItem
+            it.navigate("feedback/$userId")
+        }
+    ),
     ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
 )
