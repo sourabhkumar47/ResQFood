@@ -64,6 +64,10 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFa
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
 import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+import com.project.resqfood.presentation.searchFilter.FilterSortBottomSheetUI
+import com.project.resqfood.presentation.searchFilter.FilterSearchViewModel
+import com.project.resqfood.presentation.searchFilter.NavSearchScreen
+import com.project.resqfood.presentation.searchFilter.SearchScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -102,7 +106,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination =
                     if (alreadyLoggedIn)
-                        NavMainScreen else NavOnboarding
+                        NavMainScreen  else NavOnboarding
                 ) {
                     composable<NavSignInUI>(
                         enterTransition = {
@@ -110,6 +114,14 @@ class MainActivity : ComponentActivity() {
                         },
                     ) {
                         SignInUI(navController = navController, mainSignInViewModel)
+                    }
+                    composable<NavSearchScreen>(
+                        enterTransition = {
+                            slideHorizontallyAnimation()
+                        },
+                    ){
+                        val filterViewModel : FilterSearchViewModel = viewModel()
+                        SearchScreen(filterViewModel)
                     }
                     composable<NavOTPVerificationUI>(
                         enterTransition = {
