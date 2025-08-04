@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
@@ -87,6 +88,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.searchFilter.NavSearchScreen
 import timber.log.Timber
 
 
@@ -97,12 +99,8 @@ object ShoppingCartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun MainScreen(
     navController: NavController,
-
-
-
 ) {
     val isRequestDrawer = rememberSaveable { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -256,6 +254,17 @@ fun MainScreen(
                                     }
                                 },
                                 actions = {
+
+                                    IconButton(onClick = {
+                                        navController.navigate(NavSearchScreen)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search",
+                                            tint = Color.Black
+                                        )
+                                    }
+
                                     IconButton(onClick = {
                                         navController.navigate(ShoppingCartScreen)
                                     }) {
