@@ -56,6 +56,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -94,7 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation (libs.sdk.mappls.android.sdk)
     implementation (libs.annotation.plugin)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -153,4 +153,6 @@ dependencies {
 
     //pager
     implementation (libs.accompanist.pager)
+    //google map
+    implementation(libs.google.maps)
 }

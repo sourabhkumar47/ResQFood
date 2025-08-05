@@ -24,7 +24,6 @@ lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 lottieCompose = "5.2.0"
-mapplsAndroidSdkVersion = "8.2.2"
 materialIconsExtended = "1.9.0"
 materialIconsExtendedVersion = "1.6.8"
 navigationComposeVersion = "2.8.0-beta02"
@@ -48,6 +47,7 @@ constraintlayout = "2.1.4"
 carUiLib = "2.6.0"
 googleGmsGoogleServicesVersion = "4.4.2"
 benchmarkTraceprocessorAndroid = "1.4.0-rc01"
+playservices-maps = "19.0.0"
 
 
 [libraries]
@@ -97,14 +97,13 @@ firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage
 hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "dagger"}
 hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-sdk-mappls-android-sdk = { module = "com.mappls.sdk:mappls-android-sdk", version.ref = "mapplsAndroidSdkVersion" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
 androidx-benchmark-traceprocessor-android = { group = "androidx.benchmark", name = "benchmark-traceprocessor-android", version.ref = "benchmarkTraceprocessorAndroid" }
-
+google-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playservices-maps" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
