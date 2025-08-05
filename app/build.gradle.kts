@@ -95,7 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation (libs.annotation.plugin)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
@@ -138,8 +137,8 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.firebase.firestore)
-
-
+    // Timber for logging
+    implementation(libs.timber)
 //    Material 3 Core
     implementation(libs.core)
     // CLOCK
