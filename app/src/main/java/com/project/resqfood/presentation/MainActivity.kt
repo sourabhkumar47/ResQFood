@@ -40,6 +40,8 @@ import com.project.resqfood.presentation.login.NavWaitScreen
 import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.Screens.MainScreen
 import com.project.resqfood.presentation.login.Screens.NavMainScreen
+import com.project.resqfood.presentation.login.Screens.NavRoleSelectScreen
+import com.project.resqfood.presentation.login.Screens.ResqFoodUserSelection
 import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.WaitScreen
 import com.project.resqfood.presentation.login.emaillogin.EmailSignInViewModel
@@ -63,7 +65,10 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
-import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+//import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+import com.project.resqfood.presentation.restaurantDashboard.NavRestaurantDashboardScreen
+import com.project.resqfood.presentation.restaurantDashboard.RestaurantDashboardScreen
+import com.project.resqfood.presentation.restaurantDashboard.RestaurantViewModel
 import com.project.resqfood.presentation.searchFilter.FilterSortBottomSheetUI
 import com.project.resqfood.presentation.searchFilter.FilterSearchViewModel
 import com.project.resqfood.presentation.searchFilter.NavSearchScreen
@@ -133,6 +138,13 @@ class MainActivity : ComponentActivity() {
                             mainSignInViewModel = mainSignInViewModel
                         )
                     }
+                    composable<NavRestaurantDashboardScreen> {
+                        val restaurantViewModel: RestaurantViewModel = viewModel()
+                        RestaurantDashboardScreen(
+                            navController = navController,
+                            restaurantViewModel = restaurantViewModel
+                        )
+                    }
                     composable<NavEmailSignIn>(
                         enterTransition = {
                             slideHorizontallyAnimation()
@@ -163,7 +175,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         PersonalDetails(navigationAfterCompletion = {
                             navController.popBackStack(navController.graph.startDestinationId, true)
-                            navController.navigate(NavMainScreen)
+                            navController.navigate(NavRoleSelectScreen)
                         })
                     }
                     composable<NavWaitScreen> {
@@ -217,6 +229,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<NavOnboarding>{
                         Onboarding(navController = navController)
+                    }
+                    composable<NavRoleSelectScreen>{
+                        ResqFoodUserSelection(navController = navController)
                     }
                     composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
