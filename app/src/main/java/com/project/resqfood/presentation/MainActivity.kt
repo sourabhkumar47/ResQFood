@@ -12,16 +12,20 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.R
 import com.project.resqfood.domain.services.AccountService
 import com.project.resqfood.domain.services.AccountServiceImpl
 import com.project.resqfood.model.UserEntity
+import com.project.resqfood.presentation.address.AddAddressScreen
+import com.project.resqfood.presentation.address.AddressScreen
 import com.project.resqfood.presentation.communityScreen.CommunityScreen
 import com.project.resqfood.presentation.communityScreen.NavCommunityScreen
 import com.project.resqfood.presentation.itemdetailscreen.AddingLeftovers
@@ -59,6 +63,11 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
+import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+import com.project.resqfood.presentation.searchFilter.FilterSortBottomSheetUI
+import com.project.resqfood.presentation.searchFilter.FilterSearchViewModel
+import com.project.resqfood.presentation.searchFilter.NavSearchScreen
+import com.project.resqfood.presentation.searchFilter.SearchScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -68,6 +77,9 @@ class MainActivity : ComponentActivity() {
         var userEntity: UserEntity? = null
         var isUserAnonymous = mutableStateOf(false)
         var isDarkModeEnabled = mutableStateOf(false) //darkthemeoffhere
+        const val NavAddressScreen = "address"
+        const val NavAddAddressScreen = "add_address"
+
     }
 
 
@@ -80,6 +92,7 @@ class MainActivity : ComponentActivity() {
         val accountService: AccountService = AccountServiceImpl()
         val alreadyLoggedIn = FirebaseAuth.getInstance().currentUser != null
         val restaurantListingViewModel: ListingViewModel = ListingViewModelFactory().create(ListingViewModel::class.java)
+
         enableEdgeToEdge()
         setContent {
             AppTheme (useDarkTheme = isDarkModeEnabled.value){
@@ -93,7 +106,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination =
                     if (alreadyLoggedIn)
-                        NavMainScreen else NavOnboarding
+                        NavMainScreen  else NavOnboarding
                 ) {
                     composable<NavSignInUI>(
                         enterTransition = {
@@ -101,6 +114,14 @@ class MainActivity : ComponentActivity() {
                         },
                     ) {
                         SignInUI(navController = navController, mainSignInViewModel)
+                    }
+                    composable<NavSearchScreen>(
+                        enterTransition = {
+                            slideHorizontallyAnimation()
+                        },
+                    ){
+                        val filterViewModel : FilterSearchViewModel = viewModel()
+                        SearchScreen(filterViewModel)
                     }
                     composable<NavOTPVerificationUI>(
                         enterTransition = {
@@ -200,6 +221,42 @@ class MainActivity : ComponentActivity() {
                     composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
                     }
+                    //added the shopping cart screen
+                    composable<ShoppingCartScreen>(
+                        enterTransition = { slideHorizontallyAnimation() }
+                    ) {
+                        ShoppingCartScreen(
+                            onBackClick = { navController.popBackStack() },
+                            padding = PaddingValues()
+                        )
+                    }
+                    composable("address_screen") {
+                        AddressScreen(
+                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                            onAddClick = { navController.navigate("add_address_screen")
+                            }
+                        )
+                    }
+
+
+                    composable("add_address_screen") {
+                        AddAddressScreen(
+                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                            onSaveSuccess = {
+                                navController.popBackStack() // go back to AddressScreen
+                            }
+                        )
+                    }
+                    //forfedback
+                    composable("feedback/{userId}") { backStackEntry ->
+                        val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                        FeedbackScreen(userId = userId)
+                    }
+
+
+
+
+
                 }
             }
         }

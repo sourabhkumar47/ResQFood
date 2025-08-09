@@ -95,7 +95,12 @@ data class ProfileItem(val vectorImage: ImageVector, val label: String, val onCl
 
 val myOrderList = listOf(
     ProfileItem(vectorImage = Icons.Default.Fastfood, label = "Your Orders", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.House, label = "Your Addresses", onClick = {/*TODO*/}),
+    //address of person
+    ProfileItem(
+        vectorImage = Icons.Default.House,
+        label = "Your Addresses",
+        onClick = { it.navigate("address_screen") }
+    ),
     ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {it.navigate(NavAddingLeftovers)}),
     ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavListingRestaurant)}),
     ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/}),
@@ -106,7 +111,14 @@ val myOrderList = listOf(
 val moreList = listOf(
     ProfileItem(vectorImage = Icons.Default.Person, label = "Edit Personal Details", onClick = {navController -> navController.navigate(NavPersonalDetails) }),
     ProfileItem(vectorImage = Icons.Default.Star, label = "Rate Us", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.Default.Feedback, label = "Send Feedback",onClick = {/*TODO*/}),
+    ProfileItem(
+        vectorImage = Icons.Default.Feedback,
+        label = "Send Feedback",
+        onClick = {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@ProfileItem
+            it.navigate("feedback/$userId")
+        }
+    ),
     ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
 )
