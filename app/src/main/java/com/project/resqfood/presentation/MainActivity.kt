@@ -64,6 +64,9 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFa
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
 import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+import com.project.resqfood.presentation.restaurantDashboard.NavRestaurantDashboardScreen
+import com.project.resqfood.presentation.restaurantDashboard.RestaurantDashboardScreen
+import com.project.resqfood.presentation.restaurantDashboard.RestaurantViewModel
 import com.project.resqfood.presentation.searchFilter.FilterSortBottomSheetUI
 import com.project.resqfood.presentation.searchFilter.FilterSearchViewModel
 import com.project.resqfood.presentation.searchFilter.NavSearchScreen
@@ -131,6 +134,13 @@ class MainActivity : ComponentActivity() {
                         OTPVerificationUI(
                             navController = navController,
                             mainSignInViewModel = mainSignInViewModel
+                        )
+                    }
+                    composable<NavRestaurantDashboardScreen> {
+                        val restaurantViewModel: RestaurantViewModel = viewModel()
+                        RestaurantDashboardScreen(
+                            navController = navController,
+                            restaurantViewModel = restaurantViewModel
                         )
                     }
                     composable<NavEmailSignIn>(
