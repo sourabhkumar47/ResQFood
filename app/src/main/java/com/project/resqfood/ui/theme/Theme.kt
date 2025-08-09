@@ -234,6 +234,7 @@ fun AppTheme(
             val window = (view.context as Activity).window
             WindowCompat.setDecorFitsSystemWindows(window, false)
 
+
             // Match status bar color to surface for better contrast in Android 15
             window.statusBarColor = colors.surface.toArgb()
 
