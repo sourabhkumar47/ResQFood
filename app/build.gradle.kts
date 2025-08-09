@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.project.resqfood"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.project.resqfood"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -100,7 +100,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     //Adding Firebase BOM
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
 
     //Adding Firebase Analytics
     implementation(libs.google.firebase.analytics)
