@@ -12,6 +12,7 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +35,8 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -81,16 +85,22 @@ import kotlinx.serialization.Serializable
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.project.resqfood.R
 import com.project.resqfood.presentation.MainActivity
+import com.project.resqfood.presentation.searchFilter.NavSearchScreen
 import timber.log.Timber
+
 
 @Serializable
 object NavMainScreen
+@Serializable
+object ShoppingCartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    navController: NavController
+    navController: NavController,
 ) {
     val isRequestDrawer = rememberSaveable { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -124,11 +134,10 @@ fun MainScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 24.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "App Icon",
-                            modifier = Modifier.size(36.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_without_background),
+                            contentDescription = "App Logo",
+                            modifier = Modifier.size(36.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -210,6 +219,7 @@ fun MainScreen(
                             )
                         )
                     }
+
             // Add more items as needed
                 }
             }
@@ -244,12 +254,27 @@ fun MainScreen(
                                     }
                                 },
                                 actions = {
-                                    IconButton(onClick = { /*TODO*/ }) {
+
+                                    IconButton(onClick = {
+                                        navController.navigate(NavSearchScreen)
+                                    }) {
                                         Icon(
-                                            imageVector = Icons.Rounded.ShoppingCart,
-                                            contentDescription = "Cart"
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search",
+                                            tint = Color.Black
                                         )
                                     }
+
+                                    IconButton(onClick = {
+                                        navController.navigate(ShoppingCartScreen)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.ShoppingCart,
+                                            contentDescription = "Cart",
+                                            tint = Color.Black
+                                        )
+                                    }
+
                                 },
                                 scrollBehavior = scrollBehavior,
                             )
@@ -332,8 +357,8 @@ fun MainScreen(
                                 Timber.d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
-                                val intent = Intent(context, MapScreen::class.java)
-                                context.startActivity(intent)
+//                                val intent = Intent(context, MapScreen::class.java)
+//                                context.startActivity(intent)
                             }
                         }
                     }
