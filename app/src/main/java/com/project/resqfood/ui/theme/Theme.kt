@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -217,18 +218,44 @@ val unspecified_scheme = ColorFamily(
 @Composable
 fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        lightScheme
-    } else {
-        darkScheme
+    val context = LocalContext.current
+    val colors = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        else -> if (useDarkTheme) darkScheme else lightScheme
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
+            // Match status bar color to surface for better contrast in Android 15
+            window.statusBarColor = colors.surface.toArgb()
+
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
+            // Android 15+ uses 'appearanceLightStatusBars' differently — set explicitly
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                // Ensure system picks icons based on luminance
+                insetsController.isAppearanceLightStatusBars =
+                    colors.surface.luminance() > 0.5f
+            } else {
+                // Legacy handling
+                insetsController.isAppearanceLightStatusBars = !useDarkTheme
+            }
+        }
     }
 
     MaterialTheme(
         colorScheme = colors,
-        content = content,
-        typography = AppTypography
+        typography = AppTypography,
+        content = content
     )
 }
+
 
