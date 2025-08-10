@@ -3,7 +3,6 @@ package com.project.resqfood.presentation.login.Screens
 
 import android.content.Intent
 import android.util.Log
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
@@ -332,7 +331,7 @@ fun MainScreen(
                                 Timber.d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
-                                val intent = Intent(context, MapScreen::class.java)
+                                val intent = Intent().setAction("your.custom.action")
                                 context.startActivity(intent)
                             }
                         }
