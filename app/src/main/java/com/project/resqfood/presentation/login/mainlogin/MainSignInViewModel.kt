@@ -109,6 +109,7 @@ class MainSignInViewModel(val auth: FirebaseAuth, val accountService: AccountSer
         }
     }
 
+
     private fun showSnackbar(snackbarHostState: SnackbarHostState, message: String) {
         viewModelScope.launch {
             snackbarHostState.showSnackbar(message)

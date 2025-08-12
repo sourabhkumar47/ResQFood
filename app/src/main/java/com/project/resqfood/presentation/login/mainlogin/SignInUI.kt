@@ -213,7 +213,7 @@ fun SignInUI(
                             Spacer(modifier = Modifier.height(16.dp))
                             OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = {
                                 mainSignInViewModel.loginAnonymously(snackbarHostState,context,navController)
-                            }) {
+                            })  {
                                 Text("Login as guest")
                             }
                         }
@@ -313,7 +313,14 @@ fun Wait(){
         )
 }
 
-fun onSignInSuccessful(navController: NavController){
-    navController.navigate(NavWaitScreen)
+fun onSignInSuccessful(navController: NavController) {
+    navController.navigate(NavWaitScreen) {
+        //it is removing the login screen
+        popUpTo(NavSignInUI) { inclusive = true }
+        launchSingleTop = true
+    }
 }
+
+
+
 

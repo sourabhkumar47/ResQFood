@@ -53,7 +53,7 @@ fun AddressScreen(userId: String, onAddClick: () -> Unit) {
             ) {
                 if (addressList.isEmpty()) {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {

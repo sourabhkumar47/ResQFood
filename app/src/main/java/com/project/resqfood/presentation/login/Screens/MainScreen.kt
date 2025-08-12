@@ -67,6 +67,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -332,8 +333,8 @@ fun MainScreen(
                                 Timber.d("View Map")
                                 val context = LocalContext.current
                                 selectedItemIndex = 0
-                                val intent = Intent(context, MapScreen::class.java)
-                                context.startActivity(intent)
+                                //val intent = Intent(context, MapScreen::class.java)
+                                //context.startActivity(intent)
                             }
                         }
                     }

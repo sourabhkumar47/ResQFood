@@ -120,8 +120,11 @@ val moreList = listOf(
         }
     ),
     ProfileItem(vectorImage = Icons.Default.Delete, label = "Delete Account", onClick = {/*TODO*/}),
-    ProfileItem(vectorImage = Icons.AutoMirrored.Filled.Logout, label = "Log Out", onClick = {navController -> logoutUser(navController) }),
-)
+    ProfileItem(
+        vectorImage = Icons.AutoMirrored.Filled.Logout,
+        label = "Log Out",
+        onClick = { _ -> /* login out */ }
+    ),)
 
 
 enum class TabItem(val label: String){
@@ -139,6 +142,15 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
     val user by viewModel.user.collectAsState()
     Log.i("ProfileScreen", "User data fetched: $user")
     val auth = FirebaseAuth.getInstance()
+    //adding login out
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    val updatedMoreList = moreList.map {
+        if (it.label == "Log Out") {
+            it.copy(onClick = { showLogoutDialog = true })
+        } else it
+    }
+
+
     LaunchedEffect(key1 = MainActivity.userEntity) {
         try {
             if (auth.currentUser != null)
@@ -229,7 +241,7 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
                     )
                     TabItem.MORE.ordinal -> TabItemContent(
                         scrollState = scrollState,
-                        profileItemList = moreList,
+                        profileItemList = updatedMoreList,
                         navController = navController
                     )
                 }
@@ -238,6 +250,32 @@ fun ProfileScreen(paddingValues: PaddingValues, navController: NavController) {
 
         }
     }
+    //login out dialog
+    if (showLogoutDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("Log Out") },
+            text = { Text("Are you sure you want to log out?") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        logoutUser(navController)
+                    }
+                ) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showLogoutDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
 
 
@@ -399,6 +437,7 @@ fun logoutUser(navController: NavController) {
     navController.popBackStack(navController.graph.startDestinationId, true)
     navController.navigate(NavSignInUI)
 }
+
 
 
 
