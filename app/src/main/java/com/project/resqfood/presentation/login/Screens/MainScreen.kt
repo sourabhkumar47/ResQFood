@@ -211,7 +211,7 @@ fun MainScreen(
                             )
                         )
                     }
-            // Add more items as needed
+                    // Add more items as needed
                 }
             }
         },
@@ -300,7 +300,7 @@ fun MainScreen(
                             )
                         }
 
-                        ) { targetState ->
+                    ) { targetState ->
                         when (targetState) {
                             0 -> {
                                 Column(
@@ -341,7 +341,7 @@ fun MainScreen(
                 }
             }
         })
-    }
+}
 
 /**
  * CategoryChipRow renders a horizontal list of selectable category chips.
