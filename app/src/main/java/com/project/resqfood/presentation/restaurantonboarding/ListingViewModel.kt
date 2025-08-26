@@ -11,6 +11,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.project.resqfood.domain.repository.RestaurantDataRepository
 import com.project.resqfood.model.RestaurantEntity
 import com.project.resqfood.model.RestaurantType
+import com.project.resqfood.presentation.login.Screens.NavMainScreen
+import com.project.resqfood.presentation.login.Screens.NavRoleSelectScreen
 import com.project.resqfood.presentation.login.emailCheck
 import com.project.resqfood.presentation.login.phoneNumberCheck
 import kotlinx.coroutines.launch
@@ -25,21 +27,28 @@ class ListingViewModel : ViewModel() {
     var isStart = true
     private var currentIndex = 0
 
-    fun onNextClick(snackbarHostState: SnackbarHostState, navController: NavController) {
-        isStart = false
-        if (uiState.value == ListingUIState.RESTAURANT_SUCCESS_SCREEN)
-            navController.navigateUp()
-        if (uiState.value == ListingUIState.RESTAURANT_IMAGES_SCREEN)
-            saveData()
-        when (currentIndex) {
-            in 0..(order.size - 3) -> {
-                if (validateRestaurantDetails(snackbarHostState)) {
-                    currentIndex++
-                    uiState.value = order[currentIndex]
-                    isStart = true
+        fun onNextClick(snackbarHostState: SnackbarHostState, navController: NavController,entryPoint: String) {
+            isStart = false
+            if (uiState.value == ListingUIState.RESTAURANT_SUCCESS_SCREEN)
+            //navController.navigateUp()
+                if (entryPoint == "fromRegistration") {
+                    navController.navigate(NavMainScreen) {
+                        popUpTo(NavRoleSelectScreen) { inclusive = true }
+                    }
+                } else {
+                    navController.navigateUp()
+                }
+            if (uiState.value == ListingUIState.RESTAURANT_IMAGES_SCREEN)
+                saveData()
+            when (currentIndex) {
+                in 0..(order.size - 3) -> {
+                    if (validateRestaurantDetails(snackbarHostState)) {
+                        currentIndex++
+                        uiState.value = order[currentIndex]
+                        isStart = true
+                    }
                 }
             }
-        }
 //        when(uiState.value){
 //            ListingUIState.RESTAURANT_DETAILS_SCREEN -> {
 //            }

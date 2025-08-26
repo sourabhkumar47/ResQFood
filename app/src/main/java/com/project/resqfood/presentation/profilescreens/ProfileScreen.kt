@@ -102,7 +102,7 @@ val myOrderList = listOf(
         onClick = { it.navigate("address_screen") }
     ),
     ProfileItem(vectorImage = Icons.Default.Payments, label = "Payments Methods", onClick = {it.navigate(NavAddingLeftovers)}),
-    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavListingRestaurant)}),
+    ProfileItem(vectorImage = Icons.Default.Restaurant, label = "Add Restaurant", onClick = {it.navigate(NavListingRestaurant(entryPoint = "normalFlow"))}),
     ProfileItem(vectorImage = Icons.Default.HouseSiding, label = "Add Trusts", onClick = {/*TODO*/}),
     ProfileItem(vectorImage = Icons.Default.ShoppingCart, label = "Ordering and Pickup", onClick = {it.navigate(NavOrderingPickup)})
 )

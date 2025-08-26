@@ -1,5 +1,6 @@
 package com.project.resqfood.presentation.restaurantonboarding
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -48,14 +49,21 @@ import coil.compose.AsyncImage
 import com.project.resqfood.R
 import kotlinx.serialization.Serializable
 
+/*@Serializable
+object NavListingRestaurant*/
+
+
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
-object NavListingRestaurant
+data class NavListingRestaurant(val entryPoint: String)
+
 
 
 @Composable
 fun ListingRestaurantScreen(
     restaurantListingViewModel: ListingViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    entryPoint: String
 ) {
     val scrollState = rememberScrollState()
     val data by restaurantListingViewModel.listingData
@@ -125,7 +133,7 @@ fun ListingRestaurantScreen(
                     )
                     .padding(12.dp),
                     isFirst = (uiState == ListingUIState.RESTAURANT_SUCCESS_SCREEN || uiState == ListingUIState.RESTAURANT_DETAILS_SCREEN),
-                    onNext = { restaurantListingViewModel.onNextClick(navController = navController, snackbarHostState = snackbarHostState) }) {
+                    onNext = { restaurantListingViewModel.onNextClick(navController = navController, snackbarHostState = snackbarHostState,entryPoint = entryPoint) }) {
                     restaurantListingViewModel.onBackClick()
                 }
                 Column(

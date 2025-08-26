@@ -15,9 +15,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.R
@@ -233,9 +236,21 @@ class MainActivity : ComponentActivity() {
                     composable<NavRoleSelectScreen>{
                         ResqFoodUserSelection(navController = navController)
                     }
-                    composable<NavListingRestaurant> {
+            /*        composable<NavListingRestaurant> {
                         ListingRestaurantScreen(restaurantListingViewModel, navController)
+                    }*/
+
+                    composable<NavListingRestaurant> { backStackEntry ->
+                        val args = backStackEntry.toRoute<NavListingRestaurant>()
+                        ListingRestaurantScreen(
+                            restaurantListingViewModel,
+                            navController,
+                            args.entryPoint // pass it down
+                        )
                     }
+
+
+
                     //added the shopping cart screen
                     composable<ShoppingCartScreen>(
                         enterTransition = { slideHorizontallyAnimation() }
