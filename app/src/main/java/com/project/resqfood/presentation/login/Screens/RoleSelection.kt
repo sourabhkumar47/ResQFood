@@ -85,7 +85,7 @@ fun ResqFoodUserSelection(navController: NavHostController?) {
                         },
                         title = "Restaurant",
                         description = "List your leftover food and reduce waste while earning extra revenue",
-                        onClick = {  navController?.navigate(NavListingRestaurant(entryPoint = "fromRegistration")) }
+                        onClick = {  navController?.navigate(NavListingRestaurant(entryPoint =  "fromRegistration")) }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
