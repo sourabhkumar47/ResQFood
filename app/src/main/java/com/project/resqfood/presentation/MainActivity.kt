@@ -15,9 +15,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 
 import com.google.firebase.auth.FirebaseAuth
 import com.project.resqfood.R
@@ -40,6 +43,8 @@ import com.project.resqfood.presentation.login.NavWaitScreen
 import com.project.resqfood.presentation.login.PersonalDetails
 import com.project.resqfood.presentation.login.Screens.MainScreen
 import com.project.resqfood.presentation.login.Screens.NavMainScreen
+import com.project.resqfood.presentation.login.Screens.NavRoleSelectScreen
+import com.project.resqfood.presentation.login.Screens.ResqFoodUserSelection
 import com.project.resqfood.presentation.login.SignInDataViewModel
 import com.project.resqfood.presentation.login.WaitScreen
 import com.project.resqfood.presentation.login.emaillogin.EmailSignInViewModel
@@ -63,7 +68,7 @@ import com.project.resqfood.presentation.restaurantonboarding.ListingViewModel
 import com.project.resqfood.presentation.restaurantonboarding.ListingViewModelFactory
 import com.project.resqfood.presentation.restaurantonboarding.NavListingRestaurant
 import com.project.resqfood.ui.theme.AppTheme
-import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
+//import com.project.resqfood.presentation.login.Screens.ShoppingCartScreen
 import com.project.resqfood.presentation.restaurantDashboard.NavRestaurantDashboardScreen
 import com.project.resqfood.presentation.restaurantDashboard.RestaurantDashboardScreen
 import com.project.resqfood.presentation.restaurantDashboard.RestaurantViewModel
@@ -173,7 +178,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         PersonalDetails(navigationAfterCompletion = {
                             navController.popBackStack(navController.graph.startDestinationId, true)
-                            navController.navigate(NavMainScreen)
+                            navController.navigate(NavRoleSelectScreen)
                         })
                     }
                     composable<NavWaitScreen> {
@@ -228,9 +233,24 @@ class MainActivity : ComponentActivity() {
                     composable<NavOnboarding>{
                         Onboarding(navController = navController)
                     }
-                    composable<NavListingRestaurant> {
-                        ListingRestaurantScreen(restaurantListingViewModel, navController)
+                    composable<NavRoleSelectScreen>{
+                        ResqFoodUserSelection(navController = navController)
                     }
+            /*        composable<NavListingRestaurant> {
+                        ListingRestaurantScreen(restaurantListingViewModel, navController)
+                    }*/
+
+                    composable<NavListingRestaurant> { backStackEntry ->
+                        val args = backStackEntry.toRoute<NavListingRestaurant>()
+                        ListingRestaurantScreen(
+                            restaurantListingViewModel,
+                            navController,
+                            args.entryPoint // pass it down
+                        )
+                    }
+
+
+
                     //added the shopping cart screen
                     composable<ShoppingCartScreen>(
                         enterTransition = { slideHorizontallyAnimation() }
